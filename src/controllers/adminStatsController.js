@@ -12,11 +12,11 @@ exports.getSalesChartData = async (req, res) => {
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - days);
 
+        // Modified: removed isPaid: true constraint to show all orders (including COD)
         const dailySales = await Order.aggregate([
             {
                 $match: {
-                    createdAt: { $gte: startDate, $lte: endDate },
-                    isPaid: true
+                    createdAt: { $gte: startDate, $lte: endDate }
                 }
             },
             {
@@ -40,7 +40,7 @@ exports.getSalesChartData = async (req, res) => {
 // @access  Private (Admin only)
 exports.getTopProducts = async (req, res) => {
     try {
-        const topProducts = await Order.aggregate([
+        let topProducts = await Order.aggregate([
             { $unwind: "$orderItems" },
             {
                 $group: {
@@ -53,6 +53,20 @@ exports.getTopProducts = async (req, res) => {
             { $sort: { sales: -1 } },
             { $limit: 5 }
         ]);
+
+        // Fallback: If no orders/top products, show popular products
+        if (!topProducts || topProducts.length === 0) {
+            const popularProducts = await Product.find({ isPopular: true })
+                .limit(5)
+                .select('name price views bookedCount');
+
+            topProducts = popularProducts.map(p => ({
+                _id: p._id,
+                name: p.name,
+                sales: p.bookedCount || 0, // Use different metric or 0
+                revenue: 0 // Placeholder
+            }));
+        }
 
         res.json(topProducts);
     } catch (error) {
@@ -78,28 +92,44 @@ exports.getDashboardStats = async (req, res) => {
         const orders = await Order.find({ isPaid: true });
         const totalRevenue = orders.reduce((sum, order) => sum + (order.totalPrice || 0), 0);
 
+        // Calculate Today's Revenue
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+
+        const todaysOrders = await Order.find({
+            isPaid: true,
+            createdAt: { $gte: todayStart }
+        });
+        const todaysRevenue = todaysOrders.reduce((sum, order) => sum + (order.totalPrice || 0), 0);
+
         // Get recent orders
         const recentOrders = await Order.find()
             .populate('user', 'name email')
             .sort({ createdAt: -1 })
             .limit(10)
-            .select('totalPrice isPaid isDelivered createdAt user');
+            .select('totalPrice isPaid isDelivered createdAt user orderItems');
 
         res.json({
             totalProducts,
             totalOrders,
             totalUsers,
             totalRevenue,
+            todaysRevenue,
             totalViews,
             totalBooked,
             recentOrders: recentOrders.map(order => ({
                 _id: order._id,
                 orderNumber: order._id.toString().slice(-6).toUpperCase(),
                 customer: order.user?.name || 'Guest',
+                customerId: order.user?._id, // Added for profile link
                 email: order.user?.email || 'unknown@example.com',
                 total: order.totalPrice || 0,
                 status: order.isDelivered ? 'delivered' : (order.isPaid ? 'paid' : 'pending'),
-                date: order.createdAt
+                date: order.createdAt,
+                // Add product info
+                productImage: order.orderItems && order.orderItems.length > 0 ? order.orderItems[0].image : null,
+                productName: order.orderItems && order.orderItems.length > 0 ? order.orderItems[0].name : 'Unknown Product',
+                itemsCount: order.orderItems ? order.orderItems.length : 0
             }))
         });
     } catch (error) {
@@ -117,16 +147,21 @@ exports.getRecentOrders = async (req, res) => {
             .populate('user', 'name email')
             .sort({ createdAt: -1 })
             .limit(20)
-            .select('totalPrice isPaid isDelivered createdAt user');
+            .select('totalPrice isPaid isDelivered createdAt user orderItems');
 
         res.json(orders.map(order => ({
             _id: order._id,
             orderNumber: order._id.toString().slice(-6).toUpperCase(),
             customer: order.user?.name || 'Guest',
+            customerId: order.user?._id, // Added for profile link
             email: order.user?.email || 'unknown@example.com',
             total: order.totalPrice || 0,
             status: order.isDelivered ? 'delivered' : (order.isPaid ? 'paid' : 'pending'),
-            date: order.createdAt
+            date: order.createdAt,
+            // Add product info
+            productImage: order.orderItems && order.orderItems.length > 0 ? order.orderItems[0].image : null,
+            productName: order.orderItems && order.orderItems.length > 0 ? order.orderItems[0].name : 'Unknown Product',
+            itemsCount: order.orderItems ? order.orderItems.length : 0
         })));
     } catch (error) {
         console.error('Recent orders error:', error);

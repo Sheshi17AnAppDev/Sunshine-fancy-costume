@@ -33,6 +33,7 @@ app.get('/api/health', (req, res) => {
 
 // Static Folders
 app.use(express.static(path.join(__dirname, 'public'), { extensions: ['html'] }));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Profile page (clean URL)
 app.get('/profile', (req, res) => {

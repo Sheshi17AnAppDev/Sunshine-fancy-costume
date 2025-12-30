@@ -28,7 +28,7 @@ const fetchOrders = async () => {
                     <div style="display: flex; flex-direction: column; gap: 5px;">
                         ${firstItems.map(item => `
                             <div style="display: flex; align-items: center; gap: 8px;">
-                                <img src="${item.image || 'https://via.placeholder.com/30'}" style="width: 24px; height: 24px; object-fit: cover; border-radius: 4px; border: 1px solid #eee;">
+                                <img src="${item.image || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2VlZSIvPjwvc3ZnPg=='}" style="width: 24px; height: 24px; object-fit: cover; border-radius: 4px; border: 1px solid #eee;">
                                 <span style="font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;">${item.name}</span>
                             </div>
                         `).join('')}
@@ -149,7 +149,7 @@ window.viewOrder = async (id) => {
             const itemQty = typeof item.qty === 'number' ? item.qty : 0;
             return `
                         <div style="display: flex; gap: 1rem; margin-bottom: 0.8rem; align-items: center; background: #fff; padding: 0.75rem; border-radius: 10px; border: 1px solid var(--border-color);">
-                            <img src="${item.image || 'https://via.placeholder.com/50'}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid #eee;">
+                            <img src="${item.image || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2VlZSIvPjwvc3ZnPg=='}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid #eee;">
                             <div style="flex: 1;">
                                 <p style="font-weight: 600; font-size: 0.95rem; margin-bottom: 0.1rem; color: var(--text-main); line-height: 1.2;">${item.name || 'Unknown Item'}</p>
                                 ${item.ageGroup ? `<p style="font-size: 0.75rem; color: var(--primary-orange); font-weight: 700; text-transform: uppercase; margin-bottom: 0.2rem;">Age: ${item.ageGroup}</p>` : ''}

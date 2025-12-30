@@ -8,6 +8,17 @@ const protect = async (req, res, next) => {
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         try {
             token = req.headers.authorization.split(' ')[1];
+
+            if (token === 'null' || token === 'undefined') {
+                return res.status(401).json({ message: 'Not authorized, invalid token format' });
+            }
+
+            // Sanitize token: remove double quotes if present (common client-side storage issue)
+            token = token.replace(/"/g, '');
+
+            // Log token for debugging (first 10 chars)
+            // console.log('Verifying admin token:', token.substring(0, 10) + '...');
+
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
             const adminUser = await AdminUser.findById(decoded.id).select('-password');
@@ -35,8 +46,8 @@ const protect = async (req, res, next) => {
 
             return res.status(403).json({ message: 'Access denied. Admin privileges required.' });
         } catch (error) {
-            console.error('Admin auth error:', error);
-            return res.status(401).json({ message: 'Not authorized, admin token failed' });
+            console.error('Admin auth error:', error.message); // Log message only to avoid stack trace spam
+            return res.status(401).json({ message: 'Not authorized, token failed' });
         }
     }
 

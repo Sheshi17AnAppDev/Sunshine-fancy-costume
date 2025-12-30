@@ -10,12 +10,32 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function fetchData() {
         try {
-            allProducts = await api.get('/products');
-            allOrders = await api.get('/orders');
+            if (typeof adminAuth !== 'undefined') {
+                const [products, orders] = await Promise.all([
+                    window.api.get('/products'),
+                    window.api.get('/orders')
+                ]);
+                allProducts = products;
+                allOrders = orders;
+            } else {
+                allProducts = await window.api.get('/products');
+                allOrders = await window.api.get('/orders');
+            }
+
             renderDashboard();
         } catch (error) {
             console.error('Error fetching inventory data:', error);
+            if (window.showToast) window.showToast('Failed to load inventory data', 'error');
         }
+    }
+
+    // Refresh button check
+    const refreshBtn = document.getElementById('refresh-data');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', () => {
+            fetchData();
+            if (window.showToast) window.showToast('Refreshing data...', 'info');
+        });
     }
 
     function renderDashboard() {
@@ -23,6 +43,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         let totalBooked = 0;
         let totalConfirmed = allOrders.length;
         let totalDelivered = allOrders.filter(o => o.isDelivered).length;
+
+        if (!Array.isArray(allProducts)) {
+            console.error('Products data is not an array:', allProducts);
+            return;
+        }
 
         inventoryBody.innerHTML = allProducts.map(p => {
             totalVisited += (p.views || 0);
@@ -38,7 +63,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <tr>
                     <td>
                         <div style="display:flex; align-items:center; gap:10px;">
-                            <img src="${p.images[0]?.url || p.images[0] || 'https://via.placeholder.com/40'}" style="width:40px; height:40px; border-radius:8px; object-fit:cover;">
+                            <img src="${p.images[0]?.url || p.images[0] || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2VlZSIvPjwvc3ZnPg=='}" style="width:40px; height:40px; border-radius:8px; object-fit:cover;">
                             <span>${p.name}</span>
                         </div>
                     </td>

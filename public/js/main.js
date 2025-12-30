@@ -112,7 +112,7 @@ function updateHeaderAuthUI() {
     }
 }
 
-const api = {
+window.api = {
     request: async (method, endpoint, data = null, isFormData = false) => {
         const user = JSON.parse(localStorage.getItem('user'));
         const adminToken = localStorage.getItem('adminToken');
@@ -156,10 +156,12 @@ window.formatCurrency = (amount) => {
 // Global Header Scroll Effect
 window.addEventListener('scroll', () => {
     const header = document.getElementById('header');
-    if (window.scrollY > 50) {
-        header.classList.add('scrolled');
-    } else {
-        header.classList.remove('scrolled');
+    if (header) {
+        if (window.scrollY > 50) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
     }
 });
 

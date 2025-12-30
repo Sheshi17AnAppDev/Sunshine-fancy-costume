@@ -73,7 +73,14 @@ class Dashboard {
         this.animateNumber('stat-products', stats.totalProducts || 0);
         this.animateNumber('stat-orders', stats.totalOrders || 0);
         this.animateNumber('stat-revenue', stats.totalRevenue || 0, true);
-        this.animateNumber('stat-customers', stats.totalCustomers || 0);
+
+        // Update today's revenue subtitle
+        const todaysRevEl = document.getElementById('stat-todays-revenue');
+        if (todaysRevEl) {
+            todaysRevEl.textContent = 'Today: ' + (stats.todaysRevenue || 0).toLocaleString('en-IN', { style: 'currency', currency: 'INR' });
+        }
+
+        this.animateNumber('stat-customers', stats.totalUsers || 0); // Corrected from totalCustomers to totalUsers
     }
 
     setupCharts() {
@@ -120,7 +127,6 @@ class Dashboard {
             }
         });
 
-        // Setup period selector
         const periodSelector = document.getElementById('sales-period');
         if (periodSelector) {
             periodSelector.addEventListener('change', (e) => {
@@ -129,11 +135,29 @@ class Dashboard {
         }
     }
 
+    generateDateLabels(days) {
+        const labels = [];
+        const today = new Date();
+        for (let i = days - 1; i >= 0; i--) {
+            const date = new Date(today);
+            date.setDate(date.getDate() - i);
+            labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+        }
+        return labels;
+    }
+
+    generateMockSalesData(days) {
+        // Return 0s for initial state or fallback
+        return Array(days).fill(0);
+    }
+
     async updateSalesChart(days) {
         if (!this.salesChart) return;
 
         try {
             const data = await adminAuth.apiCall(`stats/sales-chart?days=${days}`);
+
+            if (!data) return; // Exit if data load failed
 
             // Format data for chart
             const labels = [];
@@ -222,9 +246,27 @@ class Dashboard {
             if (fallbackTbody && orders) {
                 fallbackTbody.innerHTML = orders.map(order => `
                     <tr>
-                        <td><strong>#${order.orderNumber || order._id.toString().slice(-6)}</strong></td>
-                        <td>${order.customer}</td>
-                        <td><strong>$${(order.total || 0).toLocaleString()}</strong></td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <img src="${order.productImage || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2VlZSIvPjwvc3ZnPg=='}" style="width: 40px; height: 40px; border-radius: 4px; object-fit: cover;">
+                                <div>
+                                    <div style="font-weight: bold;">${order.productName}</div>
+                                    <div style="font-size: 0.8em; color: gray;">#${order.orderNumber || order._id.toString().slice(-6)}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 30px; height: 30px; background: #eee; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #555;">
+                                    ${order.customer ? order.customer.charAt(0).toUpperCase() : 'G'}
+                                </div>
+                                <div>
+                                    <div>${order.customer}</div>
+                                    ${order.customerId ? `<a href="users.html?id=${order.customerId}" style="font-size: 0.8em; color: var(--primary-color);">View Profile</a>` : ''}
+                                </div>
+                            </div>
+                        </td>
+                        <td><strong>${(order.total || 0).toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</strong></td>
                         <td><span class="status-badge status-${order.status}">${order.status}</span></td>
                     </tr>
                 `).join('');
@@ -239,9 +281,27 @@ class Dashboard {
 
         tbody.innerHTML = orders.map(order => `
             <tr>
-                <td><strong>#${order.orderNumber || order._id.toString().slice(-6)}</strong></td>
-                <td>${order.customer}</td>
-                <td><strong>$${(order.total || 0).toLocaleString()}</strong></td>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <img src="${order.productImage || 'https://via.placeholder.com/40'}" style="width: 40px; height: 40px; border-radius: 4px; object-fit: cover;">
+                        <div>
+                            <div style="font-weight: bold;">${order.productName || 'Order'}</div>
+                            <div style="font-size: 0.8em; color: gray;">#${order.orderNumber || order._id.toString().slice(-6)}</div>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                     <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 30px; height: 30px; background: #eee; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #555;">
+                            ${order.customer ? order.customer.charAt(0).toUpperCase() : 'G'}
+                        </div>
+                        <div>
+                            <div>${order.customer}</div>
+                            ${order.customerId ? `<a href="users.html?id=${order.customerId}" style="font-size: 0.8em; color: #fbb03b; text-decoration: none;">View Profile</a>` : ''}
+                        </div>
+                    </div>
+                </td>
+                <td><strong>${(order.total || 0).toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</strong></td>
                 <td><span class="status-badge status-${order.status}">${order.status}</span></td>
             </tr>
         `).join('');

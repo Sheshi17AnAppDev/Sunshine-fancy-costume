@@ -43,7 +43,7 @@ class ProductManager {
         tableBody.innerHTML = filteredProducts.map(p => `
             <tr>
                 <td>
-                    <img src="${p.images[0]?.url || p.images[0] || 'https://via.placeholder.com/60x60'}" 
+                    <img src="${p.images[0]?.url || p.images[0] || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2VlZSIvPjwvc3ZnPg=='}" 
                          class="product-image" alt="${p.name}">
                 </td>
                 <td>
@@ -56,6 +56,10 @@ class ProductManager {
                 </td>
                 <td><strong>₹${p.price.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></td>
                 <td>${p.category?.name || 'Uncategorized'}</td>
+                <td>
+                    ${p.isFeatured ? '<span class="status-badge status-active" style="background: #e8f5e9; color: #2e7d32; margin-right: 4px;">Featured</span>' : ''}
+                    ${p.isPopular ? '<span class="status-badge status-active" style="background: #fff3e0; color: #f57c00;">Popular</span>' : ''}
+                </td>
                 <td>
                     <button onclick="productManager.editProduct('${p._id}')" class="btn btn-sm btn-primary">
                         <i class="fas fa-edit"></i> Edit
@@ -79,10 +83,12 @@ class ProductManager {
         const categoryFilter = document.getElementById('category-filter');
         const statusFilter = document.getElementById('status-filter');
         const sortFilter = document.getElementById('sort-filter');
+        const typeFilter = document.getElementById('type-filter');
 
         categoryFilter?.addEventListener('change', () => this.filterProducts());
         statusFilter?.addEventListener('change', () => this.filterProducts());
         sortFilter?.addEventListener('change', () => this.filterProducts());
+        typeFilter?.addEventListener('change', () => this.filterProducts());
     }
 
     filterProducts() {
@@ -90,6 +96,7 @@ class ProductManager {
         const categoryFilter = document.getElementById('category-filter')?.value || '';
         const statusFilter = document.getElementById('status-filter')?.value || '';
         const sortFilter = document.getElementById('sort-filter')?.value || 'name';
+        const typeFilter = document.getElementById('type-filter')?.value || '';
 
         filteredProducts = allProducts.filter(product => {
             // Search filter
@@ -109,7 +116,15 @@ class ProductManager {
                 matchesStatus = product.stock === 0;
             }
 
-            return matchesSearch && matchesCategory && matchesStatus;
+            // Type filter
+            let matchesType = true;
+            if (typeFilter === 'featured') {
+                matchesType = product.isFeatured;
+            } else if (typeFilter === 'popular') {
+                matchesType = product.isPopular;
+            }
+
+            return matchesSearch && matchesCategory && matchesStatus && matchesType;
         });
 
         // Sort products

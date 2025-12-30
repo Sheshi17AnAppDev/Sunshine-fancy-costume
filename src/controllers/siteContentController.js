@@ -58,7 +58,7 @@ const getDefaultDataForKey = (key) => {
             intro: "Have a question about our products or an existing order? Our team is ready to assist you with anything you need. Fill out the form and we'll get back to you within 24 hours.",
             email: 'hello@example.com',
             phone: '+1 (555) 123-4567',
-            whatsapp: '919876543210',
+            whatsapp: '919704022443',
             address: '123 Sunshine Blvd, Design District, NY'
         };
     }

@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
     // Fetch WhatsApp number from contact site content
-    let whatsappNumber = '919876543210'; // Default
+    let whatsappNumber = '919704022443'; // Default
     try {
         const contactContent = await api.get('/site-content/contact');
         if (contactContent && contactContent.data && contactContent.data.whatsapp) {
@@ -81,10 +81,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     const message = formatWhatsAppMessage(orderData, shippingAddress);
                     const encodedMessage = encodeURIComponent(message);
-                    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+                    const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodedMessage}`;
 
                     alert('Order details saved. Redirecting to WhatsApp to complete your order...');
-                    localStorage.removeItem('cart');
+                    // localStorage.removeItem('cart'); // Keep cart for user convenience
                     window.location.href = whatsappUrl;
                 } catch (err) {
                     alert(err.message || 'Checkout failed');
@@ -99,7 +99,6 @@ function formatWhatsAppMessage(order, shipping) {
     message += `--------------------------\n`;
     message += `*Order ID:* ${order._id || 'Pending'}\n`;
     message += `*Customer:* ${shipping.fullName}\n`;
-    message += `*Email:* ${shipping.email}\n`;
     message += `--------------------------\n`;
     message += `*Items:*\n`;
 
@@ -109,13 +108,13 @@ function formatWhatsAppMessage(order, shipping) {
 
     message += `--------------------------\n`;
     message += `*Subtotal:* ₹${order.totalPrice - (order.shippingPrice || 0)}\n`;
-    message += `*Shipping:* ₹${order.shippingPrice || 0}\n`;
-    message += `*Total Amount:* ₹${order.totalPrice}\n`;
+    message += `*Shipping:* To be calculated on WhatsApp\n`;
+    message += `*Total (Excl. Shipping):* ₹${order.totalPrice - (order.shippingPrice || 0)}\n`;
     message += `--------------------------\n`;
     message += `*Shipping Address:*\n`;
     message += `${shipping.address}, ${shipping.city}, ${shipping.postalCode}, ${shipping.country}\n`;
     message += `--------------------------\n`;
-    message += `_Please confirm my order and share payment details._`;
+    message += `_Please confirm shipping charges and final total._`;
 
     return message;
 }
