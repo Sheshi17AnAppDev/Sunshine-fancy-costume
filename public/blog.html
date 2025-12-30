@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog | Sunshine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/mobile-app.css">
+    <link rel="stylesheet" href="css/product.css">
+    <link rel="stylesheet" href="css/blog.css">
+</head>
+
+<body>
+    <div class="search-overlay" id="search-overlay">
+        <div class="search-close" id="search-close">&times;</div>
+        <div class="search-inner">
+            <input type="text" placeholder="Search for posts..." id="search-input">
+            <p style="margin-top: 2rem; color: var(--muted-text); font-size: 0.9rem;">Press Enter to search or click
+                close to cancel.</p>
+        </div>
+    </div>
+    <header id="header">
+        <a href="index" class="logo">
+            <span class="logo-text">SUNSHINE</span>
+            <div class="logo-rotating">
+                <div class="rotating-words">
+                    <span>Fancy</span>
+                    <span>Costumes</span>
+                </div>
+            </div>
+        </a>
+        <nav>
+            <ul>
+                <li><a href="index">Home</a></li>
+                <li><a href="shop">Shop</a></li>
+                <li><a href="about">About</a></li>
+                <li><a href="contact">Contact</a></li>
+                <li><a href="blog" class="active">Blog</a></li>
+                <li><a href="faq">FAQ</a></li>
+            </ul>
+        </nav>
+        <div class="header-icons">
+            <a href="#" id="search-trigger"><i class="fa-solid fa-magnifying-glass"></i></a>
+            <a href="profile"><i class="fa-regular fa-user"></i></a>
+            <a href="cart" style="position: relative;">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <div class="cart-badge" id="cart-count">0</div>
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <section class="blog-hero">
+            <h1 id="blog-page-title" class="reveal">Latest News & Stories</h1>
+            <p id="blog-page-subtitle" class="reveal reveal-delay-1">Stay updated with the latest trends and company
+                updates.</p>
+        </section>
+
+        <!-- Featured Post Section -->
+        <div id="featured-section" class="featured-post-container" style="display: none;">
+            <!-- Rendered by JS -->
+        </div>
+
+        <section class="blog-grid-section">
+            <div id="blog-grid" class="blog-main-grid">
+                <!-- Skeleton Loading -->
+                <div class="loading-skeleton" style="height: 400px; border-radius: 20px;"></div>
+                <div class="loading-skeleton" style="height: 400px; border-radius: 20px;"></div>
+                <div class="loading-skeleton" style="height: 400px; border-radius: 20px;"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <div class="logo">
+                    <span class="logo-text">SUNSHINE</span>
+                    <div class="logo-rotating">
+                        <div class="rotating-words">
+                            <span>Fancy</span>
+                            <span>Costumes</span>
+                        </div>
+                    </div>
+                </div>
+                <p style="color: var(--muted-text); line-height: 1.6;">Your one-stop shop for premium Costumes and home
+                    design.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Shop</h4>
+                <ul>
+                    <li><a href="shop">All Products</a></li>
+                    <li><a href="shop?featured=true">Featured</a></li>
+                    <li><a href="shop?category=new">New Arrivals</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="about">About Us</a></li>
+                    <li><a href="contact">Contact Us</a></li>
+                    <li><a href="blog">Read Our Blog</a></li>
+                    <li><a href="faq">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="legal">Terms of Service</a></li>
+                    <li><a href="legal">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div
+            style="text-align: center; color: var(--muted-text); font-size: 0.8rem; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 2rem; margin-top: 3rem;">
+            Copyright 2023 Sunshine Fancy Costumes. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', async () => {
+            const featuredSection = document.getElementById('featured-section');
+            const blogGrid = document.getElementById('blog-grid');
+            const pageTitle = document.getElementById('blog-page-title');
+            const pageSubtitle = document.getElementById('blog-page-subtitle');
+
+            try {
+                const res = await api.get('/site-content/blog');
+                const { data } = res;
+
+                if (data) {
+                    if (data.title) pageTitle.textContent = data.title;
+                    if (data.subtitle) pageSubtitle.textContent = data.subtitle;
+
+                    if (data.posts && Array.isArray(data.posts) && data.posts.length > 0) {
+                        // 1. Render Featured Post (First one)
+                        const featured = data.posts[0];
+                        featuredSection.style.display = 'block';
+                        featuredSection.innerHTML = `
+                            <article class="featured-post reveal">
+                                <div class="featured-img">
+                                    <img src="${featured.image || 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1200&q=80'}" alt="${featured.title}">
+                                    ${featured.badge ? `<span class="product-badge">${featured.badge}</span>` : ''}
+                                </div>
+                                <div class="featured-content">
+                                    <span class="post-tag">${featured.tag || 'Featured Story'}</span>
+                                    <h2>${featured.title}</h2>
+                                    <p>${featured.content || ''}</p>
+                                    <a href="#" class="read-more-btn" style="font-size: 1.1rem; color: var(--primary-orange);">
+                                        Continue Reading <i class="fa-solid fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </article>
+                        `;
+
+                        // 2. Render Remaining Posts in Grid
+                        const remainingPosts = data.posts.slice(1);
+                        if (remainingPosts.length > 0) {
+                            blogGrid.innerHTML = remainingPosts.map((post, index) => {
+                                const delayClass = index > 0 ? `reveal-delay-${index % 4}` : '';
+                                return `
+                                    <article class="blog-card reveal ${delayClass}">
+                                        <div class="blog-card-img">
+                                            <img src="${post.image || 'https://via.placeholder.com/800x600'}" alt="${post.title}">
+                                            ${post.badge ? `<span class="product-badge">${post.badge}</span>` : ''}
+                                        </div>
+                                        <div class="blog-card-content">
+                                            <div class="blog-card-meta">
+                                                <span>${post.tag || 'News'}</span>
+                                                <span>NEW</span>
+                                            </div>
+                                            <h3>${post.title}</h3>
+                                            <p>${post.content || ''}</p>
+                                            <a href="#" class="read-more-btn">
+                                                Read Full Story <i class="fa-solid fa-arrow-right"></i>
+                                            </a>
+                                        </div>
+                                    </article>
+                                `;
+                            }).join('');
+                        } else {
+                            blogGrid.style.display = 'none';
+                        }
+
+                        // Re-trigger reveal animation
+                        if (window.observer) {
+                            document.querySelectorAll('.reveal').forEach(el => window.observer.observe(el));
+                        }
+                    } else {
+                        blogGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 5rem;">No stories found yet.</div>';
+                    }
+                }
+            } catch (err) {
+                console.error("Error loading blog info", err);
+                blogGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 5rem;">Unable to load stories. Please try again later.</div>';
+            }
+        });
+    </script>
+    <script src="js/modal.js"></script>
+</body>
+
+</html>

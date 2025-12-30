@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop | Sunshine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/mobile-app.css">
+</head>
+
+<body>
+    <div class="search-overlay" id="search-overlay">
+        <div class="search-close" id="search-close">&times;</div>
+        <div class="search-inner">
+            <input type="text" placeholder="Search for products..." id="search-input">
+            <p style="margin-top: 2rem; color: var(--muted-text); font-size: 0.9rem;">Press Enter to search or click
+                close to cancel.</p>
+        </div>
+    </div>
+    <header id="header">
+        <a href="index" class="logo">
+            <span class="logo-text">SUNSHINE</span>
+            <div class="logo-rotating">
+                <div class="rotating-words">
+                    <span>Fancy</span>
+                    <span>Costumes</span>
+                </div>
+            </div>
+        </a>
+        <nav>
+            <ul>
+                <li><a href="index">Home</a></li>
+                <li><a href="shop" class="active">Shop</a></li>
+                <li><a href="about">About</a></li>
+                <li><a href="contact">Contact</a></li>
+                <li><a href="blog">Blog</a></li>
+                <li><a href="faq">FAQ</a></li>
+            </ul>
+        </nav>
+        <div class="header-icons">
+            <a href="#" id="search-trigger"><i class="fa-solid fa-magnifying-glass"></i></a>
+            <a href="profile"><i class="fa-regular fa-user"></i></a>
+            <a href="cart" style="position: relative;">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <div class="cart-badge" id="cart-count">0</div>
+            </a>
+        </div>
+    </header>
+
+    <main class="shop-main">
+        <aside class="shop-sidebar-container reveal">
+            <div class="shop-sidebar">
+                <div class="sidebar-title">Categories</div>
+                <ul id="cat-list" style="list-style: none;">
+                    <li style="margin-bottom: 0.8rem;">
+                        <label style="display: flex; gap: 10px; align-items: center; cursor: pointer;">
+                            <input type="checkbox"> Princess Costumes
+                        </label>
+                    </li>
+                    <li style="margin-bottom: 0.8rem;">
+                        <label style="display: flex; gap: 10px; align-items: center; cursor: pointer;">
+                            <input type="checkbox"> Superhero
+                        </label>
+                    </li>
+                    <li style="margin-bottom: 0.8rem;">
+                        <label style="display: flex; gap: 10px; align-items: center; cursor: pointer;">
+                            <input type="checkbox"> Pirates
+                        </label>
+                    </li>
+                    <li style="margin-bottom: 0.8rem;">
+                        <label style="display: flex; gap: 10px; align-items: center; cursor: pointer;">
+                            <input type="checkbox"> Fairy Tales
+                        </label>
+                    </li>
+                    <li style="margin-bottom: 0.8rem;">
+                        <label style="display: flex; gap: 10px; align-items: center; cursor: pointer;">
+                            <input type="checkbox"> Animals
+                        </label>
+                    </li>
+                    <li style="margin-bottom: 0.8rem;">
+                        <label style="display: flex; gap: 10px; align-items: center; cursor: pointer;">
+                            <input type="checkbox"> Historical
+                        </label>
+                    </li>
+                    <li style="margin-bottom: 0.8rem;">
+                        <label style="display: flex; gap: 10px; align-items: center; cursor: pointer;">
+                            <input type="checkbox"> Fantasy
+                        </label>
+                    </li>
+                </ul>
+            </div>
+            <div class="shop-sidebar" style="margin-top: 2rem;">
+                <div class="sidebar-title">Age Groups</div>
+                <div id="age-group-list" style="margin-top: 1rem;">
+                    <!-- Dynamically loaded age groups -->
+                </div>
+            </div>
+            <div class="shop-sidebar" style="margin-top: 2rem;">
+                <div class="sidebar-title">Price Range</div>
+                <div id="price-range-list" style="margin-top: 1rem;">
+                    <!-- Dynamically loaded price ranges -->
+                </div>
+            </div>
+        </aside>
+
+        <section class="shop-content reveal">
+            <div style="margin-bottom: 3rem;">
+                <h2 style="font-size: 2rem;">Our Collection Of Products</h2>
+                <div style="margin-top: 2rem; position: relative; max-width: 400px;">
+                    <input type="text" id="shop-search" placeholder="Search Item"
+                        style="width: 100%; padding: 1rem; border: 1px solid var(--border-gray); border-radius: 5px;">
+                    <i class="fa-solid fa-magnifying-glass"
+                        style="position: absolute; right: 1rem; top: 1.1rem; color: #999;"></i>
+                </div>
+            </div>
+
+            <p id="counter" style="color: #999; margin-bottom: 2rem;">Showing 1-12 of 24 item(s)</p>
+
+            <div class="products-container" id="products-grid">
+                <!-- Products will be dynamically loaded here -->
+            </div>
+
+            <div style="margin-top: 5rem; text-align: center;" class="reveal">
+                <button
+                    style="padding: 1.5rem 3rem; background: #111; color: white; border: none; border-radius: 5px; cursor: pointer;">Load
+                    More <i class="fa-solid fa-chevron-down"></i></button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <div class="logo">
+                    <span class="logo-text">SUNSHINE</span>
+                    <div class="logo-rotating">
+                        <div class="rotating-words">
+                            <span>Fancy</span>
+                            <span>Costumes</span>
+                        </div>
+                    </div>
+                </div>
+                <p style="color: var(--muted-text); line-height: 1.6;">Your one-stop shop for premium Costumess and home
+                    design.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Shop</h4>
+                <ul>
+                    <li><a href="shop">All Products</a></li>
+                    <li><a href="shop?featured=true">Featured</a></li>
+                    <li><a href="shop?category=new">New Arrivals</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="about">About Us</a></li>
+                    <li><a href="contact">Contact Us</a></li>
+                    <li><a href="blog">Read Our Blog</a></li>
+                    <li><a href="faq">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="legal">Terms of Service</a></li>
+                    <li><a href="legal">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div
+            style="text-align: center; color: var(--muted-text); font-size: 0.8rem; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 2rem; margin-top: 3rem;">
+            Copyright 2023 Sunshine Fancy Costumes. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="js/main.js?v=4"></script>
+    <script src="js/auth.js?v=4"></script>
+    <script src="js/shop.js?v=4"></script>
+</body>
+
+</html>

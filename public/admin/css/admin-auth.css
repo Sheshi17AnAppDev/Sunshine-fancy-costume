@@ -1,0 +1,251 @@
+/* Admin Authentication - Premium Amber + White Theme */
+:root {
+    --primary-color: #FFB300;
+    --primary-gradient: linear-gradient(135deg, #FFB300 0%, #FF8F00 100%);
+    --bg-body: #f8fafc;
+    --bg-white: #ffffff;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --shadow-lg: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
+    /* Soft shadow */
+    --radius-xl: 24px;
+    --radius-md: 12px;
+}
+
+body.admin-login {
+    background: var(--bg-body);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Outfit', sans-serif;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Background Decoration (Optional, subtle amber blur) */
+body.admin-login::before {
+    content: '';
+    position: absolute;
+    top: -10%;
+    right: -10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(255, 179, 0, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 0;
+}
+
+body.admin-login::after {
+    content: '';
+    position: absolute;
+    bottom: -10%;
+    left: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(255, 179, 0, 0.05) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.admin-auth-card {
+    background: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: 3.5rem;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+    position: relative;
+    z-index: 10;
+    animation: cardEntrance 0.6s ease-out;
+}
+
+@keyframes cardEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.admin-auth-header {
+    margin-bottom: 2.5rem;
+}
+
+.admin-auth-header .fa-lock {
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+}
+
+.admin-auth-header h2 {
+    color: var(--text-main);
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.admin-auth-header p {
+    color: var(--text-muted);
+    font-size: 1rem;
+}
+
+.admin-input-group {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.admin-input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-main);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.admin-input-group input {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #f8fafc;
+    /* Distinct background */
+    color: var(--text-main);
+}
+
+.admin-input-group input:focus {
+    background: #ffffff;
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(255, 179, 0, 0.15);
+    /* Stunning Amber Glow */
+    transform: translateY(-1px);
+}
+
+.password-toggle-container {
+    position: relative;
+}
+
+.password-toggle-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    /* Start from exact center */
+    top: 42px;
+    /* Adjust based on label height + input padding/2 to get close to center of input box specifically */
+    /* Wait, cleaner way: */
+    top: auto;
+    bottom: 11px;
+    /* Approximate center of input */
+
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 5px;
+}
+
+/* Adjust toggle position more reliably */
+.password-toggle-container input {
+    padding-right: 40px;
+}
+
+.password-toggle-btn {
+    top: 38px;
+    /* label height ~20px + input padding ~16px? Trial and error or calc. */
+    right: 15px;
+    bottom: auto;
+}
+
+
+.btn-admin-login {
+    background: var(--primary-gradient);
+    color: #fff;
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 1rem;
+    box-shadow: 0 4px 10px rgba(255, 179, 0, 0.3);
+}
+
+.btn-admin-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 179, 0, 0.4);
+}
+
+.btn-admin-login:active {
+    transform: translateY(0);
+}
+
+.admin-footer-link {
+    margin-top: 2rem;
+    font-size: 0.9rem;
+}
+
+.admin-footer-link a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.admin-footer-link a:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+/* Custom Message */
+.message-container {
+    margin-top: 1rem;
+}
+
+.message {
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.message-success {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+.message-error {
+    background: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .admin-auth-card {
+        padding: 2rem;
+        box-shadow: none;
+        border: none;
+        background: transparent;
+    }
+}

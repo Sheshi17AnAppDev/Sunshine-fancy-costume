@@ -1,0 +1,35 @@
+/* Checkout-specific styles that extend cart.css */
+
+.checkout-main {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 4rem;
+    padding: 5rem 10%;
+}
+
+.checkout-main>div:first-child {
+    min-width: 0;
+}
+
+/* Checkout form enhancements */
+.checkout-form h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    color: var(--dark-text);
+}
+
+.checkout-form h3:not(:first-child) {
+    margin-top: 3rem;
+    padding-top: 3rem;
+    border-top: 2px solid var(--border-gray);
+}
+
+/* Responsive checkout */
+@media (max-width: 1024px) {
+    .checkout-main {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        padding: 3rem 5%;
+    }
+}

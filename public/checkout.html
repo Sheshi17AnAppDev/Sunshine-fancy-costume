@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Sunshine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/mobile-app.css">
+    <link rel="stylesheet" href="css/cart.css">
+    <link rel="stylesheet" href="css/checkout.css">
+    <link rel="stylesheet" href="css/modal.css">
+</head>
+
+<body>
+    <div class="search-overlay" id="search-overlay">
+        <div class="search-close" id="search-close">&times;</div>
+        <div class="search-inner">
+            <input type="text" placeholder="Search for products..." id="search-input">
+            <p style="margin-top: 2rem; color: var(--muted-text); font-size: 0.9rem;">Press Enter to search or click
+                close to cancel.</p>
+        </div>
+    </div>
+    <header id="header">
+        <a href="index" class="logo">
+            <span class="logo-text">SUNSHINE</span>
+            <div class="logo-rotating">
+                <div class="rotating-words">
+                    <span>Fancy</span>
+                    <span>Costumes</span>
+                </div>
+            </div>
+        </a>
+        <nav>
+            <ul>
+                <li><a href="index">Home</a></li>
+                <li><a href="shop">Shop</a></li>
+                <li><a href="about">About</a></li>
+                <li><a href="contact">Contact</a></li>
+                <li><a href="blog">Blog</a></li>
+            </ul>
+        </nav>
+        <div class="header-icons">
+            <a href="#" id="search-trigger"><i class="fa-solid fa-magnifying-glass"></i></a>
+            <a href="profile"><i class="fa-regular fa-user"></i></a>
+            <a href="cart" style="position: relative;">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <div class="cart-badge" id="cart-count">0</div>
+            </a>
+        </div>
+    </header>
+
+    <main class="checkout-main">
+        <div>
+            <div class="steps">
+                <div class="step active">Shipping</div>
+                <div class="step">Payment</div>
+                <div class="step">Confirmation</div>
+            </div>
+
+            <form id="checkout-form" class="checkout-form">
+                <div class="input-block">
+                    <label>Full Name</label>
+                    <input type="text" placeholder="John Doe" id="full-name">
+                </div>
+                <div class="input-block">
+                    <label>Email Address</label>
+                    <input type="email" placeholder="john@example.com" id="email">
+                </div>
+                <div class="input-block">
+                    <label>Shipping Address</label>
+                    <input type="text" placeholder="123 Street Name" id="address">
+                </div>
+                <div class="input-block" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <label>City</label>
+                        <input type="text" placeholder="New York" id="city">
+                    </div>
+                    <div>
+                        <label>Zip Code</label>
+                        <input type="text" placeholder="10001" id="zip">
+                    </div>
+                </div>
+                <div class="input-group"><label>Country*</label><input type="text" id="country" required></div>
+                <div class="input-group"><label>Postcode / Zip*</label><input type="text" id="postalCode" required>
+                </div>
+
+
+                <div style="grid-column: span 2; margin-top: 2rem;">
+                    <h3>Order Confirmation</h3>
+                    <div
+                        style="margin-top: 1rem; padding: 1.5rem; background: #fdf7ef; border: 1px solid #f9e2c4; border-radius: 12px; display: flex; align-items: flex-start; gap: 1rem;">
+                        <i class="fa-brands fa-whatsapp"
+                            style="color: #25D366; font-size: 1.5rem; margin-top: 0.2rem;"></i>
+                        <div>
+                            <p style="font-weight: 600; color: #111; margin-bottom: 0.3rem;">Confirmation via WhatsApp
+                            </p>
+                            <p style="font-size: 0.85rem; color: #555; line-height: 1.5;">After clicking "Place Order",
+                                you will be redirected to WhatsApp to share your order details and confirm payment.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-black"
+                    style="padding: 1.5rem 3rem; border-radius: 50px; margin-top: 2rem;">Place Order</button>
+            </form>
+        </div>
+
+        <aside style="background: white; border: 1px solid #eee; padding: 3rem;">
+            <h3 style="margin-bottom: 2rem; border-bottom: 1px solid #eee; padding-bottom: 1rem;">Cart Details</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead style="font-size: 0.7rem; color: #999;">
+                    <tr>
+                        <th style="text-align: left;">PRODUCT</th>
+                        <th style="text-align: center;">Qty</th>
+                        <th style="text-align: right;">TOTAL</th>
+                    </tr>
+                </thead>
+                <tbody id="summary-items">
+                    <!-- Items -->
+                </tbody>
+            </table>
+            <div style="margin-top: 3rem; border-top: 1px dashed #eee; padding-top: 2rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; font-size: 0.9rem;">
+                    <span>SUBTOTAL</span><span id="summ-sub">₹0</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; font-size: 0.9rem;">
+                    <span>SHIPPING</span><span id="summ-ship">₹50</span>
+                </div>
+                <div
+                    style="display: flex; justify-content: space-between; font-weight: 700; margin-top: 2rem; font-size: 1.2rem;">
+                    <span>Total</span><span id="summ-total">₹0</span>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <div class="logo">
+                    <span class="logo-text">SUNSHINE</span>
+                    <div class="logo-rotating">
+                        <div class="rotating-words">
+                            <span>Fancy</span>
+                            <span>Costumes</span>
+                        </div>
+                    </div>
+                </div>
+                <p style="color: var(--muted-text); line-height: 1.6;">Your one-stop shop for premium Costumess and home
+                    design.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Shop</h4>
+                <ul>
+                    <li><a href="shop">All Products</a></li>
+                    <li><a href="shop?featured=true">Featured</a></li>
+                    <li><a href="shop?category=new">New Arrivals</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="about">About Us</a></li>
+                    <li><a href="contact">Contact Us</a></li>
+                    <li><a href="blog">Read Our Blog</a></li>
+                    <li><a href="faq">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="legal">Terms of Service</a></li>
+                    <li><a href="legal">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div
+            style="text-align: center; color: var(--muted-text); font-size: 0.8rem; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 2rem; margin-top: 3rem;">
+            Copyright 2023 Sunshine Fancy Costumes. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="js/main.js?v=4"></script>
+    <script src="js/auth.js?v=4"></script>
+    <script src="js/checkout.js?v=4"></script>
+</body>
+
+</html>

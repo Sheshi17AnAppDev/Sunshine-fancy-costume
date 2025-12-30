@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Editor | Sunshine Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="css/admin-modern.css">
+    <link rel="stylesheet" href="css/admin-mobile-app.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <a href="../index" class="logo" style="gap: 10px;">
+                    <span class="logo-text">SUNSHINE</span>
+                    <div class="logo-rotating">
+                        <div class="rotating-words">
+                            <span>Fancy</span>
+                            <span>Costumes</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="index"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
+                <li><a href="products"><i class="fa-solid fa-box"></i> Products</a></li>
+                <li><a href="categories"><i class="fa-solid fa-list"></i> Categories</a></li>
+                <li><a href="brands"><i class="fa-solid fa-tag"></i> Brands</a></li>
+                <li><a href="orders"><i class="fa-solid fa-cart-shopping"></i> Orders</a></li>
+                <li><a href="inventory"><i class="fa-solid fa-warehouse"></i> Inventory</a></li>
+                <li><a href="users"><i class="fa-solid fa-users"></i> Users Report</a></li>
+                <li>
+                    <a href="website-editor" class="active"><i class="fa-solid fa-wand-magic-sparkles"></i> Website
+                        Editor</a>
+                    <ul
+                        style="padding-left: 2rem; list-style: none; margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                        <li><a href="website-editor?page=theme" onclick="switchEditorPage('theme'); return false;"
+                                style="font-size: 0.9rem; opacity: 0.8;"><i class="fa-solid fa-palette"></i> Theme</a>
+                        </li>
+                        <li><a href="website-editor?page=home" onclick="switchEditorPage('home'); return false;"
+                                style="font-size: 0.9rem; opacity: 0.8;"><i class="fa-solid fa-house"></i> Home
+                                Content</a></li>
+                        <li><a href="website-editor?page=about" onclick="switchEditorPage('about'); return false;"
+                                style="font-size: 0.9rem; opacity: 0.8;"><i class="fa-solid fa-circle-info"></i> About
+                                Content</a></li>
+                        <li><a href="website-editor?page=contact" onclick="switchEditorPage('contact'); return false;"
+                                style="font-size: 0.9rem; opacity: 0.8;"><i class="fa-solid fa-address-book"></i>
+                                Contact</a></li>
+                        <li><a href="website-editor?page=blog" onclick="switchEditorPage('blog'); return false;"
+                                style="font-size: 0.9rem; opacity: 0.8;"><i class="fa-solid fa-blog"></i> Blog</a></li>
+                        <li><a href="website-editor?page=faq" onclick="switchEditorPage('faq'); return false;"
+                                style="font-size: 0.9rem; opacity: 0.8;"><i class="fa-solid fa-circle-question"></i>
+                                FAQ</a></li>
+                    </ul>
+                </li>
+                <li style="margin-top: auto;"><a href="#" id="logout"><i class="fa-solid fa-right-from-bracket"></i>
+                        Logout</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div class="admin-header">
+                <button class="mobile-menu-toggle"><i class="fa-solid fa-bars"></i></button>
+                <h1>Website Editor</h1>
+                <div style="display:flex; gap: 0.8rem; align-items: center;">
+                    <a class="btn btn-black" href="../index" target="_blank"><i
+                            class="fa-solid fa-arrow-up-right-from-square"></i> Preview Site</a>
+                    <button class="btn btn-primary" id="save-btn"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+                </div>
+            </div>
+
+            <div class="table-container" style="margin-top: 1.5rem;">
+                <div
+                    style="display:flex; gap: 1rem; align-items:center; justify-content: space-between; flex-wrap: wrap;">
+                    <div style="display:flex; gap: 0.8rem; align-items:center;">
+                        <label style="font-weight: 700;">Page</label>
+                        <select id="page-key"
+                            style="padding: 0.9rem 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: white;">
+                            <option value="header">Header</option>
+                            <option value="theme">Theme</option>
+                            <option value="home">Home</option>
+                            <option value="about">About</option>
+                            <option value="shop">Shop</option>
+                            <option value="contact">Contact</option>
+                            <option value="blog">Blog</option>
+                            <option value="faq">FAQ</option>
+                        </select>
+                    </div>
+                    <div id="status" style="color: rgba(255,255,255,0.75); font-weight: 600;">Loading...</div>
+                </div>
+
+                <div style="margin-top: 1.5rem; display: grid; grid-template-columns: 1fr; gap: 1.5rem;">
+                    <div class="glass" style="padding: 1.5rem; border-radius: 16px;" id="cms-hero-block">
+                        <h2 style="margin-bottom: 1rem;">Hero / Top Section</h2>
+                        <div class="form-group">
+                            <label>Title</label>
+                            <textarea id="hero-title" rows="3"></textarea>
+                        </div>
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label>Subtitle</label>
+                            <textarea id="hero-subtitle" rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="glass" style="padding: 1.5rem; border-radius: 16px;" id="cms-section-titles-block">
+                        <h2 style="margin-bottom: 1rem;">Section Titles</h2>
+                        <div class="responsive-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label>Featured</label>
+                                <input id="title-featured" type="text">
+                            </div>
+                            <div class="form-group">
+                                <label>Categories</label>
+                                <input id="title-categories" type="text">
+                            </div>
+                            <div class="form-group">
+                                <label>Popular</label>
+                                <input id="title-popular" type="text">
+                            </div>
+                            <div class="form-group">
+                                <label>Stats</label>
+                                <input id="title-stats" type="text">
+                            </div>
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label>Newsletter</label>
+                                <input id="title-newsletter" type="text">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass" style="padding: 1.5rem; border-radius: 16px;" id="header-extra" hidden>
+                        <h2 style="margin-bottom: 1rem;">Header</h2>
+
+                        <div class="responsive-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label>Logo Text</label>
+                                <input id="header-logo-text" type="text">
+                            </div>
+                            <div class="form-group">
+                                <label>User Icon Link</label>
+                                <input id="header-user-href" type="text" placeholder="profile">
+                            </div>
+                            <div class="form-group">
+                                <label>Rotating Word 1</label>
+                                <input id="header-rot-1" type="text">
+                            </div>
+                            <div class="form-group">
+                                <label>Cart Icon Link</label>
+                                <input id="header-cart-href" type="text" placeholder="cart">
+                            </div>
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label>Rotating Word 2</label>
+                                <input id="header-rot-2" type="text">
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 1.5rem;">
+                            <h3 style="margin-bottom: 0.8rem;">Navigation Links</h3>
+                            <div class="responsive-grid"
+                                style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div class="form-group">
+                                    <label>Link 1 Label</label>
+                                    <input id="header-nav-0-label" type="text">
+                                </div>
+                                <div class="form-group">
+                                    <label>Link 1 Href</label>
+                                    <input id="header-nav-0-href" type="text" placeholder="index">
+                                </div>
+                                <div class="form-group">
+                                    <label>Link 2 Label</label>
+                                    <input id="header-nav-1-label" type="text">
+                                </div>
+                                <div class="form-group">
+                                    <label>Link 2 Href</label>
+                                    <input id="header-nav-1-href" type="text" placeholder="shop">
+                                </div>
+                                <div class="form-group">
+                                    <label>Link 3 Label</label>
+                                    <input id="header-nav-2-label" type="text">
+                                </div>
+                                <div class="form-group">
+                                    <label>Link 3 Href</label>
+                                    <input id="header-nav-2-href" type="text" placeholder="about">
+                                </div>
+                                <div class="form-group">
+                                    <label>Link 4 Label</label>
+                                    <input id="header-nav-3-label" type="text">
+                                </div>
+                                <div class="form-group">
+                                    <label>Link 4 Href</label>
+                                    <input id="header-nav-3-href" type="text" placeholder="contact">
+                                </div>
+                                <div class="form-group">
+                                    <label>Link 5 Label</label>
+                                    <input id="header-nav-4-label" type="text">
+                                </div>
+                                <div class="form-group">
+                                    <label>Link 5 Href</label>
+                                    <input id="header-nav-4-href" type="text" placeholder="blog">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass" style="padding: 1.5rem; border-radius: 16px;" id="about-extra" hidden>
+                        <h2 style="margin-bottom: 1rem;">About Page Content</h2>
+                        <div class="form-group">
+                            <label>Story Label</label>
+                            <input id="about-label" type="text">
+                        </div>
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label>Story Title</label>
+                            <textarea id="about-story-title" rows="2"></textarea>
+                        </div>
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label>Intro Title</label>
+                            <input id="about-intro-title" type="text">
+                        </div>
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label>Paragraph 1</label>
+                            <textarea id="about-p1" rows="3"></textarea>
+                        </div>
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label>Paragraph 2</label>
+                            <textarea id="about-p2" rows="3"></textarea>
+                        </div>
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label>Why Choose Title</label>
+                            <input id="about-why" type="text">
+                        </div>
+                    </div>
+
+                    <div class="glass" style="padding: 1.5rem; border-radius: 16px;" id="shop-extra" hidden>
+                        <h2 style="margin-bottom: 1rem;">Shop Page Content</h2>
+                        <div class="form-group">
+                            <label>Collection Title</label>
+                            <input id="shop-collection-title" type="text">
+                        </div>
+
+                        <hr style="margin: 1.5rem 0; border: 0; border-top: 1px solid rgba(0,0,0,0.1);">
+
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h3 style="margin: 0;">Price Ranges</h3>
+                            <button class="btn btn-black" id="add-price-range-btn"
+                                style="padding: 0.5rem 1rem; font-size: 0.8rem;">
+                                <i class="fa-solid fa-plus"></i> Add Range
+                            </button>
+                        </div>
+
+                        <div id="price-range-list" style="display: flex; flex-direction: column; gap: 1rem;">
+                            <!-- Dynamic Price Ranges will appear here -->
+                        </div>
+
+                        <hr style="margin: 1.5rem 0; border: 0; border-top: 1px solid rgba(0,0,0,0.1);">
+
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h3 style="margin: 0;">Age Groups</h3>
+                            <button class="btn btn-black" id="add-age-group-btn"
+                                style="padding: 0.5rem 1rem; font-size: 0.8rem;">
+                                <i class="fa-solid fa-plus"></i> Add Group
+                            </button>
+                        </div>
+
+                        <div id="age-group-list-admin" style="display: flex; flex-direction: column; gap: 1rem;">
+                            <!-- Dynamic Age Groups will appear here -->
+                        </div>
+                    </div>
+
+                    <div class="glass" style="padding: 1.5rem; border-radius: 16px;" id="contact-extra" hidden>
+                        <h2 style="margin-bottom: 1rem;">Contact Page</h2>
+                        <div style="display:grid; grid-template-columns: 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label>Page Title</label>
+                                <input id="contact-title" type="text">
+                            </div>
+                            <div class="form-group">
+                                <label>Intro Text</label>
+                                <textarea id="contact-intro" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Email Address</label>
+                                <input id="contact-email" type="text">
+                            </div>
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                <input id="contact-phone" type="text">
+                            </div>
+                            <div class="form-group">
+                                <label>WhatsApp Number (for Checkout Redirect)</label>
+                                <input id="contact-whatsapp" type="text" placeholder="e.g. 919876543210">
+                            </div>
+                            <div class="form-group">
+                                <label>Physical Address</label>
+                                <textarea id="contact-address" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass" style="padding: 1.5rem; border-radius: 16px;" id="blog-extra" hidden>
+                        <h2 style="margin-bottom: 1rem;">Blog Page</h2>
+                        <div class="form-group">
+                            <label>Page Title</label>
+                            <input id="blog-title" type="text">
+                        </div>
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label>Subtitle</label>
+                            <textarea id="blog-subtitle" rows="2"></textarea>
+                        </div>
+
+                        <hr style="margin: 1.5rem 0; border: 0; border-top: 1px solid rgba(0,0,0,0.1);">
+
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h3 style="margin: 0;">Blog Posts</h3>
+                            <button class="btn btn-black" id="add-post-btn"
+                                style="padding: 0.5rem 1rem; font-size: 0.8rem;">
+                                <i class="fa-solid fa-plus"></i> Add Post
+                            </button>
+                        </div>
+
+                        <div id="blog-list" style="display: flex; flex-direction: column; gap: 1rem;">
+                            <!-- Dynamic Blog Posts will appear here -->
+                        </div>
+                    </div>
+
+                    <div class="glass" style="padding: 1.5rem; border-radius: 16px;" id="faq-extra" hidden>
+                        <h2 style="margin-bottom: 1rem;">FAQ Page</h2>
+                        <div class="form-group">
+                            <label>Page Title</label>
+                            <input id="faq-title" type="text">
+                        </div>
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label>Subtitle</label>
+                            <textarea id="faq-subtitle" rows="2"></textarea>
+                        </div>
+
+                        <hr style="margin: 1.5rem 0; border: 0; border-top: 1px solid rgba(0,0,0,0.1);">
+
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h3 style="margin: 0;">Questions</h3>
+                            <button class="btn btn-black" id="add-faq-btn"
+                                style="padding: 0.5rem 1rem; font-size: 0.8rem;">
+                                <i class="fa-solid fa-plus"></i> Add Question
+                            </button>
+                        </div>
+
+                        <div id="faq-list" style="display: flex; flex-direction: column; gap: 1rem;">
+                            <!-- Dynamic FAQ Items will appear here -->
+                        </div>
+                    </div>
+
+                    <div class="glass" style="padding: 1.5rem; border-radius: 16px;" id="theme-extra" hidden>
+                        <h2 style="margin-bottom: 1rem;">Theme Configuration</h2>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label>Preset Theme</label>
+                                <select id="theme-preset"
+                                    style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid #e2e8f0;">
+                                    <option value="custom">Custom</option>
+                                    <option value="sunshine">Sunshine (Default)</option>
+                                    <option value="ocean">Ocean Blue</option>
+                                    <option value="berry">Berry Red</option>
+                                    <option value="jungle">Jungle Green</option>
+                                    <option value="midnight">Midnight Purple</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Primary Color</label>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <input id="theme-primary" type="color"
+                                        style="width: 50px; height: 50px; padding: 0; border: none; border-radius: 8px; cursor: pointer;">
+                                    <input id="theme-primary-text" type="text" placeholder="#fbb03b" style="flex: 1;">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Secondary/Dark Color</label>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <input id="theme-secondary" type="color"
+                                        style="width: 50px; height: 50px; padding: 0; border: none; border-radius: 8px; cursor: pointer;">
+                                    <input id="theme-secondary-text" type="text" placeholder="#e89b25" style="flex: 1;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script src="js/admin-auth.js"></script>
+    <script src="js/admin-mobile.js"></script>
+    <script src="js/website-editor.js?v=2"></script>
+    <nav class="mobile-bottom-nav">
+        <a href="index" class="nav-item">
+            <i class="fa-solid fa-gauge"></i>
+            <span>Home</span>
+        </a>
+        <a href="products" class="nav-item">
+            <i class="fa-solid fa-box"></i>
+            <span>Products</span>
+        </a>
+        <a href="orders" class="nav-item">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span>Orders</span>
+        </a>
+        <a href="website-editor" class="nav-item active">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span>Editor</span>
+        </a>
+    </nav>
+</body>
+
+</html>

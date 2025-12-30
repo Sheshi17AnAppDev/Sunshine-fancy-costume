@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Brands | Sunshine Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="css/admin-modern.css">
+    <link rel="stylesheet" href="css/admin-mobile-app.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <a href="../index" class="logo" style="gap: 10px;">
+                    <span class="logo-text">SUNSHINE</span>
+                    <div class="logo-rotating">
+                        <div class="rotating-words">
+                            <span>Fancy</span>
+                            <span>Costumes</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="index"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
+                <li><a href="products"><i class="fa-solid fa-box"></i> Products</a></li>
+                <li><a href="categories"><i class="fa-solid fa-list"></i> Categories</a></li>
+                <li><a href="brands" class="active"><i class="fa-solid fa-tag"></i> Brands</a></li>
+                <li><a href="orders"><i class="fa-solid fa-cart-shopping"></i> Orders</a></li>
+                <li><a href="inventory"><i class="fa-solid fa-warehouse"></i> Inventory</a></li>
+                <li><a href="users"><i class="fa-solid fa-users"></i> Users Report</a></li>
+                <li><a href="website-editor"><i class="fa-solid fa-wand-magic-sparkles"></i> Website Editor</a></li>
+                <li style="margin-top: auto;"><a href="#" id="logout"><i class="fa-solid fa-right-from-bracket"></i>
+                        Logout</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div class="admin-header">
+                <h1>Brand Management</h1>
+                <button class="btn btn-primary" id="add-btn">
+                    <i class="fa-solid fa-plus"></i> Add New Brand
+                </button>
+            </div>
+
+            <div class="brands-grid responsive-grid" id="brands-container">
+                <!-- Dynamic Brands -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Brand Modal -->
+    <div class="overlay" id="overlay"></div>
+    <div class="modal" id="modal">
+        <h2 id="modal-title">Add Brand</h2>
+        <form id="brand-form" style="margin-top: 2rem;">
+            <input type="hidden" id="brand-id">
+            <div class="form-group">
+                <label>Brand Name</label>
+                <input type="text" id="brand-name" required placeholder="e.g. Disney">
+            </div>
+            <div class="form-group" style="margin-top: 1rem;">
+                <label>Current Logo</label>
+                <div id="brand-image-preview" style="margin-bottom: 1rem; display: flex; gap: 0.5rem;">
+                    <!-- Preview will be inserted here -->
+                </div>
+                <label>Upload New Logo</label>
+                <input type="file" id="brand-image" accept="image/*">
+            </div>
+            <div class="form-group" style="margin-top: 1rem;">
+                <label>Description</label>
+                <textarea id="brand-description" rows="3" placeholder="Brief brand description..."></textarea>
+            </div>
+            <div class="responsive-grid" style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button type="submit" class="btn btn-primary" style="flex: 1;" id="save-btn">Save Brand</button>
+                <button type="button" class="btn glass" id="cancel-btn" style="flex: 1;">Cancel</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script src="js/admin-auth.js"></script>
+    <script src="js/admin-mobile.js"></script>
+    <script src="js/brands.js"></script>
+    <nav class="mobile-bottom-nav">
+        <a href="index" class="nav-item">
+            <i class="fa-solid fa-gauge"></i>
+            <span>Home</span>
+        </a>
+        <a href="products" class="nav-item active">
+            <i class="fa-solid fa-box"></i>
+            <span>Products</span>
+        </a>
+        <a href="orders" class="nav-item">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span>Orders</span>
+        </a>
+        <a href="website-editor" class="nav-item">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span>Editor</span>
+        </a>
+    </nav>
+</body>
+
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Reports | Sunshine Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="css/admin-modern.css">
+    <link rel="stylesheet" href="css/admin-mobile-app.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <a href="../index" class="logo" style="gap: 10px;">
+                    <span class="logo-text">SUNSHINE</span>
+                </a>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="index"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
+                <li><a href="products"><i class="fa-solid fa-box"></i> Products</a></li>
+                <li><a href="categories"><i class="fa-solid fa-list"></i> Categories</a></li>
+                <li><a href="brands"><i class="fa-solid fa-tag"></i> Brands</a></li>
+                <li><a href="orders"><i class="fa-solid fa-cart-shopping"></i> Orders</a></li>
+                <li><a href="inventory"><i class="fa-solid fa-warehouse"></i> Inventory</a></li>
+                <li><a href="users" class="active"><i class="fa-solid fa-users"></i> Users Report</a></li>
+                <li><a href="website-editor"><i class="fa-solid fa-wand-magic-sparkles"></i> Website Editor</a></li>
+                <li style="margin-top: auto;"><a href="#" id="logout"><i class="fa-solid fa-right-from-bracket"></i>
+                        Logout</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div class="admin-header">
+                <button class="mobile-menu-toggle"><i class="fa-solid fa-bars"></i></button>
+                <h1>User Reports</h1>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-black" id="export-csv"><i class="fa-solid fa-file-csv"></i> Export
+                        CSV</button>
+                    <button class="btn btn-primary" id="export-pdf"><i class="fa-solid fa-file-pdf"></i> PDF
+                        Report</button>
+                </div>
+            </div>
+
+            <div class="filters-section" style="margin-top: 2rem;">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="user-search" placeholder="Search by name or email...">
+                </div>
+                <div class="filter-controls">
+                    <select id="sort-filter">
+                        <option value="spent">Total Spent: High to Low</option>
+                        <option value="orders">Order Count: High to Low</option>
+                        <option value="newest">Join Date: Newest</option>
+                        <option value="oldest">Join Date: Oldest</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User Name</th>
+                            <th>Email</th>
+                            <th>Join Date</th>
+                            <th>Orders</th>
+                            <th>Total Spent</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-body">
+                        <!-- Dynamic content -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="js/admin-auth.js"></script>
+    <script src="js/admin-mobile.js"></script>
+    <script src="js/users.js"></script>
+</body>
+
+</html>

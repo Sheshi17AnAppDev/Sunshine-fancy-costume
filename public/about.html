@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | Sunshine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/mobile-app.css">
+    <link rel="stylesheet" href="css/modal.css">
+</head>
+
+<body>
+    <div class="search-overlay" id="search-overlay">
+        <div class="search-close" id="search-close">&times;</div>
+        <div class="search-inner">
+            <input type="text" placeholder="Search for products..." id="search-input">
+            <p style="margin-top: 2rem; color: var(--muted-text); font-size: 0.9rem;">Press Enter to search or click
+                close to cancel.</p>
+        </div>
+    </div>
+    <header id="header">
+        <a href="index" class="logo">
+            <span class="logo-text">SUNSHINE</span>
+            <div class="logo-rotating">
+                <div class="rotating-words">
+                    <span>Fancy</span>
+                    <span>Costumes</span>
+                </div>
+            </div>
+        </a>
+        <nav>
+            <ul>
+                <li><a href="index">Home</a></li>
+                <li><a href="shop">Shop</a></li>
+                <li><a href="about" class="active">About</a></li>
+                <li><a href="contact">Contact</a></li>
+                <li><a href="blog">Blog</a></li>
+                <li><a href="faq">FAQ</a></li>
+            </ul>
+        </nav>
+        <div class="header-icons">
+            <a href="#" id="search-trigger"><i class="fa-solid fa-magnifying-glass"></i></a>
+            <a href="profile"><i class="fa-regular fa-user"></i></a>
+            <a href="cart" style="position: relative;">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <div class="cart-badge" id="cart-count">0</div>
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <section style="padding: 10rem 10% 5rem; text-align: center; background: #fbf1e1;" class="reveal">
+            <p id="about-story-label"
+                style="color: var(--primary-orange); font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 2px;">
+                Our Story</p>
+            <h1 id="about-story-title" style="font-size: 3.5rem; line-height: 1.2;">Crafting Comfort & <br>Spreading Joy
+                Since 2010</h1>
+        </section>
+
+        <section
+            style="padding: 5rem 10%; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center;"
+            class="reveal">
+            <div class="glass" style="padding: 0; overflow: hidden; border-radius: 20px;">
+                <img src="https://images.unsplash.com/photo-1556228575-f29cb43028fb?auto=format&fit=crop&w=1000&q=80"
+                    alt="Furniture" style="width: 100%; height: 500px; object-fit: cover;">
+            </div>
+            <div class="reveal-delay-1">
+                <h2 id="about-intro-title" style="font-size: 2.5rem; margin-bottom: 2rem;">Quality Meets Fancy</h2>
+                <p id="about-p1" style="color: var(--muted-text); line-height: 1.8; margin-bottom: 1.5rem;">
+                    At Sunshine, we believe that your home should be a reflection of your unique personality. What
+                    started as a small boutique for fancy Costumess has evolved into a premier destination for both
+                    whimsical outfits and elegant home decor.
+                </p>
+                <p id="about-p2" style="color: var(--muted-text); line-height: 1.8;">
+                    Our mission is simple: to bring a ray of sunshine into every aspect of your life. Whether you're
+                    dressing up for a special occasion or dressing up your living room, we provide the quality and style
+                    you deserve.
+                </p>
+            </div>
+        </section>
+
+        <section style="padding: 5rem 10%; background: #fff;" class="reveal">
+            <div style="text-align: center; margin-bottom: 4rem;">
+                <h2 id="about-why-title" style="font-size: 2.5rem;">Why Choose Sunshine?</h2>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem;">
+                <div class="glass reveal-delay-1" style="padding: 3rem; text-align: center;">
+                    <i class="fa-solid fa-truck-fast"
+                        style="font-size: 2.5rem; color: var(--primary-orange); margin-bottom: 1.5rem;"></i>
+                    <h3>Fast Delivery</h3>
+                    <p style="color: var(--muted-text); margin-top: 1rem;">We ensure your orders reach you within 3-5
+                        business days, guaranteed.</p>
+                </div>
+                <div class="glass reveal-delay-2" style="padding: 3rem; text-align: center;">
+                    <i class="fa-solid fa-shield-halved"
+                        style="font-size: 2.5rem; color: var(--primary-orange); margin-bottom: 1.5rem;"></i>
+                    <h3>Premium Quality</h3>
+                    <p style="color: var(--muted-text); margin-top: 1rem;">All our products undergo rigorous quality
+                        checks before they reach your doorstep.</p>
+                </div>
+                <div class="glass reveal-delay-3" style="padding: 3rem; text-align: center;">
+                    <i class="fa-solid fa-headset"
+                        style="font-size: 2.5rem; color: var(--primary-orange); margin-bottom: 1.5rem;"></i>
+                    <h3>24/7 Support</h3>
+                    <p style="color: var(--muted-text); margin-top: 1rem;">Our dedicated team is always here to help you
+                        with any queries or concerns.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <div class="logo">
+                    <span class="logo-text">SUNSHINE</span>
+                    <div class="logo-rotating">
+                        <div class="rotating-words">
+                            <span>Fancy</span>
+                            <span>Costumes</span>
+                        </div>
+                    </div>
+                </div>
+                <p style="color: var(--muted-text); line-height: 1.6;">Your one-stop shop for premium Costumess and home
+                    design.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Shop</h4>
+                <ul>
+                    <li><a href="shop">All Products</a></li>
+                    <li><a href="shop?featured=true">Featured</a></li>
+                    <li><a href="shop?category=new">New Arrivals</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="about">About Us</a></li>
+                    <li><a href="contact">Contact Us</a></li>
+                    <li><a href="blog">Read Our Blog</a></li>
+                    <li><a href="faq">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="legal">Terms of Service</a></li>
+                    <li><a href="legal">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div
+            style="text-align: center; color: var(--muted-text); font-size: 0.8rem; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 2rem; margin-top: 3rem;">
+            Copyright 2023 Sunshine Fancy Costumes. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/about.js"></script>
+    <script src="js/modal.js"></script>
+</body>
+
+</html>

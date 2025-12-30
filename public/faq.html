@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ | Sunshine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/mobile-app.css">
+    <style>
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: 16px;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            transition: var(--transition-fast);
+        }
+
+        .faq-item:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .faq-question {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--dark-text);
+        }
+
+        .faq-question i {
+            color: var(--primary-orange);
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.active .faq-question i {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #fcfcfc;
+        }
+
+        .faq-answer p {
+            padding: 0 1.5rem 1.5rem;
+            color: var(--muted-text);
+            line-height: 1.6;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            /* ample height */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="search-overlay" id="search-overlay">
+        <div class="search-close" id="search-close">&times;</div>
+        <div class="search-inner">
+            <input type="text" placeholder="Search for help..." id="search-input">
+            <p style="margin-top: 2rem; color: var(--muted-text); font-size: 0.9rem;">Press Enter to search or click
+                close to cancel.</p>
+        </div>
+    </div>
+    <header id="header">
+        <a href="index" class="logo">
+            <span class="logo-text">SUNSHINE</span>
+            <div class="logo-rotating">
+                <div class="rotating-words">
+                    <span>Fancy</span>
+                    <span>Costumes</span>
+                </div>
+            </div>
+        </a>
+        <nav>
+            <ul>
+                <li><a href="index">Home</a></li>
+                <li><a href="shop">Shop</a></li>
+                <li><a href="about">About</a></li>
+                <li><a href="contact">Contact</a></li>
+                <li><a href="blog">Blog</a></li>
+                <li><a href="faq" class="active">FAQ</a></li>
+            </ul>
+        </nav>
+        <div class="header-icons">
+            <a href="#" id="search-trigger"><i class="fa-solid fa-magnifying-glass"></i></a>
+            <a href="profile"><i class="fa-regular fa-user"></i></a>
+            <a href="cart" style="position: relative;">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <div class="cart-badge" id="cart-count">0</div>
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero" style="min-height: 40vh; padding-top: 8rem; text-align: center;">
+            <p
+                style="color: var(--primary-orange); font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 2px;">
+                Support</p>
+            <h1 id="faq-page-title" class="reveal">Frequently Asked Questions</h1>
+            <p id="faq-page-subtitle" class="reveal reveal-delay-1"
+                style="font-size: 1.2rem; opacity: 0.9; max-width: 600px; margin: 1rem auto 0;">Everything you need to
+                know about our products and services.</p>
+        </section>
+
+        <section style="padding: 2rem 10% 8rem;">
+            <div class="faq-container" id="faq-container">
+                <!-- Fallback Loading -->
+                <div style="text-align: center; color: var(--muted-text);">Loading questions...</div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <div class="logo">
+                    <span class="logo-text">SUNSHINE</span>
+                    <div class="logo-rotating">
+                        <div class="rotating-words">
+                            <span>Fancy</span>
+                            <span>Costumes</span>
+                        </div>
+                    </div>
+                </div>
+                <p style="color: var(--muted-text); line-height: 1.6;">Your one-stop shop for premium Costumes and home
+                    design.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Shop</h4>
+                <ul>
+                    <li><a href="shop">All Products</a></li>
+                    <li><a href="shop?featured=true">Featured</a></li>
+                    <li><a href="shop?category=new">New Arrivals</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="about">About Us</a></li>
+                    <li><a href="contact">Contact Us</a></li>
+                    <li><a href="blog">Read Our Blog</a></li>
+                    <li><a href="faq">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="legal">Terms of Service</a></li>
+                    <li><a href="legal">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div
+            style="text-align: center; color: var(--muted-text); font-size: 0.8rem; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 2rem; margin-top: 3rem;">
+            Copyright 2023 Sunshine Fancy Costumes. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // Load Dynamic FAQ Info
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const res = await fetch('/api/site-content/faq');
+                if (res.ok) {
+                    const { data } = await res.json();
+                    if (data) {
+                        if (data.title) document.getElementById('faq-page-title').textContent = data.title;
+                        if (data.subtitle) document.getElementById('faq-page-subtitle').textContent = data.subtitle;
+
+                        // Render Questions
+                        const container = document.getElementById('faq-container');
+                        container.innerHTML = ''; // Clear loading
+
+                        if (data.questions && data.questions.length > 0) {
+                            data.questions.forEach(item => {
+                                const el = document.createElement('div');
+                                el.className = 'faq-item reveal';
+                                el.innerHTML = `
+                                    <div class="faq-question">
+                                        ${item.q}
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </div>
+                                    <div class="faq-answer">
+                                        <p>${item.a}</p>
+                                    </div>
+                                `;
+                                el.querySelector('.faq-question').addEventListener('click', () => {
+                                    el.classList.toggle('active');
+                                });
+                                container.appendChild(el);
+                            });
+                        } else {
+                            container.innerHTML = '<div style="text-align: center; color: var(--muted-text);">No questions added yet.</div>';
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error("Error loading faq info", err);
+            }
+        });
+    </script>
+</body>
+
+</html>

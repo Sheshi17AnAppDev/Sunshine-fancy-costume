@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Email | Sunshine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/verify.css">
+</head>
+
+<body class="verify-page">
+    <div class="auth-bg-decor">
+        <div class="auth-circle circle-1"></div>
+        <div class="auth-circle circle-2"></div>
+        <div class="auth-circle circle-3"></div>
+    </div>
+    <header id="header">
+        <a href="index" class="logo">
+            <span class="logo-text">SUNSHINE</span>
+            <div class="logo-rotating">
+                <div class="rotating-words">
+                    <span>Fancy</span>
+                    <span>Costumes</span>
+                </div>
+            </div>
+        </a>
+    </header>
+
+    <main class="auth-container">
+        <div class="auth-card">
+            <div class="verify-header">
+                <i class="fa-solid fa-envelope-circle-check" style="font-size: 3rem; color: var(--primary-orange); margin-bottom: 1rem;"></i>
+                <h2>Verify Your Email</h2>
+                <p>We've sent a 6-digit verification code to your email.</p>
+                <p class="email-display" id="user-email">user@example.com</p>
+            </div>
+
+            <form id="verify-form">
+                <div class="otp-input-container">
+                    <input type="text" maxlength="1" class="otp-input" id="otp-1" required>
+                    <input type="text" maxlength="1" class="otp-input" id="otp-2" required>
+                    <input type="text" maxlength="1" class="otp-input" id="otp-3" required>
+                    <input type="text" maxlength="1" class="otp-input" id="otp-4" required>
+                    <input type="text" maxlength="1" class="otp-input" id="otp-5" required>
+                    <input type="text" maxlength="1" class="otp-input" id="otp-6" required>
+                </div>
+
+                <button type="submit" class="btn btn-black" style="width: 100%; padding: 1.2rem; margin-top: 2rem;">
+                    <i class="fa-solid fa-check"></i> Verify Email
+                </button>
+            </form>
+
+            <div class="verify-actions">
+                <p style="margin-top: 2rem; text-align: center; font-size: 0.9rem; color: var(--muted-text);">
+                    Didn't receive the code?
+                </p>
+                <button type="button" id="resend-btn" class="btn btn-outline" style="width: 100%; margin-top: 0.5rem;">
+                    <i class="fa-solid fa-redo"></i> Resend Code
+                </button>
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <a href="signup" style="color: var(--primary-orange); text-decoration: none; font-size: 0.9rem;">
+                        <i class="fa-solid fa-arrow-left"></i> Back to Registration
+                    </a>
+                </div>
+            </div>
+
+            <div class="timer-display" id="timer-display">
+                <p style="text-align: center; font-size: 0.85rem; color: var(--muted-text);">
+                    Code expires in <span id="timer">10:00</span>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+    <script src="js/verify.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,205 @@
+/* Category Showcase Section */
+.category-showcase {
+    padding: 5rem 10%;
+    overflow: hidden;
+}
+
+.category-scroll-wrapper {
+    position: relative;
+    padding: 0 1rem;
+}
+
+.category-scroll-container {
+    display: flex;
+    gap: 3rem;
+    /* Spacing between groups */
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    padding: 1rem 0;
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+.category-scroll-container::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari and Opera */
+}
+
+/* Individual Grid Group (Replaces single card flow) */
+.category-grid-group {
+    display: grid;
+    grid-template-columns: 350px 350px 350px;
+    grid-template-rows: 280px 280px;
+    gap: 1.5rem;
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+}
+
+.category-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #a8a8a8 0%, #9e9e9e 100%);
+    display: flex;
+    align-items: flex-end;
+    padding: 2rem;
+    text-decoration: none;
+    transition: var(--transition-smooth);
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+}
+
+/* Asymmetric Grid Layout Logic */
+.category-card:nth-child(1) {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    /* Tall Item - Left */
+}
+
+.category-card:nth-child(2) {
+    grid-column: 2;
+    grid-row: 1;
+    /* Stacked Item - Top */
+}
+
+.category-card:nth-child(3) {
+    grid-column: 2;
+    grid-row: 2;
+    /* Stacked Item - Bottom */
+}
+
+.category-card:nth-child(4) {
+    grid-column: 3;
+    grid-row: 1 / 3;
+    /* Tall Item - Right */
+}
+
+/* Fallback for incomplete groups */
+.category-card:nth-last-child(1):first-child {
+    grid-column: 1 / 4;
+    grid-row: 1 / 3;
+}
+
+.category-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.4) 100%);
+    z-index: 1;
+    transition: var(--transition-smooth);
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.category-card img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    transition: var(--transition-smooth);
+}
+
+.category-card:hover img {
+    transform: scale(1.05);
+}
+
+.category-card h3 {
+    position: relative;
+    z-index: 2;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Scroll Buttons */
+.scroll-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: white;
+    border: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: var(--dark-text);
+    transition: all 0.3s ease;
+}
+
+.scroll-btn:hover {
+    background: var(--primary-orange);
+    color: white;
+}
+
+.scroll-btn.prev {
+    left: -25px;
+}
+
+.scroll-btn.next {
+    right: -25px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .category-grid-group {
+        grid-template-columns: 300px 300px 300px;
+        grid-template-rows: 240px 240px;
+    }
+}
+
+@media (max-width: 992px) {
+    .category-grid-group {
+        grid-template-columns: 250px 250px 250px;
+        grid-template-rows: 200px 200px;
+    }
+}
+
+@media (max-width: 768px) {
+    .category-scroll-container {
+        gap: 1rem;
+    }
+
+    .category-grid-group {
+        /* On mobile, standard horizontal scroll card by card, breaking the grid */
+        display: flex;
+        gap: 1rem;
+    }
+
+    .category-card {
+        flex: 0 0 280px;
+        height: 380px;
+        width: 280px;
+        /* Reset grid positioning for flex layout */
+        grid-column: auto !important;
+        grid-row: auto !important;
+    }
+
+    .scroll-btn {
+        display: none;
+    }
+
+    .category-scroll-wrapper {
+        padding: 0;
+    }
+}

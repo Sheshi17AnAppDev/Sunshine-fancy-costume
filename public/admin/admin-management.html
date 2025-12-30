@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Management | Sunshine Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/admin-modern.css">
+    <link rel="stylesheet" href="css/admin-mobile-app.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <a href="../index" class="logo" style="gap: 10px;">
+                    <span class="logo-text">SUNSHINE</span>
+                    <div class="logo-rotating">
+                        <div class="rotating-words">
+                            <span>Fancy</span>
+                            <span>Costumes</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="index"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
+                <li><a href="products"><i class="fa-solid fa-box"></i> Products</a></li>
+                <li><a href="categories"><i class="fa-solid fa-list"></i> Categories</a></li>
+                <li><a href="brands"><i class="fa-solid fa-tag"></i> Brands</a></li>
+                <li><a href="orders"><i class="fa-solid fa-cart-shopping"></i> Orders</a></li>
+                <li><a href="website-editor"><i class="fa-solid fa-wand-magic-sparkles"></i> Website Editor</a></li>
+                <li><a href="admin-management" class="active"><i class="fa-solid fa-users-gear"></i> Admin Management</a></li>
+                <li style="margin-top: auto;"><a href="#" id="logout"><i class="fa-solid fa-right-from-bracket"></i>
+                        Logout</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div class="admin-header">
+                <h1>Admin Management</h1>
+                <button class="btn btn-primary" id="add-admin-btn">Add New Admin</button>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Last Login</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-table-body">
+                        <!-- Dynamic Rows -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Add/Edit Admin -->
+    <div class="overlay" id="overlay"></div>
+    <div class="modal" id="modal">
+        <h2 id="modal-title">Add New Admin</h2>
+        <form id="admin-form" style="margin-top: 2rem;">
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" id="admin-name" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="admin-email" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="admin-password" required>
+            </div>
+            <div class="form-group">
+                <label>Permissions</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                        <input type="checkbox" id="perm-products" checked> Manage Products
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                        <input type="checkbox" id="perm-categories" checked> Manage Categories
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                        <input type="checkbox" id="perm-brands" checked> Manage Brands
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                        <input type="checkbox" id="perm-orders" checked> Manage Orders
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                        <input type="checkbox" id="perm-website"> Manage Website
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                        <input type="checkbox" id="perm-stats" checked> View Statistics
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                        <input type="checkbox" id="perm-credentials" checked> Change Credentials
+                    </label>
+                </div>
+            </div>
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button type="submit" class="btn btn-primary" style="flex: 1;">Save</button>
+                <button type="button" class="btn glass" id="cancel-btn" style="flex: 1;">Cancel</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Permissions Modal -->
+    <div class="modal" id="permissions-modal">
+        <h2>Edit Permissions</h2>
+        <form id="permissions-form" style="margin-top: 2rem;">
+            <input type="hidden" id="permissions-admin-id">
+            <div class="form-group">
+                <label>Admin Name</label>
+                <input type="text" id="permissions-admin-name" readonly style="background: var(--light-bg);">
+            </div>
+            <div class="form-group">
+                <label>Permissions</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                        <input type="checkbox" id="edit-perm-products"> Manage Products
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                        <input type="checkbox" id="edit-perm-categories"> Manage Categories
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                        <input type="checkbox" id="edit-perm-brands"> Manage Brands
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                        <input type="checkbox" id="edit-perm-orders"> Manage Orders
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                        <input type="checkbox" id="edit-perm-website"> Manage Website
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                        <input type="checkbox" id="edit-perm-stats"> View Statistics
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                        <input type="checkbox" id="edit-perm-credentials"> Change Credentials
+                    </label>
+                </div>
+            </div>
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button type="submit" class="btn btn-primary" style="flex: 1;">Update Permissions</button>
+                <button type="button" class="btn glass" id="cancel-permissions-btn" style="flex: 1;">Cancel</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script src="js/admin-auth.js"></script>
+    <script src="js/admin-mobile.js"></script>
+    <script src="js/admin-management.js"></script>
+</body>
+
+</html>

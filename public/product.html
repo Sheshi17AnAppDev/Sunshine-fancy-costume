@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details | Sunshine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/mobile-app.css">
+    <link rel="stylesheet" href="css/product.css">
+</head>
+
+<body>
+    <div class="search-overlay" id="search-overlay">
+        <div class="search-close" id="search-close">&times;</div>
+        <div class="search-inner">
+            <input type="text" placeholder="Search for products..." id="search-input">
+            <p style="margin-top: 2rem; color: var(--muted-text); font-size: 0.9rem;">Press Enter to search or click
+                close to cancel.</p>
+        </div>
+    </div>
+    <header id="header">
+        <a href="index" class="logo">
+            <span class="logo-text">SUNSHINE</span>
+            <div class="logo-rotating">
+                <div class="rotating-words">
+                    <span>Fancy</span>
+                    <span>Costumes</span>
+                </div>
+            </div>
+        </a>
+        <nav>
+            <ul>
+                <li><a href="index">Home</a></li>
+                <li><a href="shop">Shop</a></li>
+                <li><a href="about">About</a></li>
+                <li><a href="contact">Contact</a></li>
+                <li><a href="blog">Blog</a></li>
+                <li><a href="faq">FAQ</a></li>
+            </ul>
+        </nav>
+        <div class="header-icons">
+            <a href="#" id="search-trigger"><i class="fa-solid fa-magnifying-glass"></i></a>
+            <a href="profile"><i class="fa-regular fa-user"></i></a>
+            <a href="cart" style="position: relative;">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <div class="cart-badge" id="cart-count">0</div>
+            </a>
+        </div>
+    </header>
+
+    <div class="breadcrumb">
+        <a href="shop">Product Listing</a> <i class="fa-solid fa-chevron-right"
+            style="font-size: 0.7rem; margin: 0 0.5rem; opacity: 0.5;"></i> <span id="bread-name">Product Name</span>
+    </div>
+
+    <main class="product-details-main">
+        <div class="product-details-grid reveal">
+            <div class="product-gallery-container">
+                <div id="thumb-list" class="thumb-list" hidden>
+                    <!-- Dynamic Thumbnails -->
+                </div>
+                <div class="main-img-container">
+                    <img id="product-img" src="https://via.placeholder.com/600x600?text=Product+Image"
+                        class="reveal-delay-1">
+                </div>
+            </div>
+
+            <div class="product-info reveal-delay-2">
+                <h1 id="product-name">Product Name</h1>
+
+                <div class="product-meta">
+                    <span id="product-price" class="product-price-display">₹0.00</span>
+                    <span class="rating-divider">|</span>
+                    <div class="rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <span>(32 reviews)</span>
+                    </div>
+                </div>
+
+                <div id="product-category" class="product-category" style="margin: 1.5rem 0;">CATEGORY</div>
+
+                <div id="age-selection-container" style="margin-bottom: 2rem;" hidden>
+                    <label
+                        style="display: block; font-weight: 700; margin-bottom: 0.8rem; color: var(--text-dark);">SELECT
+                        AGE GROUP</label>
+                    <div id="age-chips" style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
+                        <!-- Dynamic Age Chips -->
+                    </div>
+                </div>
+
+                <div class="short-description">
+                    <p id="product-desc">Loading product description...</p>
+                </div>
+
+                <div class="product-actions-container" style="margin-top: 2rem;">
+                    <div class="quantity-input-wrapper">
+                        <button onclick="changeQty(-1)"><i class="fa-solid fa-minus"></i></button>
+                        <input type="number" id="qty" value="1" readonly>
+                        <button onclick="changeQty(1)"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                    <button id="add-to-cart" class="btn add-to-cart-btn"><i class="fa-solid fa-bag-shopping"></i> Add to
+                        Cart</button>
+                </div>
+                <button class="btn btn-outline buy-now-btn" style="width: 100%; margin-top: 1rem;">Buy Now</button>
+
+                <div class="shipping-info" style="margin-top: 2.5rem;">
+                    <div class="info-item">
+                        <i class="fa-solid fa-truck"></i>
+                        <span>Free worldwide shipping on orders over $100</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fa-solid fa-clock"></i>
+                        <span>Delivered in 2-7 Working Days. Shipping & Return</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="product-tabs reveal" style="margin-top: 8rem;">
+            <div class="tab-headers">
+                <div class="tab-header active" data-tab="description">Description</div>
+                <div class="tab-header" data-tab="reviews">Reviews</div>
+            </div>
+            <div class="tab-content" id="description-tab">
+                <p id="tab-desc" style="color: var(--muted-text); line-height: 1.8;">
+                    Loading description...
+                </p>
+            </div>
+        </div>
+
+        <section class="related-products-section reveal">
+            <h2>You May Also Like</h2>
+            <div class="products-container" id="related-products">
+                <!-- Related Products -->
+            </div>
+        </section>
+        <section class="newsletter-section reveal">
+            <h2>Subscribe To Your Newsletter To Stay Updated About Discounts</h2>
+            <form class="newsletter-form">
+                <input type="email" placeholder="person@email.com" required>
+                <button type="submit"><i class="fa-solid fa-chevron-right"></i></button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <div class="logo">
+                    <span class="logo-text">SUNSHINE</span>
+                    <div class="logo-rotating">
+                        <div class="rotating-words">
+                            <span>Fancy</span>
+                            <span>Costumes</span>
+                        </div>
+                    </div>
+                </div>
+                <p style="color: var(--muted-text); line-height: 1.6;">Your one-stop shop for premium Costumess and home
+                    design.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Shop</h4>
+                <ul>
+                    <li><a href="shop">All Products</a></li>
+                    <li><a href="shop?featured=true">Featured</a></li>
+                    <li><a href="shop?category=new">New Arrivals</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="about">About Us</a></li>
+                    <li><a href="contact">Contact Us</a></li>
+                    <li><a href="blog">Read Our Blog</a></li>
+                    <li><a href="faq">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="legal">Terms of Service</a></li>
+                    <li><a href="legal">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div
+            style="text-align: center; color: var(--muted-text); font-size: 0.8rem; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 2rem; margin-top: 3rem;">
+            Copyright 2023 Sunshine Fancy Costumes. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="js/main.js?v=4"></script>
+    <script src="js/auth.js?v=4"></script>
+    <script src="js/product.js?v=4"></script>
+</body>
+
+</html>

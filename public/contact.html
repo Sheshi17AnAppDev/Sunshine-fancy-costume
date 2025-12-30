@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | Sunshine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/mobile-app.css">
+</head>
+
+<body>
+    <div class="search-overlay" id="search-overlay">
+        <div class="search-close" id="search-close">&times;</div>
+        <div class="search-inner">
+            <input type="text" placeholder="Search for products..." id="search-input">
+            <p style="margin-top: 2rem; color: var(--muted-text); font-size: 0.9rem;">Press Enter to search or click
+                close to cancel.</p>
+        </div>
+    </div>
+    <header id="header">
+        <a href="index" class="logo">
+            <span class="logo-text">SUNSHINE</span>
+            <div class="logo-rotating">
+                <div class="rotating-words">
+                    <span>Fancy</span>
+                    <span>Costumes</span>
+                </div>
+            </div>
+        </a>
+        <nav>
+            <ul>
+                <li><a href="index">Home</a></li>
+                <li><a href="shop">Shop</a></li>
+                <li><a href="about">About</a></li>
+                <li><a href="contact" class="active">Contact</a></li>
+                <li><a href="blog">Blog</a></li>
+                <li><a href="faq">FAQ</a></li>
+            </ul>
+        </nav>
+        <div class="header-icons">
+            <a href="#" id="search-trigger"><i class="fa-solid fa-magnifying-glass"></i></a>
+            <a href="profile"><i class="fa-regular fa-user"></i></a>
+            <a href="cart" style="position: relative;">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <div class="cart-badge" id="cart-count">0</div>
+            </a>
+        </div>
+    </header>
+
+    <main style="padding: 10rem 10% 5rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start;">
+            <div>
+                <p
+                    style="color: var(--primary-orange); font-weight: 700; margin-bottom: 1rem; text-transform: uppercase;">
+                    Contact Us</p>
+                <h1 id="contact-page-title" style="font-size: 3rem; line-height: 1.2; margin-bottom: 2rem;">We'd Love To
+                    Hear <br>From You</h1>
+                <p id="contact-intro-text" style="color: var(--muted-text); line-height: 1.8; margin-bottom: 3rem;">
+                    Have a question about our products or an existing order? Our team is ready to assist you with
+                    anything you need. Fill out the form and we'll get back to you within 24 hours.
+                </p>
+
+                <div style="display: flex; flex-direction: column; gap: 2rem;">
+                    <div style="display: flex; gap: 1.5rem; align-items: center;">
+                        <div
+                            style="width: 50px; height: 50px; background: var(--primary-orange); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </div>
+                        <div>
+                            <h4 style="margin-bottom: 0.3rem;">Visit Us</h4>
+                            <p id="contact-address-display" style="color: var(--muted-text); font-size: 0.9rem;">123
+                                Sunshine Blvd, Design District,
+                                NY</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 1.5rem; align-items: center;">
+                        <div
+                            style="width: 50px; height: 50px; background: var(--primary-orange); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+                        <div>
+                            <div>
+                                <h4 style="margin-bottom: 0.3rem;">Call Us</h4>
+                                <p id="contact-phone-display" style="color: var(--muted-text); font-size: 0.9rem;">+1
+                                    (555) 123-4567</p>
+                                <p id="contact-email-display"
+                                    style="color: var(--muted-text); font-size: 0.9rem; margin-top: 0.5rem;">
+                                    hello@example.com</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass" style="padding: 4rem;">
+                    <form id="contact-form">
+                        <div class="form-group" style="margin-bottom: 2rem;">
+                            <label style="display: block; margin-bottom: 0.8rem; font-weight: 500;">Your Name</label>
+                            <input type="text" placeholder="John Doe" required
+                                style="width: 100%; padding: 1.2rem; border-radius: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(0,0,0,0.1); outline: none;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 2rem;">
+                            <label style="display: block; margin-bottom: 0.8rem; font-weight: 500;">Email
+                                Address</label>
+                            <input type="email" placeholder="john@example.com" required
+                                style="width: 100%; padding: 1.2rem; border-radius: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(0,0,0,0.1); outline: none;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 2rem;">
+                            <label style="display: block; margin-bottom: 0.8rem; font-weight: 500;">Your Message</label>
+                            <textarea placeholder="How can we help you?" required
+                                style="width: 100%; padding: 1.2rem; border-radius: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(0,0,0,0.1); outline: none; height: 150px; resize: none;"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1.2rem;">Send
+                            Message</button>
+                    </form>
+                </div>
+            </div>
+    </main>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <div class="logo">
+                    <span class="logo-text">SUNSHINE</span>
+                    <div class="logo-rotating">
+                        <div class="rotating-words">
+                            <span>Fancy</span>
+                            <span>Costumes</span>
+                        </div>
+                    </div>
+                </div>
+                <p style="color: var(--muted-text); line-height: 1.6;">Your one-stop shop for premium Costumess and home
+                    design.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Shop</h4>
+                <ul>
+                    <li><a href="shop">All Products</a></li>
+                    <li><a href="shop?featured=true">Featured</a></li>
+                    <li><a href="shop?category=new">New Arrivals</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="about">About Us</a></li>
+                    <li><a href="contact">Contact Us</a></li>
+                    <li><a href="blog">Read Our Blog</a></li>
+                    <li><a href="faq">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="legal">Terms of Service</a></li>
+                    <li><a href="legal">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Admin</h4>
+                <ul>
+                    <li><a href="admin/login">Admin Login</a></li>
+                </ul>
+            </div>
+        </div>
+        <div
+            style="text-align: center; color: var(--muted-text); font-size: 0.8rem; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 2rem; margin-top: 3rem;">
+            Copyright 2023 Sunshine Fancy Costumes. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        document.getElementById('contact-form')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Thank you for your message! We will get back to you soon.');
+            e.target.reset();
+        });
+
+        // Load Dynamic Contact Info
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const res = await fetch('/api/site-content/contact');
+                if (res.ok) {
+                    const { data } = await res.json();
+                    if (data) {
+                        if (data.title) document.getElementById('contact-page-title').textContent = data.title;
+                        if (data.intro) document.getElementById('contact-intro-text').textContent = data.intro;
+                        if (data.address) document.getElementById('contact-address-display').textContent = data.address;
+                        if (data.phone) document.getElementById('contact-phone-display').textContent = data.phone;
+                        if (data.email) document.getElementById('contact-email-display').textContent = data.email;
+                    }
+                }
+            } catch (err) {
+                console.error("Error loading contact info", err);
+            }
+        });
+    </script>
+</body>
+
+</html>

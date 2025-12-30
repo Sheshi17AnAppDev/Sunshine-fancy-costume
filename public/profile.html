@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account | Sunshine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/mobile-app.css">
+    <link rel="stylesheet" href="css/profile.css">
+</head>
+
+<body>
+    <div class="search-overlay" id="search-overlay">
+        <div class="search-close" id="search-close">&times;</div>
+        <div class="search-inner">
+            <input type="text" placeholder="Search for products..." id="search-input">
+            <p style="margin-top: 2rem; color: var(--muted-text); font-size: 0.9rem;">Press Enter to search or click
+                close to cancel.</p>
+        </div>
+    </div>
+    <header id="header">
+        <a href="index" class="logo">
+            <span class="logo-text">SUNSHINE</span>
+            <div class="logo-rotating">
+                <div class="rotating-words">
+                    <span>Fancy</span>
+                    <span>Costumes</span>
+                </div>
+            </div>
+        </a>
+        <nav>
+            <ul>
+                <li><a href="index">Home</a></li>
+                <li><a href="shop">Shop</a></li>
+                <li><a href="about">About</a></li>
+                <li><a href="contact">Contact</a></li>
+                <li><a href="blog">Blog</a></li>
+                <li><a href="faq">FAQ</a></li>
+            </ul>
+        </nav>
+        <div class="header-icons">
+            <a href="#" id="search-trigger"><i class="fa-solid fa-magnifying-glass"></i></a>
+            <a href="profile" class="active"><i class="fa-regular fa-user"></i></a>
+            <a href="cart" style="position: relative;">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <div class="cart-badge" id="cart-count">0</div>
+            </a>
+        </div>
+    </header>
+
+    <main class="account-page">
+        <section class="account-hero reveal revealed">
+            <div class="account-hero-inner">
+                <div>
+                    <div class="account-badge">My Account</div>
+                    <h1>Welcome back, <span id="profile-name">Customer</span></h1>
+                    <p>Manage your profile, track orders, and keep your shopping experience smooth.</p>
+                </div>
+                <div class="account-hero-actions">
+                    <button class="btn btn-black" id="logout-btn"><i class="fa-solid fa-right-from-bracket"></i>
+                        Logout</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="account-layout">
+            <aside class="account-sidebar reveal revealed">
+                <button class="account-tab active" data-tab="overview"><i class="fa-solid fa-grid-2"></i>
+                    Overview</button>
+                <button class="account-tab" data-tab="orders"><i class="fa-solid fa-box"></i> My Orders</button>
+                <button class="account-tab" data-tab="settings"><i class="fa-solid fa-gear"></i> Settings</button>
+            </aside>
+
+            <div class="account-content">
+                <div class="account-panel active reveal revealed" id="panel-overview">
+                    <div class="panel-grid">
+                        <div class="panel-card">
+                            <div class="card-head">
+                                <h2>Profile</h2>
+                                <span class="card-chip" id="profile-role">User</span>
+                            </div>
+                            <div class="profile-row">
+                                <div class="profile-avatar">
+                                    <i class="fa-regular fa-user"></i>
+                                </div>
+                                <div class="profile-meta">
+                                    <div class="profile-title" id="profile-name-2">Customer</div>
+                                    <div class="profile-sub" id="profile-email">email@example.com</div>
+                                </div>
+                            </div>
+                            <div class="mini-grid">
+                                <div class="mini-card">
+                                    <div class="mini-label">Orders</div>
+                                    <div class="mini-value" id="stat-orders">0</div>
+                                </div>
+                                <div class="mini-card">
+                                    <div class="mini-label">Delivered</div>
+                                    <div class="mini-value" id="stat-delivered">0</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-card">
+                            <div class="card-head">
+                                <h2>Quick Actions</h2>
+                                <span class="card-chip">Fast</span>
+                            </div>
+                            <div class="quick-actions">
+                                <a class="quick-link" href="shop"><i class="fa-solid fa-bag-shopping"></i> Continue
+                                    Shopping</a>
+                                <a class="quick-link" href="cart"><i class="fa-solid fa-cart-shopping"></i> View
+                                    Cart</a>
+                                <a class="quick-link" href="contact"><i class="fa-solid fa-headset"></i> Support</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-card" style="margin-top: 2rem;">
+                        <div class="card-head">
+                            <h2>Recent Orders</h2>
+                            <a class="btn btn-primary" href="#" id="view-all-orders">View All</a>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="account-table">
+                                <thead>
+                                    <tr>
+                                        <th>Order</th>
+                                        <th>Date</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent-orders-body">
+                                    <tr>
+                                        <td colspan="4" class="table-empty">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="account-panel" id="panel-orders">
+                    <div class="panel-card">
+                        <div class="card-head">
+                            <h2>My Orders</h2>
+                            <span class="card-chip">Tracking</span>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="account-table">
+                                <thead>
+                                    <tr>
+                                        <th>Order</th>
+                                        <th>Date</th>
+                                        <th>Total</th>
+                                        <th>Paid</th>
+                                        <th>Delivered</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="orders-body">
+                                    <tr>
+                                        <td colspan="5" class="table-empty">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="account-panel" id="panel-settings">
+                    <div class="panel-card">
+                        <div class="card-head">
+                            <h2>Settings</h2>
+                            <span class="card-chip">Security</span>
+                        </div>
+                        <div class="settings-grid">
+                            <div class="settings-item">
+                                <div>
+                                    <div class="settings-title">Account Email</div>
+                                    <div class="settings-sub" id="settings-email">email@example.com</div>
+                                </div>
+                                <button class="btn btn-black" id="copy-email"><i class="fa-regular fa-copy"></i>
+                                    Copy</button>
+                            </div>
+                            <div class="settings-item">
+                                <div>
+                                    <div class="settings-title">Sign out</div>
+                                    <div class="settings-sub">Log out from this device.</div>
+                                </div>
+                                <button class="btn btn-primary" id="logout-btn-2"><i
+                                        class="fa-solid fa-right-from-bracket"></i> Logout</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/profile.js"></script>
+</body>
+
+</html>

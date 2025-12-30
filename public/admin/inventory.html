@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory & Analytics | Sunshine Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="css/admin-modern.css">
+    <link rel="stylesheet" href="css/admin-mobile-app.css">
+    <style>
+        .funnel-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .funnel-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .funnel-card h4 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.7;
+            margin-bottom: 0.5rem;
+        }
+
+        .funnel-card .value {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .funnel-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary-orange);
+            opacity: 0.5;
+        }
+
+        .stock-indicator {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .stock-low {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .stock-medium {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .stock-high {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <a href="../index" class="logo" style="gap: 10px;">
+                    <span class="logo-text">SUNSHINE</span>
+                </a>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="index"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
+                <li><a href="products"><i class="fa-solid fa-box"></i> Products</a></li>
+                <li><a href="categories"><i class="fa-solid fa-list"></i> Categories</a></li>
+                <li><a href="brands"><i class="fa-solid fa-tag"></i> Brands</a></li>
+                <li><a href="orders"><i class="fa-solid fa-cart-shopping"></i> Orders</a></li>
+                <li><a href="inventory" class="active"><i class="fa-solid fa-warehouse"></i> Inventory</a></li>
+                <li><a href="users"><i class="fa-solid fa-users"></i> Users Report</a></li>
+                <li><a href="website-editor"><i class="fa-solid fa-wand-magic-sparkles"></i> Website Editor</a></li>
+                <li style="margin-top: auto;"><a href="#" id="logout"><i class="fa-solid fa-right-from-bracket"></i>
+                        Logout</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div class="admin-header">
+                <button class="mobile-menu-toggle"><i class="fa-solid fa-bars"></i></button>
+                <h1>Inventory & Sales Funnel</h1>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-black" id="export-csv"><i class="fa-solid fa-file-csv"></i> Export
+                        CSV</button>
+                    <button class="btn btn-primary" id="export-pdf"><i class="fa-solid fa-file-pdf"></i> Stock
+                        Report</button>
+                </div>
+            </div>
+
+            <div class="funnel-container" style="margin-top: 1.5rem;">
+                <div class="funnel-card">
+                    <h4>Visited</h4>
+                    <div class="value" id="total-visited">0</div>
+                </div>
+                <div class="funnel-card">
+                    <h4>Booked</h4>
+                    <div class="value" id="total-booked">0</div>
+                </div>
+                <div class="funnel-card" style="background: rgba(251, 176, 59, 0.1);">
+                    <h4>Confirmed</h4>
+                    <div class="value" id="total-confirmed">0</div>
+                </div>
+                <div class="funnel-card">
+                    <h4>Delivered</h4>
+                    <div class="value" id="total-delivered">0</div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="inventory-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th>Stock</th>
+                            <th>Status</th>
+                            <th>Visited</th>
+                            <th>Booked</th>
+                            <th>Conv. %</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventory-body">
+                        <!-- Dynamic content -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="js/admin-auth.js"></script>
+    <script src="js/admin-mobile.js"></script>
+    <script src="js/inventory.js"></script>
+</body>
+
+</html>
