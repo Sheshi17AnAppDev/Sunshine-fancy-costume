@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
             overlay.style.display = 'none';
             fetchBrands();
         } catch (err) {
-            alert(err.message || 'Error saving brand');
+            showToast(err.message || 'Error saving brand', 'error');
         }
     };
 });
@@ -111,7 +111,7 @@ async function deleteBrand(id) {
             await api.delete(`/brands/${id}`);
             fetchBrands();
         } catch (err) {
-            alert(err.message || 'Delete failed');
+            showToast(err.message || 'Delete failed', 'error');
         }
     }
 }

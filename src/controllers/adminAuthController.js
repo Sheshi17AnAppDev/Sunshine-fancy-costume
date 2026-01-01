@@ -1,5 +1,4 @@
 const AdminUser = require('../models/AdminUser');
-const MockAdminUser = require('../models/MockAdminUser');
 const generateToken = require('../config/generateToken');
 
 // @desc    Admin login
@@ -7,39 +6,22 @@ const generateToken = require('../config/generateToken');
 // @access  Public
 exports.adminLogin = async (req, res) => {
     const { email, password } = req.body;
-    
+
     console.log('Login attempt for email:', email);
     console.log('Password provided:', password ? 'Yes' : 'No');
 
     try {
-        // Try MongoDB first, but if it fails, use mock database
-        let admin;
-        try {
-            console.log('Trying MongoDB...');
-            admin = await AdminUser.findOne({ email }).select('+password');
-            console.log('MongoDB result:', admin ? 'Found' : 'Not found');
-            
-            // If not found in MongoDB, try mock
-            if (!admin) {
-                console.log('Admin not found in MongoDB, trying mock database');
-                admin = await MockAdminUser.findOne({ email });
-                console.log('Mock result:', admin ? 'Found' : 'Not found');
-            }
-        } catch (mongoError) {
-            console.log('MongoDB failed, trying mock for login:', mongoError.message);
-            admin = await MockAdminUser.findOne({ email });
-            console.log('Mock result after error:', admin ? 'Found' : 'Not found');
-        }
+        const admin = await AdminUser.findOne({ email }).select('+password');
 
         if (admin) {
             console.log('Admin found, checking password...');
             const passwordMatch = await admin.matchPassword(password);
             console.log('Password match result:', passwordMatch);
-            
+
             if (!passwordMatch) {
                 return res.status(401).json({ message: 'Invalid admin credentials' });
             }
-            
+
             if (!admin.isActive) {
                 return res.status(403).json({ message: 'Access denied. Account is inactive.' });
             }

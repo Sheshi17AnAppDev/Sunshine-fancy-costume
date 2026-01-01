@@ -38,6 +38,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <button class="btn btn-sm btn-primary" onclick="generateUserBill('${u._id}', '${u.name}')">
                         <i class="fa-solid fa-file-invoice"></i> Bill
                     </button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteUser('${u._id}', '${u.name}')">
+                        <i class="fa-solid fa-trash"></i> Delete
+                    </button>
                 </td>
             </tr>
         `).join('');
@@ -47,7 +50,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const orders = await api.get(`/admin/users/${userId}/orders`);
             if (!orders || orders.length === 0) {
-                alert('No orders found for this user.');
+                showToast('No orders found for this user.', 'info');
                 return;
             }
 
@@ -109,7 +112,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             doc.save(`statement_${userName.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0, 10)}.pdf`);
         } catch (err) {
             console.error('Bill Generation Error:', err);
-            alert('Failed to generate bill: ' + err.message);
+            showToast('Failed to generate bill: ' + err.message, 'error');
+        }
+    };
+
+    window.deleteUser = async (userId, userName) => {
+        if (!confirm(`Are you sure you want to delete ${userName} and all their associated data (including Orders)? This action cannot be undone.`)) {
+            return;
+        }
+
+        try {
+            const res = await api.delete(`/admin/users/${userId}`);
+            showToast(res.message || 'User deleted successfully', 'success');
+            fetchUsers();
+        } catch (error) {
+            console.error('Error deleting user:', error);
+            showToast(error.message || 'Failed to delete user', 'error');
         }
     };
 

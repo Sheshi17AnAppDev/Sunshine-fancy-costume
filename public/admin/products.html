@@ -34,7 +34,9 @@
                 <li><a href="brands"><i class="fa-solid fa-tag"></i> Brands</a></li>
                 <li><a href="orders"><i class="fa-solid fa-cart-shopping"></i> Orders</a></li>
                 <li><a href="inventory"><i class="fa-solid fa-warehouse"></i> Inventory</a></li>
-                <li><a href="users"><i class="fa-solid fa-users"></i> Users Report</a></li>
+                <li><a href="users"><i class="fa-solid fa-users"></i> Users Report</a>
+                    <a href="sites"><i class="fas fa-globe"></i> Sites</a>
+                </li>
                 <li><a href="website-editor"><i class="fa-solid fa-wand-magic-sparkles"></i> Website Editor</a></li>
                 <li style="margin-top: auto;"><a href="#" id="logout"><i class="fa-solid fa-right-from-bracket"></i>
                         Logout</a></li>
@@ -116,6 +118,16 @@
                     <input type="number" id="prod-price" required>
                 </div>
             </div>
+            <div class="form-group" style="margin-top: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                    <label>Original Price <small style="color: #666;">(MRP)</small></label>
+                    <input type="number" id="prod-original-price" placeholder="e.g. 1500">
+                </div>
+                <div>
+                    <label>Discount (%)</label>
+                    <input type="number" id="prod-discount" placeholder="e.g. 20">
+                </div>
+            </div>
             <div class="form-group" style="margin-top: 1rem;">
                 <label>Stock Quantity</label>
                 <input type="number" id="prod-stock" required value="0">
@@ -143,8 +155,22 @@
                 </select>
             </div>
             <div class="form-group" style="margin-top: 1rem;">
+                <label>Main Images (Select multiple)</label>
+                <input type="file" id="prod-images" multiple accept="image/*">
+                <small style="color: #666;">First image will be the primary thumbnail.</small>
+                <div id="prod-images-preview" class="image-preview-container"></div>
+            </div>
+
+            <div class="form-group" style="margin-top: 1rem;">
+                <label>Product Video (Optional)</label>
+                <input type="file" id="prod-video" accept="video/*">
+                <small style="color: #666;">Shows only on product details page. Max size 50MB.</small>
+                <div id="prod-video-preview" style="margin-top: 0.5rem;"></div>
+            </div>
+
+            <div class="form-group" style="margin-top: 1rem;">
                 <label>Description</label>
-                <textarea id="prod-desc" required style="height: 80px;"></textarea>
+                <textarea id="prod-desc" rows="5" required></textarea>
             </div>
             <div class="form-group" style="margin-top: 1rem;">
                 <label>Current Images</label>
@@ -171,16 +197,19 @@
                 <!-- Dynamic Age Price Rows -->
             </div>
 
-            <datalist id="age-groups-list">
-                <option value="Newborn (0-6 months)">
-                <option value="Infant (6-12 months)">
-                <option value="Toddler (1-2 years)">
-                <option value="Preschool (3-4 years)">
-                <option value="Kids (5-7 years)">
-                <option value="Pre-teen (8-12 years)">
-                <option value="Teens">
-                <option value="Adults">
-            </datalist>
+            <hr style="margin: 1.5rem 0; border: 0; border-top: 1px solid rgba(0,0,0,0.1);">
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="margin: 0; font-size: 1.1rem;">Size Based Pricing (Optional)</h3>
+                <button type="button" class="btn btn-sm btn-primary" id="add-size-price-btn">
+                    <i class="fa-solid fa-plus"></i> Add
+                </button>
+            </div>
+
+            <div id="size-prices-list" style="display: flex; flex-direction: column; gap: 0.8rem;">
+                <!-- Dynamic Size Price Rows -->
+            </div>
+
 
             <div style="display: flex; gap: 1rem; margin-top: 2rem;">
                 <button type="submit" class="btn btn-primary" style="flex: 1;">Save</button>

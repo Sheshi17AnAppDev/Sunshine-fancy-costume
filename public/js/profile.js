@@ -113,13 +113,62 @@
         document.getElementById('logout-btn')?.addEventListener('click', logout);
         document.getElementById('logout-btn-2')?.addEventListener('click', logout);
 
-        document.getElementById('copy-email')?.addEventListener('click', async () => {
-            const email = document.getElementById('settings-email')?.textContent || '';
-            try {
-                await navigator.clipboard.writeText(email);
-            } catch (e) {
-            }
-        });
+        const editForm = document.getElementById('edit-profile-form');
+        if (editForm) {
+            editForm.onsubmit = async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('edit-name').value;
+                const email = document.getElementById('edit-email').value;
+                const password = document.getElementById('edit-password').value;
+                const phoneNumber = document.getElementById('edit-phone').value;
+                const address = document.getElementById('edit-address').value;
+                const city = document.getElementById('edit-city').value;
+                const postalCode = document.getElementById('edit-postal').value;
+                const country = document.getElementById('edit-country').value;
+
+                try {
+                    const submitBtn = editForm.querySelector('button[type="submit"]');
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Saving...';
+
+                    const body = {
+                        name,
+                        email,
+                        phoneNumber,
+                        address,
+                        city,
+                        postalCode,
+                        country
+                    };
+                    if (password) body.password = password;
+
+                    const updated = await api.put('/auth/profile', body);
+
+                    // Update local storage
+                    const user = JSON.parse(localStorage.getItem('user'));
+                    user.name = updated.name;
+                    user.email = updated.email;
+                    localStorage.setItem('user', JSON.stringify(user));
+                    localStorage.setItem('token', updated.token);
+
+                    // Update UI
+                    setText('profile-name', updated.name);
+                    setText('profile-name-2', updated.name);
+                    setText('profile-email', updated.email);
+
+                    showToast('Profile updated successfully', 'success');
+
+                    // Clear password field
+                    document.getElementById('edit-password').value = '';
+                } catch (error) {
+                    showToast(error.message, 'error');
+                } finally {
+                    const submitBtn = editForm.querySelector('button[type="submit"]');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Save Changes <i class="fa-solid fa-check" style="margin-left: 8px;"></i>';
+                }
+            };
+        }
     };
 
     const load = async () => {
@@ -131,8 +180,24 @@
             setText('profile-name', profile.name || 'Customer');
             setText('profile-name-2', profile.name || 'Customer');
             setText('profile-email', profile.email || '');
-            setText('settings-email', profile.email || '');
             setText('profile-role', (profile.role || 'user').toUpperCase());
+
+            // Fill form
+            const editName = document.getElementById('edit-name');
+            const editEmail = document.getElementById('edit-email');
+            const editPhone = document.getElementById('edit-phone');
+            const editAddress = document.getElementById('edit-address');
+            const editCity = document.getElementById('edit-city');
+            const editPostal = document.getElementById('edit-postal');
+            const editCountry = document.getElementById('edit-country');
+
+            if (editName) editName.value = profile.name || '';
+            if (editEmail) editEmail.value = profile.email || '';
+            if (editPhone) editPhone.value = profile.phoneNumber || '';
+            if (editAddress) editAddress.value = profile.address || '';
+            if (editCity) editCity.value = profile.city || '';
+            if (editPostal) editPostal.value = profile.postalCode || '';
+            if (editCountry) editCountry.value = profile.country || '';
         } catch (e) {
             logout();
             return;

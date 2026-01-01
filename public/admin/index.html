@@ -35,7 +35,8 @@
                 <li><a href="brands"><i class="fa-solid fa-tag"></i> Brands</a></li>
                 <li><a href="orders"><i class="fa-solid fa-cart-shopping"></i> Orders</a></li>
                 <li><a href="inventory"><i class="fa-solid fa-warehouse"></i> Inventory</a></li>
-                <li><a href="users"><i class="fa-solid fa-users"></i> Users Report</a></li>
+                <li><a href="users"><i class="fa-solid fa-users"></i> Users Report</a>
+                <a href="sites"><i class="fas fa-globe"></i> Sites</a></li>
                 <li><a href="website-editor"><i class="fa-solid fa-wand-magic-sparkles"></i> Website Editor</a></li>
                 <li style="margin-top: auto;"><a href="login.html" id="logout"><i
                             class="fa-solid fa-right-from-bracket"></i>
@@ -58,7 +59,7 @@
                     <div class="stat-content">
                         <h3 id="stat-products">0</h3>
                         <p>Total Products</p>
-                        <span class="stat-change positive">+12%</span>
+
                     </div>
                 </div>
                 <div class="stat-card success">
@@ -68,7 +69,7 @@
                     <div class="stat-content">
                         <h3 id="stat-orders">0</h3>
                         <p>Total Orders</p>
-                        <span class="stat-change positive">+8%</span>
+
                     </div>
                 </div>
                 <div class="stat-card warning">
@@ -89,7 +90,18 @@
                     <div class="stat-content">
                         <h3 id="stat-customers">0</h3>
                         <p>Customers</p>
-                        <span class="stat-change positive">+15%</span>
+
+                    </div>
+                </div>
+                <div class="stat-card danger" id="low-stock-alert" style="display: none; cursor: pointer;"
+                    onclick="window.location.href='inventory?filter=low'">
+                    <div class="stat-icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="stat-low-stock">0</h3>
+                        <p>Low Stock Items</p>
+                        <span class="stat-change" style="color: #ef4444;">Requires Attention</span>
                     </div>
                 </div>
             </div>

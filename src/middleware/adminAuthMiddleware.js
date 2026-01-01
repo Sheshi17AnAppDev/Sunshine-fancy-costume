@@ -19,9 +19,9 @@ const protect = async (req, res, next) => {
             // Log token for debugging (first 10 chars)
             // console.log('Verifying admin token:', token.substring(0, 10) + '...');
 
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const decoded = jwt.verify(token, process.env.JWT_SECRET || 'dev_secret_fallback_12345');
 
-            const adminUser = await AdminUser.findById(decoded.id).select('-password');
+            const adminUser = await AdminUser.findById(decoded.id).select('-password').populate('site');
             if (adminUser) {
                 if (!adminUser.isActive) {
                     return res.status(403).json({ message: 'Access denied. Account is inactive.' });
@@ -29,6 +29,15 @@ const protect = async (req, res, next) => {
 
                 req.user = adminUser;
                 req.authType = 'admin';
+
+                // Inject site context for data filtering
+                if (adminUser.role === 'super_admin') {
+                    req.adminSite = null; // Super admin can access all sites
+                    req.isSuperAdmin = true;
+                } else {
+                    req.adminSite = adminUser.site?._id || adminUser.site; // Site-specific admin
+                    req.isSuperAdmin = false;
+                }
 
                 // Update last login (admin users only)
                 await adminUser.updateLastLogin();

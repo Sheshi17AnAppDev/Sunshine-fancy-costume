@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Invoice | Sunshine Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="css/admin-modern.css">
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --primary-orange: #fbb03b;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f6f9fc 0%, #edf2f7 100%);
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            padding: 2rem 5%;
+        }
+
+        .invoice-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .invoice-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(251, 176, 59, 0.1) 0%, transparent 70%);
+            z-index: -1;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 3rem;
+        }
+
+        .logo-area h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            color: #1a202c;
+            margin: 0;
+        }
+
+        .logo-area p {
+            color: var(--primary-orange);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+        }
+
+        .invoice-meta {
+            text-align: right;
+        }
+
+        .invoice-meta h2 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #cbd5e0;
+            margin: 0;
+            line-height: 1;
+        }
+
+        .invoice-meta p {
+            font-weight: 600;
+            color: #4a5568;
+            margin-top: 5px;
+        }
+
+        .billing-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            margin-bottom: 3rem;
+        }
+
+        .bill-box h3 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            color: #a0aec0;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        .bill-box .content {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #2d3748;
+        }
+
+        .item-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+            margin-bottom: 3rem;
+        }
+
+        .item-table th {
+            text-align: left;
+            padding: 1rem;
+            color: #a0aec0;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .item-table tr:not(:first-child) td {
+            background: rgba(255, 255, 255, 0.5);
+            padding: 1.25rem 1rem;
+        }
+
+        .item-table td:first-child {
+            border-top-left-radius: 15px;
+            border-bottom-left-radius: 15px;
+        }
+
+        .item-table td:last-child {
+            border-top-right-radius: 15px;
+            border-bottom-right-radius: 15px;
+        }
+
+        .item-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .item-info img {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .item-name {
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .item-age {
+            font-size: 0.75rem;
+            color: var(--primary-orange);
+            font-weight: 800;
+        }
+
+        .edit-input {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 8px 12px;
+            width: 100px;
+            font-family: inherit;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .edit-input:focus {
+            outline: none;
+            border-color: var(--primary-orange);
+            box-shadow: 0 0 0 3px rgba(251, 176, 59, 0.2);
+        }
+
+        .totals-area {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .totals-box {
+            width: 300px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #718096;
+            font-size: 1.1rem;
+        }
+
+        .total-row.grand-total {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+            color: #1a202c;
+            font-weight: 800;
+            font-size: 1.5rem;
+        }
+
+        .actions-bar {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 1000;
+        }
+
+        .floating-btn {
+            background: #1a202c;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+
+        .floating-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .floating-btn.primary {
+            background: var(--primary-orange);
+        }
+
+        .floating-btn.secondary {
+            background: #4a5568;
+        }
+
+        @media print {
+
+            .actions-bar,
+            .edit-input {
+                display: none !important;
+            }
+
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .invoice-container {
+                box-shadow: none;
+                border: none;
+                max-width: 100%;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="invoice-container" id="invoice">
+        <div class="header">
+            <div class="logo-area">
+                <h1>SUNSHINE</h1>
+                <p>Fancy Costumes</p>
+            </div>
+            <div class="invoice-meta">
+                <h2>INVOICE</h2>
+                <p id="invoice-id">#ORD-000000</p>
+                <p id="invoice-date" style="color: #a0aec0; font-size: 0.9rem;">Date: --/--/----</p>
+            </div>
+        </div>
+
+        <div class="billing-grid">
+            <div class="bill-box">
+                <h3>Customer Info</h3>
+                <div class="content" id="customer-info">
+                    <p><strong>Loading...</strong></p>
+                </div>
+            </div>
+            <div class="bill-box">
+                <h3>Shipping Address</h3>
+                <div class="content" id="shipping-info">
+                    <p>Loading...</p>
+                </div>
+            </div>
+        </div>
+
+        <table class="item-table">
+            <thead>
+                <tr>
+                    <th style="width: 45%;">Description</th>
+                    <th style="width: 20%;">Price (₹)</th>
+                    <th style="width: 15%;">Quantity</th>
+                    <th style="width: 20%; text-align: right;">Total</th>
+                </tr>
+            </thead>
+            <tbody id="items-body">
+                <!-- Items injected here -->
+            </tbody>
+        </table>
+
+        <div class="totals-area">
+            <div class="totals-box">
+                <div class="total-row">
+                    <span>Subtotal</span>
+                    <span id="subtotal">₹0</span>
+                </div>
+                <div class="total-row">
+                    <span>Shipping</span>
+                    <span id="shipping-cost">₹0</span>
+                </div>
+                <div class="total-row grand-total">
+                    <span>Total Amount</span>
+                    <span id="grand-total">₹0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="actions-bar">
+        <button class="floating-btn secondary" onclick="window.history.back()">
+            <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <button class="floating-btn" id="save-btn" onclick="saveChanges()">
+            <i class="fas fa-save"></i> Save Changes
+        </button>
+        <button class="floating-btn primary" onclick="exportPDF()">
+            <i class="fas fa-file-pdf"></i> Download PDF
+        </button>
+        <button class="floating-btn" style="background: #25d366;" onclick="exportCSV()">
+            <i class="fas fa-file-csv"></i> Export CSV
+        </button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="js/admin-auth.js"></script>
+    <script src="js/invoice.js"></script>
+</body>
+
+</html>

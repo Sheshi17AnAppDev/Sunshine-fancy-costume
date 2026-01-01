@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div style="display: flex; flex-direction: column;">
                                 <span style="font-weight: 500;">${item.name}</span>
                                 ${item.ageGroup ? `<span style="font-size: 0.8rem; color: var(--muted-text);">Age: ${item.ageGroup}</span>` : ''}
+                                ${item.size ? `<span style="font-size: 0.8rem; color: var(--muted-text);">Size: ${item.size}</span>` : ''}
                             </div>
                         </div>
                     </td>

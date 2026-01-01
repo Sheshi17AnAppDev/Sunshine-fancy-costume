@@ -45,6 +45,65 @@ async function applyTheme() {
     }
 }
 
+async function renderOfferBanner() {
+    try {
+        const response = await fetch('/api/site-content/offerBanner');
+        if (response.ok) {
+            const { data } = await response.json();
+            if (data && data.isVisible) {
+                const banner = document.createElement('div');
+                banner.id = 'offer-banner';
+                // Styles
+                Object.assign(banner.style, {
+                    backgroundColor: data.backgroundColor || '#000000',
+                    color: data.textColor || '#ffffff',
+                    textAlign: 'center',
+                    padding: '0.6rem 1rem',
+                    fontSize: '0.85rem',
+                    fontWeight: '500',
+                    position: 'relative',
+                    zIndex: '2000',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    lineHeight: '1.4'
+                });
+
+                let content = data.text;
+                if (data.link && data.link !== '#' && data.link.trim() !== '') {
+                    content = `<a href="${data.link}" style="color: inherit; text-decoration: underline; margin-left: 0.3rem;">${data.text} <i class="fa-solid fa-arrow-right" style="font-size: 0.8em; margin-left: 2px;"></i></a>`;
+                } else {
+                    content = `<span>${data.text}</span>`;
+                }
+
+                banner.innerHTML = content;
+
+                // Close button
+                const closeBtn = document.createElement('button');
+                closeBtn.innerHTML = '&times;';
+                Object.assign(closeBtn.style, {
+                    position: 'absolute',
+                    right: '1rem',
+                    background: 'none',
+                    border: 'none',
+                    color: 'inherit',
+                    fontSize: '1.2rem',
+                    cursor: 'pointer',
+                    padding: '0 0.5rem',
+                    opacity: '0.8'
+                });
+                closeBtn.onclick = () => banner.remove();
+                banner.appendChild(closeBtn);
+
+                // Prepend to body
+                document.body.prepend(banner);
+            }
+        }
+    } catch (error) {
+        console.error('Failed to render banner:', error);
+    }
+}
+
 // Authentication check function
 function isAuthenticated() {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -86,6 +145,9 @@ function updateHeaderAuthUI() {
     if (!userLink) return;
 
     if (user && user.token) {
+        // Add class for flexible width
+        userLink.classList.add('user-logged-in');
+
         const firstName = user.name ? user.name.split(' ')[0] : 'User';
         userLink.innerHTML = `
             <div class="user-auth-wrapper">
@@ -108,6 +170,7 @@ function updateHeaderAuthUI() {
             };
         }
     } else {
+        userLink.classList.remove('user-logged-in');
         userLink.innerHTML = '<i class="fa-regular fa-user"></i>';
     }
 }
@@ -168,6 +231,7 @@ window.addEventListener('scroll', () => {
 // Reveal on Scroll
 document.addEventListener('DOMContentLoaded', () => {
     applyTheme();
+    renderOfferBanner();
     updateCartCount();
     // CMS: Dynamic header (public site only)
     try {
@@ -327,21 +391,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Hero Search Logic
     const heroBtn = document.getElementById('hero-search-btn');
-    const heroInput = document.getElementById('hero-search-input');
+    const mobileBtn = document.getElementById('mobile-search-btn');
 
-    if (heroBtn && heroInput) {
-        const performHeroSearch = () => {
-            const query = heroInput.value.trim();
-            if (query) {
-                window.location.href = `shop?search=${encodeURIComponent(query)}`;
-            }
-        };
+    const handleSearch = (inputId) => {
+        const input = document.getElementById(inputId);
+        if (input && input.value.trim()) {
+            window.location.href = `/shop?search=${encodeURIComponent(input.value.trim())}`;
+        }
+    };
 
-        heroBtn.addEventListener('click', performHeroSearch);
-        heroInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') performHeroSearch();
-        });
+    if (heroBtn) {
+        heroBtn.addEventListener('click', () => handleSearch('hero-search-input'));
     }
+    if (mobileBtn) {
+        mobileBtn.addEventListener('click', () => handleSearch('mobile-search-input'));
+    }
+
+    // Enter key support for both
+    document.getElementById('hero-search-input')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleSearch('hero-search-input');
+    });
+    document.getElementById('mobile-search-input')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleSearch('mobile-search-input');
+    });
 
     // Update Cart Count
     updateCartCount();
@@ -558,31 +630,26 @@ window.quickAddToCart = async (productId) => {
     }
 };
 
-// Global Toast (if not already defined)
-if (typeof window.showToast !== 'function') {
-    window.showToast = (message, type = 'info') => {
-        const toast = document.createElement('div');
-        toast.className = `toast toast-${type}`;
-        toast.style.cssText = `
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: #333;
-            color: #fff;
-            padding: 1rem 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 10000;
-            animation: slideInRight 0.3s ease-out;
-        `;
-        if (type === 'success') toast.style.background = '#10b981';
-        if (type === 'error') toast.style.background = '#ef4444';
+// Global Toast
+window.showToast = (message, type = 'info') => {
+    // Remove existing toasts to prevent stacking issues if desired, 
+    // or just let them stack naturally.
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
 
-        toast.textContent = message;
-        document.body.appendChild(toast);
-        setTimeout(() => {
-            toast.style.animation = 'slideOutRight 0.3s ease-out forwards';
-            setTimeout(() => toast.remove(), 300);
-        }, 3000);
-    };
-}
+    // Icon based on type
+    let icon = 'fa-info-circle';
+    if (type === 'success') icon = 'fa-check-circle';
+    if (type === 'error') icon = 'fa-exclamation-triangle';
+    if (type === 'warning') icon = 'fa-exclamation-circle';
+
+    toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${message}</span>`;
+    document.body.appendChild(toast);
+
+    // Auto remove
+    setTimeout(() => {
+        toast.classList.add('hide');
+        setTimeout(() => toast.remove(), 500);
+    }, 4000);
+};
+

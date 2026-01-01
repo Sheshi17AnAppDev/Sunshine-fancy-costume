@@ -14,6 +14,16 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: [true, 'Please add a price']
     },
+    originalPrice: {
+        type: Number,
+        default: 0
+    },
+    site: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Site',
+        required: true,
+        index: true
+    },
     category: {
         type: mongoose.Schema.ObjectId,
         ref: 'Category',
@@ -53,6 +63,12 @@ const productSchema = new mongoose.Schema({
             price: Number
         }
     ],
+    sizePrices: [
+        {
+            size: String,  // e.g., "S", "M", "L", "XL", "XXL"
+            price: Number
+        }
+    ],
     views: {
         type: Number,
         default: 0
@@ -65,6 +81,11 @@ const productSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
-});
+})
+
+// Indexes for performance
+productSchema.index({ site: 1, category: 1 });
+productSchema.index({ site: 1, isFeatured: 1 });
+productSchema.index({ site: 1, isPopular: 1 });
 
 module.exports = mongoose.model('Product', productSchema);

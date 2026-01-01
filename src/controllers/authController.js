@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Site = require('../models/Site');
 const generateToken = require('../config/generateToken');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
@@ -13,7 +14,7 @@ function generateOTP() {
 }
 
 // Email service function
-const sendOTPEmail = async (email, otp) => {
+const sendOTPEmail = async (email, otp, subject, type = 'verify') => {
     try {
         // Check if email credentials are configured
         if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
@@ -37,12 +38,12 @@ const sendOTPEmail = async (email, otp) => {
                 rejectUnauthorized: false // Only for development
             }
         });
-        
+
         const mailOptions = {
             from: `"Sunshine Costumes" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
             to: email,
-            subject: 'Verify Your Email - Sunshine Costumes',
-            html: createEmailTemplate(otp)
+            subject: subject || 'Verify Your Email - Sunshine Costumes',
+            html: createEmailTemplate(otp, type)
         };
 
         const info = await transporter.sendMail(mailOptions);
@@ -60,13 +61,19 @@ const sendOTPEmail = async (email, otp) => {
 };
 
 // Email template
-function createEmailTemplate(otp) {
+function createEmailTemplate(otp, type = 'verify') {
+    const isReset = type === 'reset';
+    const title = isReset ? 'Reset Your Password' : 'Verify Your Email Address';
+    const intro = isReset
+        ? 'We received a request to reset your password. Use the code below to proceed:'
+        : 'Thank you for signing up with Sunshine Costumes! To complete your registration, please use the verification code below:';
+
     return `<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Verification</title>
+    <title>${title}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -157,12 +164,12 @@ function createEmailTemplate(otp) {
             <p style="margin:10px 0 0;font-size:1rem;opacity:0.9">Fancy Costumes</p>
         </div>
         <div class="content">
-            <h2 style="color:#333;margin-bottom:20px">Verify Your Email Address</h2>
+            <h2 style="color:#333;margin-bottom:20px">${title}</h2>
             <p style="font-size:1.1rem;line-height:1.6;color:#555">
-                Thank you for signing up with Sunshine Costumes! To complete your registration, please use the verification code below:
+                ${intro}
             </p>
             <div class="otp-container">
-                <p style="color:white;font-size:1.1rem;margin:0 0 15px">Your Verification Code:</p>
+                <p style="color:white;font-size:1.1rem;margin:0 0 15px">Your Code:</p>
                 <div class="otp-code">${otp}</div>
                 <p class="expiry-info">This code will expire in 10 minutes</p>
             </div>
@@ -172,7 +179,7 @@ function createEmailTemplate(otp) {
                 </p>
             </div>
             <p style="color:#666;font-size:0.9rem;margin-top:30px">
-                If you didn't request this verification, please ignore this email.
+                If you didn't request this code, please ignore this email.
             </p>
         </div>
         <div class="footer">
@@ -228,7 +235,7 @@ exports.initiateRegistration = async (req, res) => {
             // In production, you might want to handle this differently
         }
 
-        res.status(200).json({ 
+        res.status(200).json({
             message: 'OTP sent to your email',
             email: email,
             debugOTP: process.env.NODE_ENV === 'development' ? otp : undefined
@@ -262,13 +269,36 @@ exports.verifyOTP = async (req, res) => {
             return res.status(400).json({ message: 'Registration session expired' });
         }
 
+        // Find default/active site
+        // Find default/active site
+        // Ideally this should come from middleware/request context in multi-site setup
+        let defaultSite = await Site.findOne({ isActive: true });
+
+        // Auto-create default site if none exists (Failsafe for empty DB)
+        if (!defaultSite) {
+            console.log('No active site found. Creating default site...');
+            try {
+                defaultSite = await Site.create({
+                    name: 'Sunshine Fancy Costumes',
+                    slug: 'sunshine-default',
+                    description: 'Default site created by auth failsafe',
+                    isActive: true
+                });
+            } catch (siteErr) {
+                console.error('Failed to create default site:', siteErr);
+                // Try finding ANY site if creation fail
+                defaultSite = await Site.findOne({});
+            }
+        }
+
         // Create user
         const user = await User.create({
             name: userData.name,
             email: userData.email,
             password: userData.password,
             role: 'user',
-            isVerified: true
+            isVerified: true,
+            site: defaultSite ? defaultSite._id : null
         });
 
         // Clean up stores
@@ -321,7 +351,7 @@ exports.resendOTP = async (req, res) => {
             // Continue with resend even if email fails for demo purposes
         }
 
-        res.status(200).json({ 
+        res.status(200).json({
             message: 'OTP resent to your email',
             debugOTP: process.env.NODE_ENV === 'development' ? otp : undefined
         });
@@ -333,14 +363,14 @@ exports.resendOTP = async (req, res) => {
 // Clean up expired data (run periodically)
 function cleanupExpiredData() {
     const now = Date.now();
-    
+
     // Clean expired OTPs
     for (const [email, data] of otpStore.entries()) {
         if (data.expiry < now) {
             otpStore.delete(email);
         }
     }
-    
+
     // Clean expired unverified users (30 minutes)
     for (const [email, data] of unverifiedUsers.entries()) {
         if (data.createdAt + 30 * 60 * 1000 < now) {
@@ -425,11 +455,151 @@ exports.getUserProfile = async (req, res) => {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
-                role: user.role
+                role: user.role,
+                phoneNumber: user.phoneNumber,
+                address: user.address,
+                city: user.city,
+                postalCode: user.postalCode,
+                country: user.country
             });
         } else {
             res.status(404).json({ message: 'User not found' });
         }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Update user profile
+// @route   PUT /api/auth/profile
+// @access  Private
+exports.updateUserProfile = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+
+        if (user) {
+            user.name = req.body.name || user.name;
+
+            if (req.body.email && req.body.email !== user.email) {
+                const emailExists = await User.findOne({ email: req.body.email });
+                if (emailExists) {
+                    return res.status(400).json({ message: 'Email already in use' });
+                }
+                user.email = req.body.email;
+            }
+
+            if (req.body.password) {
+                user.password = req.body.password;
+            }
+
+            user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
+            user.address = req.body.address || user.address;
+            user.city = req.body.city || user.city;
+            user.postalCode = req.body.postalCode || user.postalCode;
+            user.country = req.body.country || user.country;
+
+            const updatedUser = await user.save();
+
+            res.json({
+                _id: updatedUser._id,
+                name: updatedUser.name,
+                email: updatedUser.email,
+                role: updatedUser.role,
+                phoneNumber: updatedUser.phoneNumber,
+                address: updatedUser.address,
+                city: updatedUser.city,
+                postalCode: updatedUser.postalCode,
+                country: updatedUser.country,
+                token: generateToken(updatedUser._id)
+            });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+// @desc    Forgot password - Send OTP
+// @route   POST /api/auth/forgot-password
+// @access  Public
+exports.forgotPassword = async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Generate 6-digit OTP
+        const otp = generateOTP();
+
+        // Hash and save to DB
+        user.resetPasswordToken = crypto
+            .createHash('sha256')
+            .update(otp)
+            .digest('hex');
+
+        // Expire in 10 minutes
+        user.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+
+        await user.save();
+
+        // Send email
+        try {
+            await sendOTPEmail(email, otp, 'Reset Your Password - Sunshine Costumes', 'reset');
+            res.status(200).json({
+                success: true,
+                message: 'Password reset code sent to email',
+                debugOTP: process.env.NODE_ENV === 'development' ? otp : undefined
+            });
+        } catch (error) {
+            user.resetPasswordToken = undefined;
+            user.resetPasswordExpire = undefined;
+            await user.save();
+            return res.status(500).json({ message: 'Email could not be sent' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Reset password
+// @route   POST /api/auth/reset-password
+// @access  Public
+exports.resetPassword = async (req, res) => {
+    const { email, otp, password } = req.body;
+
+    try {
+        // Hash the provided OTP to compare with stored hash
+        const hashedOTP = crypto
+            .createHash('sha256')
+            .update(otp)
+            .digest('hex');
+
+        const user = await User.findOne({
+            email,
+            resetPasswordToken: hashedOTP,
+            resetPasswordExpire: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            return res.status(400).json({ message: 'Invalid or expired reset code' });
+        }
+
+        // Set new password
+        user.password = password;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpire = undefined;
+
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Password reset successful',
+            token: generateToken(user._id)
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

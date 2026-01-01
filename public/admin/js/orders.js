@@ -54,9 +54,14 @@ const fetchOrders = async () => {
                     <td>${o.isPaid ? '<span style="color: #10b981; font-weight:600;">Yes</span>' : '<span style="color: #ef4444; font-weight:600;">No</span>'}</td>
                     <td>${o.isDelivered ? '<span style="color: #10b981; font-weight:600;">Yes</span>' : '<span style="color: #ef4444; font-weight:600;">No</span>'}</td>
                     <td>
-                        <button class="btn-icon" onclick="viewOrder('${o._id}')" title="View Order" style="background:none; border:none; cursor:pointer; color: var(--primary-orange);">
-                            <i class="fa-solid fa-eye"></i>
-                        </button>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn-icon" onclick="viewOrder('${o._id}')" title="View Order" style="background:none; border:none; cursor:pointer; color: var(--text-muted); font-size: 1.1rem;">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                            <a href="invoice?id=${o._id}" class="btn-icon" title="Generate Bill" style="color: var(--primary-orange); font-size: 1.1rem;">
+                                <i class="fa-solid fa-file-invoice"></i>
+                            </a>
+                        </div>
                     </td>
                 </tr>
             `;
@@ -69,22 +74,12 @@ const fetchOrders = async () => {
         if (typeof showToast === 'function') {
             showToast(err.message || 'Failed to load orders', 'error');
         } else {
-            alert('Error loading orders: ' + (err.message || 'Check console for details'));
+            showToast('Error loading orders: ' + (err.message || 'Check console for details'), 'error');
         }
     }
 };
 
-// Simple showToast fallback if not defined elsewhere
-function showToast(message, type = 'info') {
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    setTimeout(() => {
-        toast.style.animation = 'slideOutRight 0.3s ease-out forwards';
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
+
 
 const modal = document.getElementById('modal');
 const overlay = document.getElementById('overlay');

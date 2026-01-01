@@ -337,6 +337,65 @@
     margin-top: 0.2rem;
 }
 
+/* Edit Profile Form Styling */
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.input-group label {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--dark-text);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding-left: 2px;
+}
+
+.input-group input {
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-gray);
+    background: var(--off-white);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--dark-text);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--primary-orange);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(251, 176, 59, 0.15);
+    transform: translateY(-1px);
+}
+
+.input-group input::placeholder {
+    color: #b0b0b0;
+    font-weight: 500;
+}
+
+.input-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .input-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem;
+    }
+}
+
 @media (max-width: 980px) {
     .account-layout {
         grid-template-columns: 1fr;

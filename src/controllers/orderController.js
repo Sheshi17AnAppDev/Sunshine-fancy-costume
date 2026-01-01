@@ -124,3 +124,61 @@ exports.getOrders = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+// @desc    Update order items
+// @route   PUT /api/orders/:id/items
+// @access  Private/Admin
+exports.updateOrderItems = async (req, res) => {
+    try {
+        const { orderItems } = req.body;
+        const order = await Order.findById(req.params.id);
+
+        if (order) {
+            // Update stock levels based on difference
+            for (const newItem of orderItems) {
+                const oldItem = order.orderItems.find(i => i.product.toString() === newItem.product.toString());
+
+                if (oldItem) {
+                    const diff = oldItem.qty - newItem.qty;
+                    if (diff !== 0) {
+                        // If diff > 0 (reduced order qty), increment stock
+                        // If diff < 0 (increased order qty), decrement stock
+                        await Product.findByIdAndUpdate(newItem.product, {
+                            $inc: { countInStock: diff }
+                        });
+                    }
+                } else {
+                    // New item added to order - decrease stock
+                    await Product.findByIdAndUpdate(newItem.product, {
+                        $inc: { countInStock: -newItem.qty }
+                    });
+                }
+            }
+
+            // Check for removed items
+            for (const oldItem of order.orderItems) {
+                const stillExists = orderItems.find(i => i.product.toString() === oldItem.product.toString());
+                if (!stillExists) {
+                    // Item was removed from order - return stock
+                    await Product.findByIdAndUpdate(oldItem.product, {
+                        $inc: { countInStock: oldItem.qty }
+                    });
+                }
+            }
+
+            order.orderItems = orderItems;
+
+            // Recalculate prices
+            const itemsPrice = orderItems.reduce((acc, item) => acc + item.price * item.qty, 0);
+            order.itemsPrice = itemsPrice;
+            order.totalPrice = itemsPrice + (order.shippingPrice || 0);
+
+            const updatedOrder = await order.save();
+            res.json(updatedOrder);
+        } else {
+            res.status(404).json({ message: 'Order not found' });
+        }
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+

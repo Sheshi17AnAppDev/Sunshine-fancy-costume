@@ -1,0 +1,120 @@
+/* ==============================================
+   VIEW ALL BUTTON - UNIVERSAL STYLING
+   ============================================== */
+
+/* Base "View All" button styling - Works on all screen sizes */
+.view-all-btn,
+.mobile-view-all-btn,
+.btn.view-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    background: linear-gradient(135deg, var(--primary-orange) 0%, #e89b25 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(251, 176, 59, 0.25);
+    border: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Shimmer effect */
+.view-all-btn::before,
+.mobile-view-all-btn::before,
+.btn.view-all::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.6s;
+}
+
+.view-all-btn:hover::before,
+.mobile-view-all-btn:hover::before,
+.btn.view-all:hover::before {
+    left: 100%;
+}
+
+/* Hover state */
+.view-all-btn:hover,
+.mobile-view-all-btn:hover,
+.btn.view-all:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(251, 176, 59, 0.35);
+    background: linear-gradient(135deg, #e89b25 0%, var(--primary-orange) 100%);
+}
+
+/* Active state */
+.view-all-btn:active,
+.mobile-view-all-btn:active,
+.btn.view-all:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 10px rgba(251, 176, 59, 0.3);
+}
+
+/* Icon styling within button */
+.view-all-btn i,
+.mobile-view-all-btn i,
+.btn.view-all i {
+    font-size: 0.85rem;
+    transition: transform 0.3s;
+}
+
+.view-all-btn:hover i,
+.mobile-view-all-btn:hover i,
+.btn.view-all:hover i {
+    transform: translateX(3px);
+}
+
+/* Variant: Outlined style */
+.view-all-btn.outlined {
+    background: transparent;
+    color: var(--primary-orange);
+    border: 2px solid var(--primary-orange);
+    box-shadow: none;
+}
+
+.view-all-btn.outlined:hover {
+    background: var(--primary-orange);
+    color: white;
+}
+
+/* Variant: Full width (for mobile) */
+@media (max-width: 768px) {
+
+    .view-all-btn.full-width,
+    .mobile-view-all-btn {
+        width: 100%;
+        justify-content: center;
+        margin-top: 1.5rem;
+        padding: 1.2rem;
+    }
+}
+
+/* Desktop - Hide purely mobile buttons */
+@media (min-width: 769px) {
+    .mobile-view-all-btn {
+        display: none !important;
+    }
+}
+
+/* For buttons in section headers */
+.section-title .view-all-btn,
+.section-title .mobile-view-all-btn {
+    margin-top: 0;
+    font-size: 0.85rem;
+    padding: 0.6rem 1rem;
+    text-transform: capitalize;
+    letter-spacing: 0.3px;
+}

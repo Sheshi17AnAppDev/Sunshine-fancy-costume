@@ -43,6 +43,7 @@ window.deleteCat = async (id) => {
     if (confirm('Are you sure?')) {
         try {
             await api.delete(`/categories/${id}`);
+            showToast('Category deleted', 'success');
             loadCategories();
         } catch (err) {
             console.error(err);
@@ -87,7 +88,7 @@ document.getElementById('category-form').onsubmit = async (e) => {
         overlay.style.display = 'none';
         loadCategories();
     } catch (err) {
-        alert(err.message || 'Error saving category');
+        showToast(err.message || 'Error saving category', 'error');
     }
 };
 

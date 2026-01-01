@@ -119,11 +119,27 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const renderItem = (p) => {
         const isFav = window.isInWishlist(p._id);
+        const hasMultipleImages = p.images && p.images.length > 1;
+        const hasSale = p.originalPrice && p.originalPrice > p.price;
+        const discountPercent = hasSale ? Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100) : 0;
+
+        let imageContent;
+        if (hasMultipleImages) {
+            imageContent = `
+                <div class="product-card-carousel">
+                    ${p.images.map(img => `<img src="${img.url || img}" alt="${p.name}">`).join('')}
+                </div>
+            `;
+        } else {
+            imageContent = `<img src="${p.images[0]?.url || p.images[0] || ''}" alt="${p.name}">`;
+        }
+
         return `
             <div class="product-item reveal">
                 <div class="product-img-box">
-                    <a href="product?id=${p._id}" style="display: block; width: 100%; height: 100%;">
-                        <img src="${(p.images && p.images[0]) ? (p.images[0].url || p.images[0]) : ''}" alt="${p.name}">
+                    ${hasSale ? `<span class="sale-tag">-${discountPercent}% OFF</span>` : ''}
+                    <a href="product?id=${p._id}" style="display: block; width: 100%; height: 100%; position: relative; overflow: hidden;">
+                        ${imageContent}
                     </a>
                     <div class="quick-actions">
                         <button class="action-btn heart-icon-btn ${isFav ? 'active' : ''}" data-id="${p._id}" title="Add to Wishlist" onclick="event.preventDefault(); window.toggleWishlist('${p._id}')">
@@ -137,6 +153,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <a href="product?id=${p._id}" style="text-decoration: none; color: inherit;">
                     <h4>${p.name}</h4>
                     <div class="price-box">
+                        ${hasSale ? `<span class="old-price">${formatCurrency(p.originalPrice)}</span>` : ''}
                         <span class="new-price">${formatCurrency(p.price)}</span>
                     </div>
                 </a>
@@ -149,6 +166,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         const selectedCats = Array.from(document.querySelectorAll('.cat-filter:checked')).map(cb => cb.value);
         const selectedAges = Array.from(document.querySelectorAll('.age-filter:checked')).map(cb => cb.value);
         const selectedPriceIndices = Array.from(document.querySelectorAll('.price-filter:checked')).map(cb => parseInt(cb.value));
+
+        // Get filter from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const filterType = urlParams.get('filter'); // e.g., "featured" or "popular"
 
         const filtered = products.filter(p => {
             const matchesSearch = p.name.toLowerCase().includes(searchText) ||
@@ -170,7 +191,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                     return allPrices.some(priceVal => priceVal >= range.min && priceVal <= range.max);
                 });
 
-            return matchesSearch && matchesCat && matchesAge && matchesPrice;
+            // Check URL filter parameter
+            let matchesFilter = true;
+            if (filterType === 'featured') {
+                matchesFilter = p.isFeatured === true;
+            } else if (filterType === 'popular') {
+                matchesFilter = p.isPopular === true;
+            }
+
+            return matchesSearch && matchesCat && matchesAge && matchesPrice && matchesFilter;
         });
 
         if (grid) {
@@ -207,6 +236,42 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (searchQuery && searchInput) {
         searchInput.value = searchQuery;
     }
+
+    // Product Card Hover Auto-Scroll (Delegated)
+    let cardInterval;
+    const stopCardScroll = () => {
+        if (cardInterval) clearInterval(cardInterval);
+        cardInterval = null;
+    };
+
+    document.addEventListener('mouseover', (e) => {
+        const carousel = e.target.closest('.product-card-carousel');
+        if (carousel && !cardInterval) {
+            // Start scrolling
+            cardInterval = setInterval(() => {
+                const currentScroll = carousel.scrollLeft;
+                const width = carousel.clientWidth;
+                const totalWidth = carousel.scrollWidth;
+
+                let nextScroll = currentScroll + width;
+                if (nextScroll >= totalWidth - 5) {
+                    nextScroll = 0; // Loop back
+                }
+                carousel.scrollTo({ left: nextScroll, behavior: 'smooth' });
+            }, 1200);
+        }
+    });
+
+    document.addEventListener('mouseout', (e) => {
+        const carousel = e.target.closest('.product-card-carousel');
+        if (carousel) {
+            const rel = e.relatedTarget;
+            if (!carousel.contains(rel)) {
+                stopCardScroll();
+                carousel.scrollTo({ left: 0 }); // reset
+            }
+        }
+    });
 
     initShop();
 });

@@ -10,8 +10,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/mobile-small.css">
+    <link rel="stylesheet" href="css/view-all-buttons.css">
+    <link rel="stylesheet" href="css/mobile-app.css">
     <link rel="stylesheet" href="css/mobile-app.css">
     <link rel="stylesheet" href="css/product.css">
+    <link rel="stylesheet" href="css/reviews.css">
 </head>
 
 <body>
@@ -97,6 +101,15 @@
                     </div>
                 </div>
 
+                <div id="size-selection-container" style="margin-bottom: 2rem;" hidden>
+                    <label
+                        style="display: block; font-weight: 700; margin-bottom: 0.8rem; color: var(--text-dark);">SELECT
+                        SIZE</label>
+                    <div id="size-chips" style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
+                        <!-- Dynamic Size Chips -->
+                    </div>
+                </div>
+
                 <div class="short-description">
                     <p id="product-desc">Loading product description...</p>
                 </div>
@@ -113,10 +126,7 @@
                 <button class="btn btn-outline buy-now-btn" style="width: 100%; margin-top: 1rem;">Buy Now</button>
 
                 <div class="shipping-info" style="margin-top: 2.5rem;">
-                    <div class="info-item">
-                        <i class="fa-solid fa-truck"></i>
-                        <span>Free worldwide shipping on orders over $100</span>
-                    </div>
+
                     <div class="info-item">
                         <i class="fa-solid fa-clock"></i>
                         <span>Delivered in 2-7 Working Days. Shipping & Return</span>
@@ -134,6 +144,41 @@
                 <p id="tab-desc" style="color: var(--muted-text); line-height: 1.8;">
                     Loading description...
                 </p>
+            </div>
+            <div class="tab-content" id="reviews-tab" style="display: none;">
+                <div class="reviews-container" id="reviews-list">
+                    <p style="text-align:center; color:#999;">No reviews yet. Be the first to review!</p>
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 2rem 0;">
+
+                <h3>Write a Review</h3>
+                <form id="review-form" style="margin-top: 1rem; max-width: 600px;">
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <input type="text" id="review-name" placeholder="Your Name" required
+                            style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label style="display:block; margin-bottom:0.5rem;">Rating</label>
+                        <div class="star-rating-input">
+                            <input type="radio" id="star5" name="rating" value="5" /><label for="star5"
+                                title="5 stars">★</label>
+                            <input type="radio" id="star4" name="rating" value="4" /><label for="star4"
+                                title="4 stars">★</label>
+                            <input type="radio" id="star3" name="rating" value="3" /><label for="star3"
+                                title="3 stars">★</label>
+                            <input type="radio" id="star2" name="rating" value="2" /><label for="star2"
+                                title="2 stars">★</label>
+                            <input type="radio" id="star1" name="rating" value="1" /><label for="star1"
+                                title="1 star">★</label>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <textarea id="review-comment" placeholder="Your experience..." rows="4" required
+                            style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 5px;"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-black" style="padding: 0.8rem 2rem;">Submit Review</button>
+                </form>
             </div>
         </div>
 

@@ -138,6 +138,24 @@ const getDefaultDataForKey = (key) => {
         };
     }
 
+
+    if (key === 'offerBanner') {
+        return {
+            isVisible: false,
+            text: 'Special Offer! Get 20% Off On All Products.',
+            link: '#',
+            backgroundColor: '#000000',
+            textColor: '#ffffff'
+        };
+    }
+
+    if (key === 'promoCarousel') {
+        return {
+            isVisible: true,
+            slides: []
+        };
+    }
+
     return {};
 };
 

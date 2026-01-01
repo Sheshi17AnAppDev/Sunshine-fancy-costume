@@ -88,6 +88,7 @@ exports.getDashboardStats = async (req, res) => {
         const allProducts = await Product.find({});
         const totalViews = allProducts.reduce((sum, p) => sum + (p.views || 0), 0);
         const totalBooked = allProducts.reduce((sum, p) => sum + (p.bookedCount || 0), 0);
+        const lowStockCount = await Product.countDocuments({ countInStock: { $lte: 5 } });
 
         const orders = await Order.find({ isPaid: true });
         const totalRevenue = orders.reduce((sum, order) => sum + (order.totalPrice || 0), 0);
@@ -117,6 +118,7 @@ exports.getDashboardStats = async (req, res) => {
             todaysRevenue,
             totalViews,
             totalBooked,
+            lowStockCount,
             recentOrders: recentOrders.map(order => ({
                 _id: order._id,
                 orderNumber: order._id.toString().slice(-6).toUpperCase(),
@@ -204,6 +206,35 @@ exports.getUserOrders = async (req, res) => {
         const orders = await Order.find({ user: req.params.id }).sort({ createdAt: -1 });
         res.json(orders);
     } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+// @desc    Delete user and all their associated data (Orders)
+// @route   DELETE /api/admin/users/:id
+// @access  Private (Admin only)
+exports.deleteUserAndData = async (req, res) => {
+    try {
+        const userId = req.params.id;
+
+        // 1. Check if user exists and is a regular user (not admin)
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (user.role === 'admin') {
+            return res.status(403).json({ message: 'Cannot delete admin users from here' });
+        }
+
+        // 2. Delete all orders associated with this user
+        await Order.deleteMany({ user: userId });
+
+        // 3. Delete the user
+        await User.findByIdAndDelete(userId);
+
+        res.json({ message: 'User and all associated data deleted successfully' });
+    } catch (error) {
+        console.error('Delete user error:', error);
         res.status(500).json({ message: error.message });
     }
 };

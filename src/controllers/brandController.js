@@ -5,7 +5,14 @@ const Brand = require('../models/Brand');
 // @access  Public
 exports.getBrands = async (req, res) => {
     try {
-        const brands = await Brand.find().sort({ name: 1 });
+        const filter = {};
+
+        // Apply site filtering for admin access
+        if (req.user && req.authType === 'admin' && req.adminSite) {
+            filter.site = req.adminSite;
+        }
+
+        const brands = await Brand.find(filter).sort({ name: 1 });
         res.status(200).json(brands);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -30,7 +37,11 @@ exports.getBrand = async (req, res) => {
 // @access  Private/Admin
 exports.createBrand = async (req, res) => {
     try {
-        const brand = await Brand.create(req.body);
+        const brandData = {
+            ...req.body,
+            site: req.adminSite || req.body.site // Use admin's site or provided site (for super admin)
+        };
+        const brand = await Brand.create(brandData);
         res.status(201).json(brand);
     } catch (error) {
         res.status(400).json({ message: error.message });

@@ -1,6 +1,12 @@
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
+    site: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Site',
+        required: true,
+        index: true
+    },
     user: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
@@ -22,7 +28,7 @@ const orderSchema = new mongoose.Schema({
     ],
     shippingAddress: {
         fullName: { type: String, required: true },
-        email: { type: String, required: true },
+        email: { type: String, required: false },
         address: { type: String, required: true },
         city: { type: String, required: true },
         postalCode: { type: String, required: true },
@@ -69,5 +75,9 @@ const orderSchema = new mongoose.Schema({
         default: Date.now
     }
 });
+
+// Index for site-based order queries
+orderSchema.index({ site: 1, user: 1 });
+orderSchema.index({ site: 1, createdAt: -1 });
 
 module.exports = mongoose.model('Order', orderSchema);

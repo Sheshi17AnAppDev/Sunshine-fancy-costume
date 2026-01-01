@@ -93,7 +93,8 @@
                 <li><a href="brands"><i class="fa-solid fa-tag"></i> Brands</a></li>
                 <li><a href="orders"><i class="fa-solid fa-cart-shopping"></i> Orders</a></li>
                 <li><a href="inventory" class="active"><i class="fa-solid fa-warehouse"></i> Inventory</a></li>
-                <li><a href="users"><i class="fa-solid fa-users"></i> Users Report</a></li>
+                <li><a href="users"><i class="fa-solid fa-users"></i> Users Report</a>
+                <a href="sites"><i class="fas fa-globe"></i> Sites</a></li>
                 <li><a href="website-editor"><i class="fa-solid fa-wand-magic-sparkles"></i> Website Editor</a></li>
                 <li style="margin-top: auto;"><a href="#" id="logout"><i class="fa-solid fa-right-from-bracket"></i>
                         Logout</a></li>
@@ -112,7 +113,28 @@
                 </div>
             </div>
 
-            <div class="funnel-container" style="margin-top: 1.5rem;">
+            <div class="filters-section" style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
+                <div class="search-bar" style="flex: 1; min-width: 250px; position: relative;">
+                    <i class="fa-solid fa-magnifying-glass"
+                        style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); opacity: 0.5;"></i>
+                    <input type="text" id="inventory-search" placeholder="Search products..."
+                        style="width: 100%; padding: 12px 12px 12px 45px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); background: #fff;">
+                </div>
+                <div class="filter-controls" style="display: flex; gap: 0.75rem;">
+                    <select id="category-filter"
+                        style="padding: 12px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); background: #fff; min-width: 150px;">
+                        <option value="">All Categories</option>
+                    </select>
+                    <select id="stock-filter"
+                        style="padding: 12px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); background: #fff; min-width: 150px;">
+                        <option value="all">All Stock Status</option>
+                        <option value="low">Low Stock (≤ 5)</option>
+                        <option value="out">Out of Stock</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="funnel-container" style="margin-top: 2rem;">
                 <div class="funnel-card">
                     <h4>Visited</h4>
                     <div class="value" id="total-visited">0</div>
@@ -129,6 +151,10 @@
                     <h4>Delivered</h4>
                     <div class="value" id="total-delivered">0</div>
                 </div>
+                <div class="funnel-card" style="background: #1a202c; color: white;">
+                    <h4 style="color: rgba(255,255,255,0.7);">Inventory Value</h4>
+                    <div class="value" id="stat-inventory-value">₹0</div>
+                </div>
             </div>
 
             <div class="table-container">
@@ -137,11 +163,12 @@
                         <tr>
                             <th>Product</th>
                             <th>Category</th>
-                            <th>Stock</th>
+                            <th style="width: 120px;">Stock</th>
                             <th>Status</th>
                             <th>Visited</th>
                             <th>Booked</th>
                             <th>Conv. %</th>
+                            <th style="width: 100px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="inventory-body">

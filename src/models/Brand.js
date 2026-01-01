@@ -1,11 +1,16 @@
 const mongoose = require('mongoose');
 
 const brandSchema = new mongoose.Schema({
+    site: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Site',
+        required: true,
+        index: true
+    },
     name: {
         type: String,
         required: [true, 'Please add a brand name'],
-        trim: true,
-        unique: true
+        trim: true
     },
     image: {
         type: String,
@@ -24,5 +29,8 @@ const brandSchema = new mongoose.Schema({
         default: Date.now
     }
 });
+
+// Unique brand name per site
+brandSchema.index({ site: 1, name: 1 }, { unique: true });
 
 module.exports = mongoose.model('Brand', brandSchema);

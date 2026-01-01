@@ -33,7 +33,8 @@
                 <li><a href="brands"><i class="fa-solid fa-tag"></i> Brands</a></li>
                 <li><a href="orders"><i class="fa-solid fa-cart-shopping"></i> Orders</a></li>
                 <li><a href="website-editor"><i class="fa-solid fa-wand-magic-sparkles"></i> Website Editor</a></li>
-                <li><a href="admin-management" class="active"><i class="fa-solid fa-users-gear"></i> Admin Management</a></li>
+                <li><a href="admin-management" class="active"><i class="fa-solid fa-users-gear"></i> Admin
+                        Management</a></li>
                 <li style="margin-top: auto;"><a href="#" id="logout"><i class="fa-solid fa-right-from-bracket"></i>
                         Logout</a></li>
             </ul>
@@ -82,6 +83,21 @@
             <div class="form-group">
                 <label>Password</label>
                 <input type="password" id="admin-password" required>
+            </div>
+            <div class="form-group">
+                <label>Role</label>
+                <select id="admin-role" required>
+                    <option value="admin">Regular Admin</option>
+                    <option value="super_admin">Super Admin</option>
+                </select>
+                <small>Super admins can manage all sites</small>
+            </div>
+            <div class="form-group" id="site-selection-group">
+                <label>Assigned Site *</label>
+                <select id="admin-site" required>
+                    <option value="">Loading sites...</option>
+                </select>
+                <small>Regular admins can only manage one site</small>
             </div>
             <div class="form-group">
                 <label>Permissions</label>

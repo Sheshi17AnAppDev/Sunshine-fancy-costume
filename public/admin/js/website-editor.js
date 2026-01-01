@@ -1,4 +1,37 @@
 (function () {
+    // Site management
+    let currentSiteId = null;
+    let allSites = [];
+
+    // Load sites into selector
+    async function loadSites() {
+        try {
+            allSites = await api.get('/sites');
+            const selector = document.getElementById('site-selector');
+
+            if (allSites.length > 0) {
+                // Default to first active site
+                const activeSites = allSites.filter(s => s.isActive);
+                currentSiteId = activeSites.length > 0 ? activeSites[0]._id : allSites[0]._id;
+
+                selector.innerHTML = allSites.map(site =>
+                    `<option value="${site._id}" ${site._id === currentSiteId ? 'selected' : ''}>${site.name}</option>`
+                ).join('');
+
+                selector.addEventListener('change', (e) => {
+                    currentSiteId = e.target.value;
+                    loadContent(); // Reload content for selected site
+                    showToast(`Switched to ${allSites.find(s => s._id === currentSiteId).name}`, 'info');
+                });
+            } else {
+                selector.innerHTML = '<option value="">No sites available</option>';
+            }
+        } catch (error) {
+            console.error('Failed to load sites:', error);
+            showToast('Failed to load sites', 'error');
+        }
+    }
+
     const els = {
         pageKey: document.getElementById('page-key'),
         status: document.getElementById('status'),
@@ -63,7 +96,23 @@
         priceRangeList: document.getElementById('price-range-list'),
         addPriceRangeBtn: document.getElementById('add-price-range-btn'),
         ageGroupListAdmin: document.getElementById('age-group-list-admin'),
-        addAgeGroupBtn: document.getElementById('add-age-group-btn')
+        addAgeGroupBtn: document.getElementById('add-age-group-btn'),
+
+        // Offer Banner
+        offerBannerExtra: document.getElementById('offer-banner-extra'),
+        bannerVisible: document.getElementById('banner-visible'),
+        bannerText: document.getElementById('banner-text'),
+        bannerLink: document.getElementById('banner-link'),
+        bannerBgColor: document.getElementById('banner-bg-color'),
+        bannerBgText: document.getElementById('banner-bg-text'),
+        bannerTextColor: document.getElementById('banner-text-color'),
+        bannerTextText: document.getElementById('banner-text-text'),
+
+        // Promo Carousel
+        promoCarouselExtra: document.getElementById('promo-carousel-extra'),
+        carouselVisible: document.getElementById('carousel-visible'),
+        carouselList: document.getElementById('carousel-list'),
+        addSlideBtn: document.getElementById('add-slide-btn')
     };
 
     const setStatus = (text) => {
@@ -74,6 +123,8 @@
 
     const setVisibleForPage = (key) => {
         if (els.aboutExtra) els.aboutExtra.hidden = key !== 'about';
+        if (els.offerBannerExtra) els.offerBannerExtra.hidden = key !== 'offerBanner';
+        if (els.promoCarouselExtra) els.promoCarouselExtra.hidden = key !== 'promoCarousel';
         if (els.contactExtra) els.contactExtra.hidden = key !== 'contact';
         if (els.blogExtra) els.blogExtra.hidden = key !== 'blog';
         if (els.faqExtra) els.faqExtra.hidden = key !== 'faq';
@@ -82,9 +133,9 @@
         if (els.headerExtra) els.headerExtra.hidden = key !== 'header';
         if (els.themeExtra) els.themeExtra.hidden = key !== 'theme';
 
-        const contentKeys = ['home', 'header', 'about', 'shop', 'contact', 'blog', 'faq', 'theme'];
+        const contentKeys = ['home', 'header', 'about', 'shop', 'contact', 'blog', 'faq', 'theme', 'offerBanner', 'promoCarousel'];
         // Only show generic blocks for 'home' or others if they use them. 
-        const showGeneric = !['header', 'theme', 'contact', 'blog', 'faq', 'shop'].includes(key);
+        const showGeneric = !['header', 'theme', 'contact', 'blog', 'faq', 'shop', 'offerBanner', 'promoCarousel'].includes(key);
 
         if (els.heroBlock) els.heroBlock.style.display = showGeneric ? '' : 'none';
         if (els.sectionTitlesBlock) els.sectionTitlesBlock.style.display = showGeneric ? '' : 'none';
@@ -162,6 +213,13 @@
             posts.forEach(p => renderBlogPost(p));
         }
 
+        if (key === 'promoCarousel') {
+            els.carouselVisible.checked = !!content?.isVisible;
+            els.carouselList.innerHTML = '';
+            const slides = content?.slides || [];
+            slides.forEach(s => renderCarouselSlideItem(s));
+        }
+
         if (key === 'faq') {
             els.faqTitle.value = content?.title || '';
             els.faqSubtitle.value = content?.subtitle || '';
@@ -169,6 +227,20 @@
             els.faqList.innerHTML = '';
             const questions = content?.questions || [];
             questions.forEach(q => renderFaqItem(q.q, q.a));
+        }
+
+        if (key === 'offerBanner') {
+            els.bannerVisible.checked = !!content?.isVisible;
+            els.bannerText.value = safe(content?.text);
+            els.bannerLink.value = safe(content?.link);
+
+            const bg = content?.backgroundColor || '#000000';
+            const txt = content?.textColor || '#ffffff';
+
+            els.bannerBgColor.value = bg;
+            els.bannerBgText.value = bg;
+            els.bannerTextColor.value = txt;
+            els.bannerTextText.value = txt;
         }
 
         if (key === 'shop') {
@@ -182,6 +254,126 @@
             groups.forEach(g => renderAgeGroupItem(g.label));
         }
     };
+
+    // Helper to render Carousel Slide Item
+    const renderCarouselSlideItem = (slide = {}) => {
+        const div = document.createElement('div');
+        div.className = 'carousel-slide-item glass';
+        div.style.padding = '1.5rem';
+        div.style.border = '1px solid rgba(255,255,255,0.1)';
+
+        const catOptions = availableCategories.map(c =>
+            `<option value="${c._id}" ${c._id === slide.categoryId ? 'selected' : ''}>${c.name}</option>`
+        ).join('');
+
+        div.innerHTML = `
+            <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+                <h4 style="margin:0;">Slide</h4>
+                <button type="button" class="btn-remove" style="color:red; background:none; border:none; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+            </div>
+             <div style="margin-bottom:1rem;">
+                <label style="font-weight:600; font-size:0.8rem; display:block; margin-bottom:0.3rem;">Image/Video URL</label>
+                <div style="display:flex; gap:0.5rem;">
+                    <input type="text" class="slide-image" value="${slide.image || ''}" style="flex:1; padding:0.6rem; border-radius:6px; border:1px solid #ddd;">
+                    <button type="button" class="btn-upload" style="background:var(--primary-color); color:white; border:none; padding:0 1rem; border-radius:6px; cursor:pointer; font-size:0.8rem;">
+                        <i class="fa-solid fa-upload"></i> Upload
+                    </button>
+                    <input type="file" class="file-input" style="display:none;" accept="image/*,video/*">
+                </div>
+                <p style="font-size:0.75rem; color:rgba(255,255,255,0.5); margin-top:0.3rem;">Supports Images (JPG, PNG) and Videos (MP4, WebM).</p>
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin-bottom:1rem;">
+                <div>
+                   <label style="font-weight:600; font-size:0.8rem; display:block; margin-bottom:0.3rem;">Title</label>
+                   <input type="text" class="slide-title" value="${slide.title || ''}" style="width:100%; padding:0.6rem; border-radius:6px; border:1px solid #ddd;">
+                </div>
+                <div>
+                   <label style="font-weight:600; font-size:0.8rem; display:block; margin-bottom:0.3rem;">Target Category</label>
+                   <select class="slide-category" style="width:100%; padding:0.6rem; border-radius:6px; border:1px solid #ddd;">
+                        <option value="">-- Select Category --</option>
+                        ${catOptions}
+                   </select>
+                </div>
+            </div>
+             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin-bottom:1rem;">
+                <div>
+                   <label style="font-weight:600; font-size:0.8rem; display:block; margin-bottom:0.3rem;">Discount %</label>
+                   <input type="number" class="slide-discount" value="${slide.discount || ''}" placeholder="e.g. 20" style="width:100%; padding:0.6rem; border-radius:6px; border:1px solid #ddd;">
+                </div>
+                <div style="display:flex; align-items:flex-end;">
+                   <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; margin-bottom:0.8rem;">
+                        <input type="checkbox" class="slide-show-discount" ${slide.showDiscount ? 'checked' : ''} style="width:1.2rem; height:1.2rem;">
+                        <span style="font-weight:600; font-size:0.85rem;">Show Discount on Button/Products</span>
+                   </label>
+                </div>
+            </div>
+            <!-- Link removed as it will be auto-generated from Category -->
+            <!-- But keeping it hidden/optional just in case? -->
+            <!-- No, requested to "choose categories" in place of subtitle. -->
+        `;
+
+        div.querySelector('.btn-remove').addEventListener('click', () => div.remove());
+
+        // Upload Handler (reusing logic but simplified here)
+        const btnUpload = div.querySelector('.btn-upload');
+        const fileInput = div.querySelector('.file-input');
+        const urlInput = div.querySelector('.slide-image');
+
+        btnUpload.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (file.size > 25 * 1024 * 1024) {
+                showToast('File is too large (Max 25MB)', 'warning');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const originalBtnText = btnUpload.innerHTML;
+            btnUpload.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            btnUpload.disabled = true;
+
+            try {
+                // Token logic replicated from blog post upload
+                const token = localStorage.getItem('adminToken');
+                const uploadRes = await fetch('/api/upload', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+
+                if (!uploadRes.ok) {
+                    const data = await uploadRes.json();
+                    if (uploadRes.status === 401) {
+                        showToast('Session expired', 'error');
+                        return;
+                    }
+                    throw new Error(data.message || 'Upload failed');
+                }
+
+                const data = await uploadRes.json();
+                urlInput.value = data.url;
+                btnUpload.innerHTML = '<i class="fa-solid fa-check"></i> Done';
+                setTimeout(() => { btnUpload.innerHTML = originalBtnText; btnUpload.disabled = false; }, 2000);
+
+            } catch (err) {
+                console.error(err);
+                showToast('Upload failed: ' + err.message, 'error');
+                btnUpload.innerHTML = 'Error';
+                setTimeout(() => { btnUpload.innerHTML = originalBtnText; btnUpload.disabled = false; }, 2000);
+            }
+        });
+
+        els.carouselList.appendChild(div);
+    };
+
+    if (els.addSlideBtn) {
+        els.addSlideBtn.addEventListener('click', () => renderCarouselSlideItem());
+    }
 
     // Helper to render FAQ Item
     const renderFaqItem = (question = '', answer = '') => {
@@ -298,7 +490,7 @@
 
             // Basic Validation before sending
             if (file.size > 25 * 1024 * 1024) {
-                alert('File is too large (Max 25MB)');
+                showToast('File is too large (Max 25MB)', 'warning');
                 return;
             }
 
@@ -335,7 +527,7 @@
                 if (!uploadRes.ok) {
                     const data = await uploadRes.json();
                     if (uploadRes.status === 401) {
-                        alert('Session expired. Please log in again.');
+                        showToast('Session expired. Please log in again.', 'error');
                         window.location.href = '/admin/login';
                         return;
                     }
@@ -353,7 +545,7 @@
 
             } catch (err) {
                 console.error(err);
-                alert('Upload failed: ' + err.message);
+                showToast('Upload failed: ' + err.message, 'error');
                 btnUpload.innerHTML = 'Error';
                 setTimeout(() => {
                     btnUpload.innerHTML = originalBtnText;
@@ -491,6 +683,38 @@
             };
         }
 
+        if (key === 'offerBanner') {
+            return {
+                isVisible: els.bannerVisible.checked,
+                text: els.bannerText.value,
+                link: els.bannerLink.value,
+                backgroundColor: els.bannerBgText.value,
+                textColor: els.bannerTextText.value
+            };
+        }
+
+        if (key === 'promoCarousel') {
+            const slides = [];
+            const items = els.carouselList.querySelectorAll('.carousel-slide-item');
+            items.forEach((item, index) => {
+                const categoryId = item.querySelector('.slide-category').value;
+                slides.push({
+                    id: String(index + 1),
+                    image: item.querySelector('.slide-image').value,
+                    title: item.querySelector('.slide-title').value,
+                    categoryId: categoryId,
+                    discount: item.querySelector('.slide-discount').value,
+                    showDiscount: item.querySelector('.slide-show-discount').checked,
+                    link: categoryId ? `/shop?category=${categoryId}` : '#'
+                });
+            });
+
+            return {
+                isVisible: els.carouselVisible.checked,
+                slides
+            };
+        }
+
         if (key === 'shop') {
             const priceRanges = [];
             const rItems = els.priceRangeList.querySelectorAll('.price-range-item');
@@ -520,12 +744,20 @@
         return {};
     };
 
+    let availableCategories = [];
+
     const loadPage = async () => {
         const key = els.pageKey.value;
         setVisibleForPage(key);
         setStatus('Loading...');
 
         try {
+            // Pre-fetch categories if needed for promoCarousel
+            if (key === 'promoCarousel' && availableCategories.length === 0) {
+                const catRes = await fetch('/api/categories');
+                if (catRes.ok) availableCategories = await catRes.json();
+            }
+
             const res = await adminAuth.makeAuthenticatedRequest(`/api/admin/site-content/${key}?t=${Date.now()}`);
             fillForm(key, res.data);
             setStatus(`Loaded • ${new Date(res.updatedAt).toLocaleString()}`);
@@ -552,8 +784,16 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         setVisibleForPage(els.pageKey.value);
+        document.getElementById('save-btn').addEventListener('click', savePage);
+        const saveCarouselBtn = document.getElementById('save-carousel-btn');
+        if (saveCarouselBtn) {
+            saveCarouselBtn.addEventListener('click', async () => {
+                await savePage();
+                showToast('Changes Saved Successfully!', 'success');
+            });
+        }
+
         els.pageKey.addEventListener('change', loadPage);
-        els.saveBtn.addEventListener('click', savePage);
 
         // Theme Color Sync
         const syncColor = (picker, text) => {
@@ -562,6 +802,8 @@
         };
         syncColor(els.themePrimary, els.themePrimaryText);
         syncColor(els.themeSecondary, els.themeSecondaryText);
+        syncColor(els.bannerBgColor, els.bannerBgText);
+        syncColor(els.bannerTextColor, els.bannerTextText);
 
         // Theme Presets
         const presets = {
@@ -609,4 +851,7 @@
             }
         };
     });
+
+    // Initialize site selector
+    loadSites();
 })();

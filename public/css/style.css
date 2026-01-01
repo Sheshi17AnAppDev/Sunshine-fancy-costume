@@ -157,6 +157,35 @@ body {
     filter: drop-shadow(0 0 10px rgba(251, 176, 59, 0.4));
 }
 
+/* Product Card Mini Carousel */
+.product-card-carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    /* Occupies full img-box relative space */
+    top: 0;
+    left: 0;
+}
+
+.product-card-carousel::-webkit-scrollbar {
+    display: none;
+}
+
+.product-card-carousel img {
+    min-width: 100%;
+    height: 100%;
+    object-fit: cover;
+    scroll-snap-align: center;
+    transition: transform 0.5s ease;
+}
+
+/* Hover reveal arrows in future if requested, but swipe works naturally */
+
+
 /* Header - Exactly as Reference */
 header {
     background: var(--white);
@@ -211,6 +240,18 @@ nav ul li a {
     color: var(--primary-orange);
     background: var(--soft-peach);
     transform: translateY(-2px);
+}
+
+.header-icons a.user-logged-in {
+    width: auto;
+    height: auto;
+    border-radius: 50px;
+    background: transparent !important;
+}
+
+.header-icons a.user-logged-in:hover {
+    background: transparent !important;
+    transform: none;
 }
 
 /* User Auth Header Styles */
@@ -650,6 +691,7 @@ section {
     text-decoration: none;
     color: var(--dark-text);
     transition: var(--transition-smooth);
+    text-align: center;
 }
 
 .product-item:hover {
@@ -835,21 +877,49 @@ section {
     color: var(--primary-orange);
 }
 
+/* Product Price Styling */
 .price-box {
     display: flex;
-    gap: 10px;
     align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    margin-top: 0.8rem;
+    flex-wrap: wrap;
 }
 
 .old-price {
-    color: var(--muted-text);
+    color: #999;
     text-decoration: line-through;
     font-size: 0.9rem;
+    font-weight: 500;
+    opacity: 0.8;
 }
 
 .new-price {
+    color: var(--primary-orange);
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
+    letter-spacing: -0.5px;
+}
+
+/* When there's a sale price, make it red and more prominent */
+.price-box:has(.old-price) .new-price {
+    color: #ff3838;
+    font-size: 1.3rem;
+}
+
+@media (max-width: 480px) {
+    .old-price {
+        font-size: 0.85rem;
+    }
+
+    .new-price {
+        font-size: 1.1rem;
+    }
+
+    .price-box:has(.old-price) .new-price {
+        font-size: 1.2rem;
+    }
 }
 
 /* Newsletter Section - EXACT */
@@ -989,6 +1059,21 @@ footer {
 
 .cart-table td {
     padding: 0.5rem 0.5rem;
+}
+
+/* Mobile Search Bar Visibility */
+.mobile-search-bar {
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+    .mobile-search-bar {
+        display: block !important;
+    }
+
+    .hero-search {
+        display: none !important;
+    }
 }
 
 /* Hide mobile bottom navigation on auth pages */
@@ -1948,6 +2033,7 @@ body.admin-signup {
     line-height: 1.2;
     font-weight: 500;
 }
+
 /* Horizontal Scroll for Products */
 .product-scroll-wrapper {
     position: relative;
@@ -1959,18 +2045,18 @@ body.admin-signup {
     overflow-x: auto;
     scroll-behavior: smooth;
     gap: 1.5rem;
-    padding: 1rem 0 2rem; 
-    -ms-overflow-style: none; 
-    scrollbar-width: none; 
+    padding: 1rem 0 2rem;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
 .product-scroll-container::-webkit-scrollbar {
-    display: none; 
+    display: none;
 }
 
 /* Override Grid behavior for Scroll Mode */
 .product-scroll-container .product-item {
-    flex: 0 0 280px; 
+    flex: 0 0 280px;
     min-width: 280px;
     width: 280px;
 }
@@ -1980,5 +2066,98 @@ body.admin-signup {
         flex: 0 0 240px;
         min-width: 240px;
         width: 240px;
+    }
+}
+
+/* Toast Notifications (Standardized) */
+.toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    padding: 1.25rem 2rem;
+    background: rgba(17, 17, 17, 0.95);
+    color: white;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    animation: toastSlideIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.toast i {
+    font-size: 1.25rem;
+}
+
+.toast-success {
+    border-left: 5px solid var(--success);
+}
+
+.toast-success i {
+    color: var(--success);
+}
+
+.toast-error {
+    border-left: 5px solid #ef4444;
+}
+
+.toast-error i {
+    color: #ef4444;
+}
+
+.toast-info {
+    border-left: 5px solid var(--info);
+}
+
+.toast-info i {
+    color: var(--info);
+}
+
+.toast-warning {
+    border-left: 5px solid var(--warning);
+}
+
+.toast-warning i {
+    color: var(--warning);
+}
+
+.toast.hide {
+    animation: toastSlideOut 0.5s ease-in forwards;
+}
+
+@keyframes toastSlideIn {
+    from {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes toastSlideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .toast {
+        left: 1rem;
+        right: 1rem;
+        bottom: 5rem;
+        justify-content: center;
     }
 }

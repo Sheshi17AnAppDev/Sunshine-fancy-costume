@@ -1,10 +1,15 @@
 const mongoose = require('mongoose');
 
 const categorySchema = new mongoose.Schema({
+    site: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Site',
+        required: true,
+        index: true
+    },
     name: {
         type: String,
         required: [true, 'Please add a category name'],
-        unique: true,
         trim: true
     },
     description: {
@@ -20,5 +25,8 @@ const categorySchema = new mongoose.Schema({
         default: Date.now
     }
 });
+
+// Unique category name per site
+categorySchema.index({ site: 1, name: 1 }, { unique: true });
 
 module.exports = mongoose.model('Category', categorySchema);

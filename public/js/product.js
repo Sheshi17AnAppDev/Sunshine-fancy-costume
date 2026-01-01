@@ -15,7 +15,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (productName) productName.innerText = product.name;
 
         const productPrice = document.getElementById('product-price');
-        if (productPrice) productPrice.innerText = formatCurrency(product.price);
+        if (productPrice) {
+            if (product.originalPrice && product.originalPrice > product.price) {
+                const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
+                productPrice.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                        <span style="text-decoration: line-through; color: #999; font-size: 0.7em;">${formatCurrency(product.originalPrice)}</span>
+                        <span style="color: var(--black); font-weight: 700;">${formatCurrency(product.price)}</span>
+                        <span style="background: var(--black); color: #fff; font-size: 0.6em; padding: 4px 10px; border-radius: 4px; font-weight: 600;">-${discount}% OFF</span>
+                    </div>
+                `;
+            } else {
+                productPrice.innerText = formatCurrency(product.price);
+            }
+        }
 
         const productDesc = document.getElementById('product-desc');
         if (productDesc) productDesc.innerText = product.description;
@@ -23,90 +36,291 @@ document.addEventListener('DOMContentLoaded', async () => {
         const productCat = document.getElementById('product-category');
         if (productCat) productCat.innerText = (product.category?.name || product.category || 'CATEGORY');
 
-        // Age Pricing Logic
+        // Pricing Logic (Age & Size)
         let selectedAgeGroup = null;
+        let selectedSize = null;
         let currentPrice = product.price;
 
         const ageContainer = document.getElementById('age-selection-container');
         const ageChips = document.getElementById('age-chips');
+        const sizeContainer = document.getElementById('size-selection-container');
+        const sizeChips = document.getElementById('size-chips');
 
+        // Helper to update displayed price
+        const updatePriceDisplay = (price) => {
+            currentPrice = price;
+            if (productPrice) productPrice.innerText = formatCurrency(currentPrice);
+        };
+
+        // Render Age Prices
         if (product.agePrices && product.agePrices.length > 0) {
             ageContainer.hidden = false;
             ageChips.innerHTML = product.agePrices.map((ap, index) => `
                 <div class="age-chip" data-index="${index}">${ap.ageGroup}</div>
             `).join('');
 
-            const chips = document.querySelectorAll('.age-chip');
-            chips.forEach(chip => {
+            const aChips = ageChips.querySelectorAll('.age-chip');
+            aChips.forEach(chip => {
                 chip.onclick = () => {
-                    chips.forEach(c => c.classList.remove('selected'));
+                    // Deselect Size if any
+                    if (sizeChips) sizeChips.querySelectorAll('.age-chip').forEach(c => c.classList.remove('selected'));
+                    selectedSize = null;
+
+                    // Select Age
+                    aChips.forEach(c => c.classList.remove('selected'));
                     chip.classList.add('selected');
                     const idx = chip.getAttribute('data-index');
                     selectedAgeGroup = product.agePrices[idx].ageGroup;
-                    currentPrice = product.agePrices[idx].price;
-                    if (productPrice) productPrice.innerText = formatCurrency(currentPrice);
+                    updatePriceDisplay(product.agePrices[idx].price);
                 };
             });
-            // Select first by default? User might want this.
-            // chips[0].click();
+        }
+
+        // Render Size Prices
+        if (product.sizePrices && product.sizePrices.length > 0) {
+            sizeContainer.hidden = false;
+            sizeChips.innerHTML = product.sizePrices.map((sp, index) => `
+                <div class="age-chip size-chip" data-index="${index}">${sp.size}</div>
+            `).join('');
+
+            const sChips = sizeChips.querySelectorAll('.size-chip');
+            sChips.forEach(chip => {
+                chip.onclick = () => {
+                    // Deselect Age if any
+                    if (ageChips) ageChips.querySelectorAll('.age-chip').forEach(c => c.classList.remove('selected'));
+                    selectedAgeGroup = null;
+
+                    // Select Size
+                    sChips.forEach(c => c.classList.remove('selected'));
+                    chip.classList.add('selected');
+                    const idx = chip.getAttribute('data-index');
+                    selectedSize = product.sizePrices[idx].size;
+                    updatePriceDisplay(product.sizePrices[idx].price);
+                };
+            });
         }
 
         // Image Handling
-        const productImg = document.getElementById('product-img');
+        const mainImgContainer = document.querySelector('.main-img-container');
         const thumbList = document.getElementById('thumb-list');
 
-        if (productImg) {
-            productImg.src = ((product.images && product.images[0]) ? (product.images[0].url || product.images[0]) : '') || 'https://via.placeholder.com/600x600?text=No+Image';
-        }
+        if (mainImgContainer) {
+            let slides = (product.images && product.images.length > 0) ? [...product.images] : [/* fallback */ 'https://via.placeholder.com/600x600?text=No+Image'];
 
-        if (thumbList && product.images && product.images.length > 1) {
-            thumbList.hidden = false;
-            thumbList.innerHTML = product.images.map((img, index) => `
-                <div class="thumb-item ${index === 0 ? 'active' : ''}" data-index="${index}">
-                    <img src="${img.url || img}">
-                </div>
-            `).join('');
+            // Add video if exists
+            if (product.video) {
+                slides.push({ isVideo: true, ...product.video });
+            }
 
-            const thumbs = thumbList.querySelectorAll('.thumb-item');
-            thumbs.forEach((thumb, index) => {
-                thumb.onclick = () => {
-                    thumbs.forEach(t => t.classList.remove('active'));
-                    thumb.classList.add('active');
-                    productImg.src = (product.images[index].url || product.images[index]);
-                };
-            });
-        }
-
-        // Tab Logic
-        const tabHeaders = document.querySelectorAll('.tab-header');
-        const tabContent = document.getElementById('description-tab');
-
-        // Initialize tab content
-        if (tabContent) tabContent.innerHTML = `<p style="color: var(--muted-text); line-height: 1.8;">${product.description}</p>`;
-
-        tabHeaders.forEach(header => {
-            header.onclick = () => {
-                tabHeaders.forEach(h => h.classList.remove('active'));
-                header.classList.add('active');
-                const tab = header.getAttribute('data-tab');
-                if (tab === 'description') {
-                    tabContent.innerHTML = `<p style="color: var(--muted-text); line-height: 1.8;">${product.description}</p>`;
-                } else {
-                    tabContent.innerHTML = `<p style="color: var(--muted-text); line-height: 1.8;">No reviews yet for this product.</p>`;
+            mainImgContainer.innerHTML = slides.map(item => {
+                if (item.isVideo) {
+                    return `
+                        <div class="carousel-slide video-slide" style="min-width:100%; height:90%; scroll-snap-align:center; display:flex; align-items:center; justify-content:center;">
+                            <video src="${item.url}" controls style="max-width:100%; max-height:100%; border-radius:15px;"></video>
+                        </div>
+                    `;
                 }
-            };
-        });
+                return `<img src="${item.url || item}" class="reveal-delay-1" style="min-width:100%; height:90%; object-fit:contain; scroll-snap-align:center;">`;
+            }).join('');
+
+            // Setup Thumbnails
+            if (thumbList && slides.length > 1) {
+                thumbList.hidden = false;
+                thumbList.innerHTML = slides.map((item, index) => {
+                    const content = item.isVideo
+                        ? `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#000; color:#fff;"><i class="fa-solid fa-play"></i></div>`
+                        : `<img src="${item.url || item}" style="width:100%; height:100%; object-fit:cover;">`;
+
+                    return `
+                        <div class="thumb-item ${index === 0 ? 'active' : ''}" data-index="${index}">
+                            ${content}
+                        </div>
+                    `;
+                }).join('');
+
+                const thumbs = thumbList.querySelectorAll('.thumb-item');
+
+                // Auto Scroll Logic Variables
+                let autoSlideInterval;
+                let isScrolling;
+                const videos = mainImgContainer.querySelectorAll('video');
+
+
+
+                const stopAutoSlide = () => {
+                    clearInterval(autoSlideInterval);
+                };
+
+                // Click to scroll
+                thumbs.forEach((thumb, index) => {
+                    thumb.onclick = () => {
+                        stopAutoSlide();
+                        // Pause all videos if manual nav
+                        videos.forEach(v => v.pause());
+
+                        mainImgContainer.scrollTo({
+                            left: mainImgContainer.clientWidth * index,
+                            behavior: 'smooth'
+                        });
+                        startAutoSlide(5000); // Resume after delay
+                    };
+                });
+
+                // Sync scroll to active thumb
+
+
+                // Video Events
+                videos.forEach(v => {
+                    v.addEventListener('play', stopAutoSlide);
+                    v.addEventListener('pause', () => startAutoSlide(3000));
+                    v.addEventListener('ended', () => startAutoSlide(1000));
+                });
+
+                // Infinite Loop Logic
+                // 1. Clone first slide for seamless loop
+                if (mainImgContainer.children.length > 1) {
+                    const firstSlideClone = mainImgContainer.children[0].cloneNode(true);
+                    firstSlideClone.id = 'slide-clone-first';
+                    mainImgContainer.appendChild(firstSlideClone);
+                }
+
+                // Start initially
+                startAutoSlide();
+
+                // Pause on hover
+                mainImgContainer.addEventListener('mouseenter', stopAutoSlide);
+                mainImgContainer.addEventListener('mouseleave', () => {
+                    // Only resume if video not playing
+                    const isVideoPlaying = Array.from(videos).some(v => !v.paused && !v.ended);
+                    if (!isVideoPlaying) startAutoSlide();
+                });
+
+                // Mobile touch interaction
+                mainImgContainer.addEventListener('touchstart', stopAutoSlide);
+                mainImgContainer.addEventListener('touchend', () => startAutoSlide(4000));
+
+                // Handle Window Resize
+                let resizeTimer;
+                window.addEventListener('resize', () => {
+                    clearTimeout(resizeTimer);
+                    resizeTimer = setTimeout(() => {
+                        const activeThumb = thumbList.querySelector('.thumb-item.active');
+                        if (activeThumb) {
+                            const index = parseInt(activeThumb.getAttribute('data-index'));
+                            if (!isNaN(index)) {
+                                mainImgContainer.scrollTo({
+                                    left: mainImgContainer.clientWidth * index,
+                                    behavior: 'auto'
+                                });
+                            }
+                        }
+                    }, 100);
+                });
+
+                // Auto Scroll Logic with Infinite Loop
+                function startAutoSlide(delay = 3000) {
+                    clearInterval(autoSlideInterval);
+                    console.log('Starting Auto Slide');
+                    autoSlideInterval = setInterval(() => {
+                        const isVideoPlaying = Array.from(videos).some(v => !v.paused && !v.ended && v.readyState > 2);
+                        if (isVideoPlaying) {
+                            console.log('Video playing, skipping slide');
+                            return;
+                        }
+
+                        const width = mainImgContainer.clientWidth;
+                        if (width === 0) return; // Hidden or not ready
+
+                        const currentScroll = mainImgContainer.scrollLeft;
+                        const totalWidth = mainImgContainer.scrollWidth;
+
+                        // Calculate current index
+                        const currentIndex = Math.round(currentScroll / width);
+                        const totalSlides = slides.length + 1; // +1 for clone
+
+                        console.log(`AutoSlide: Index ${currentIndex} / ${totalSlides - 1}`);
+
+                        // If we are currently at the CLONE (last slide, index == slides.length)
+                        // Then we should have already snapped to 0. But if we are here, force snap to 0 and move to 1.
+                        if (currentIndex >= slides.length) {
+                            console.log('At Clone. Resetting to 0');
+                            mainImgContainer.scrollTo({ left: 0, behavior: 'auto' });
+                            setTimeout(() => {
+                                mainImgContainer.scrollTo({ left: width, behavior: 'smooth' });
+                            }, 100);
+                            return;
+                        }
+
+                        // Normal move to next
+                        const nextScroll = (currentIndex + 1) * width;
+                        console.log(`Scrolling to ${nextScroll}`);
+
+                        // Check if next move hits the clone (End)
+                        if (currentIndex + 1 >= slides.length) {
+                            // Moving to clone
+                            mainImgContainer.scrollTo({ left: nextScroll, behavior: 'smooth' });
+                            // Note: The 'scroll' event listener or next interval will handle the reset to 0
+                        } else {
+                            mainImgContainer.scrollTo({ left: nextScroll, behavior: 'smooth' });
+                        }
+                    }, delay);
+                };
+
+                // Pagination Dots (Mobile)
+                const galleryContainer = document.querySelector('.product-gallery-container');
+                let dotsContainer = document.querySelector('.carousel-dots');
+                if (!dotsContainer && galleryContainer && slides.length > 1) {
+                    dotsContainer = document.createElement('div');
+                    dotsContainer.className = 'carousel-dots';
+                    dotsContainer.innerHTML = slides.map((_, i) => `<div class="dot ${i === 0 ? 'active' : ''}" data-index="${i}"></div>`).join('');
+                    galleryContainer.appendChild(dotsContainer);
+                }
+                const dots = dotsContainer ? dotsContainer.querySelectorAll('.dot') : [];
+
+                // Sync scroll logic updated for clone & dots
+                mainImgContainer.addEventListener('scroll', () => {
+                    window.clearTimeout(isScrolling);
+                    isScrolling = setTimeout(() => {
+                        let index = Math.round(mainImgContainer.scrollLeft / mainImgContainer.clientWidth);
+
+                        // If index == last one (which is the clone), it maps to index 0
+                        // slides.length is the count of REAL slides. 
+                        // children.length is slides.length + 1
+                        if (index >= slides.length) {
+                            index = 0;
+                        }
+
+                        // Update Thumbnails
+                        thumbs.forEach(t => t.classList.remove('active'));
+                        if (thumbs[index]) {
+                            thumbs[index].classList.add('active');
+                            thumbs[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                        }
+
+                        // Update Dots
+                        dots.forEach(d => d.classList.remove('active'));
+                        if (dots[index]) {
+                            dots[index].classList.add('active');
+                        }
+
+                    }, 60);
+                });
+            }
+        }
+
+        // Tab Logic (Legacy removed, using unified logic at bottom)
+
 
         // Related Products
         (async () => {
             const section = document.querySelector('.related-products-section');
             try {
-                const allProducts = await api.get('/products');
-                const similar = allProducts.filter(p =>
-                    p.category && product.category &&
-                    (p.category._id || p.category) === (product.category._id || product.category) &&
-                    p._id !== product._id
-                ).slice(0, 4);
+                // Optimize: Filter by category directly on backend
+                const categoryId = product.category?._id || product.category;
+                if (!categoryId) return;
+
+                const allProducts = await api.get(`/products?category=${categoryId}`);
+                const similar = allProducts.filter(p => p._id !== product._id).slice(0, 4);
 
                 const relatedContainer = document.getElementById('related-products');
                 if (similar.length > 0 && relatedContainer && section) {
@@ -131,19 +345,43 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         })();
 
+        const validateSelection = () => {
+            if (product.agePrices && product.agePrices.length > 0 && !selectedAgeGroup && !selectedSize) {
+                showToast('Please select an age group', 'warning');
+                return false;
+            }
+            if (product.sizePrices && product.sizePrices.length > 0 && !selectedSize && !selectedAgeGroup) {
+                showToast('Please select a size', 'warning');
+                return false;
+            }
+            return true;
+        };
+
         const buyNowBtn = document.querySelector('.buy-now-btn');
         if (buyNowBtn) {
             buyNowBtn.onclick = () => {
-                if (product.agePrices && product.agePrices.length > 0 && !selectedAgeGroup) {
-                    alert('Please select an age group');
-                    return;
-                }
+                if (!validateSelection()) return;
+
                 const qty = parseInt(document.getElementById('qty').value) || 1;
                 let cart = JSON.parse(localStorage.getItem('cart')) || [];
-                const cartItem = { ...product, price: currentPrice, qty, ageGroup: selectedAgeGroup };
-                const existingIndex = cart.findIndex(item => item._id === product._id && item.ageGroup === selectedAgeGroup);
+
+                const cartItem = {
+                    ...product,
+                    price: currentPrice,
+                    qty,
+                    ageGroup: selectedAgeGroup,
+                    size: selectedSize
+                };
+
+                const existingIndex = cart.findIndex(item =>
+                    item._id === product._id &&
+                    item.ageGroup === selectedAgeGroup &&
+                    item.size === selectedSize
+                );
+
                 if (existingIndex > -1) cart[existingIndex].qty += qty;
                 else cart.push(cartItem);
+
                 localStorage.setItem('cart', JSON.stringify(cart));
                 api.patch(`/products/${productId}/booked`).catch(err => console.error(err));
                 window.location.href = '/cart';
@@ -163,10 +401,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const addToCartBtn = document.getElementById('add-to-cart');
         if (addToCartBtn) {
             addToCartBtn.onclick = () => {
-                if (product.agePrices && product.agePrices.length > 0 && !selectedAgeGroup) {
-                    alert('Please select an age group');
-                    return;
-                }
+                if (!validateSelection()) return;
 
                 const qty = parseInt(document.getElementById('qty').value) || 1;
                 let cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -175,11 +410,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                     ...product,
                     price: currentPrice,
                     qty,
-                    ageGroup: selectedAgeGroup
+                    ageGroup: selectedAgeGroup,
+                    size: selectedSize
                 };
 
                 const existingIndex = cart.findIndex(item =>
-                    item._id === product._id && item.ageGroup === selectedAgeGroup
+                    item._id === product._id &&
+                    item.ageGroup === selectedAgeGroup &&
+                    item.size === selectedSize
                 );
 
                 if (existingIndex > -1) {
@@ -191,9 +429,123 @@ document.addEventListener('DOMContentLoaded', async () => {
                 localStorage.setItem('cart', JSON.stringify(cart));
                 api.patch(`/products/${productId}/booked`).catch(err => console.error(err));
                 updateCartCount();
-                alert('Added to cart!');
+                showToast('Added to cart!', 'success');
             };
         }
+
+        // Initial UI Update
+        if (typeof window.updateCartCount === 'function') {
+            window.updateCartCount();
+        }
+
+        // --- Tabs Logic ---
+        const tabHeaders = document.querySelectorAll('.tab-header');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabHeaders.forEach(header => {
+            header.addEventListener('click', () => {
+                const target = header.getAttribute('data-tab');
+
+                tabHeaders.forEach(th => th.classList.remove('active'));
+                header.classList.add('active');
+
+                tabContents.forEach(tc => {
+                    if (tc.id === `${target}-tab`) {
+                        tc.style.display = 'block';
+                    } else {
+                        tc.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // --- Reviews Logic ---
+        const reviewsList = document.getElementById('reviews-list');
+        const reviewForm = document.getElementById('review-form');
+
+        const renderReviews = (reviews) => {
+            if (reviews.length === 0) {
+                reviewsList.innerHTML = '<p style="text-align:center; color:#999;">No reviews yet. Be the first to review!</p>';
+                return;
+            }
+
+            reviewsList.innerHTML = reviews.map(r => `
+                <div class="review-item">
+                    <div class="review-header">
+                        <span class="review-user">
+                            ${r.user}
+                            ${r.isAdmin ? '<span class="admin-badge">Admin</span>' : ''}
+                        </span>
+                        <span class="review-date">${new Date(r.createdAt).toLocaleDateString()}</span>
+                    </div>
+                    <div class="review-rating">
+                        ${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}
+                    </div>
+                    <div class="review-content">${r.comment}</div>
+                </div>
+            `).join('');
+        };
+
+        const loadReviews = async () => {
+            try {
+                const reviews = await api.get(`/reviews/${productId}`);
+                renderReviews(reviews);
+
+                // Update average rating display if needed
+                // const avgRating = reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length;
+                // updateStarDisplay(avgRating, reviews.length);
+            } catch (err) {
+                console.error('Failed to load reviews', err);
+            }
+        };
+
+        // Submit Review
+        if (reviewForm) {
+            reviewForm.onsubmit = async (e) => {
+                e.preventDefault();
+                const submitBtn = reviewForm.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerText;
+                submitBtn.innerText = 'Submitting...';
+                submitBtn.disabled = true;
+
+                try {
+                    const name = document.getElementById('review-name').value;
+                    const comment = document.getElementById('review-comment').value;
+                    const ratingInput = document.querySelector('input[name="rating"]:checked');
+
+                    if (!ratingInput) {
+                        showToast('Please select a rating', 'warning');
+                        return;
+                    }
+
+                    const rating = parseInt(ratingInput.value);
+
+                    // Get site ID from product
+                    const siteId = product.site;
+
+                    await api.post('/reviews', {
+                        productId,
+                        user: name,
+                        rating,
+                        comment,
+                        siteId
+                    });
+
+                    showToast('Review submitted successfully!', 'success');
+                    reviewForm.reset();
+                    loadReviews(); // Reload to show new review
+                } catch (err) {
+                    console.error(err);
+                    showToast(err.message || 'Failed to submit review', 'error');
+                } finally {
+                    submitBtn.innerText = originalText;
+                    submitBtn.disabled = false;
+                }
+            };
+        }
+
+        // Initial Load
+        loadReviews();
 
     } catch (error) {
         console.error('Error loading product:', error);

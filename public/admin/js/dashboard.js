@@ -10,6 +10,7 @@ class Dashboard {
         this.setupAnimations();
         this.setupInteractions();
         this.setupCharts();
+        this.updateSalesChart(7); // Load 7 days by default
         this.loadTopProducts();
 
         // Auto-refresh every 30 seconds
@@ -49,6 +50,14 @@ class Dashboard {
             const revenue = orders?.filter(o => o.isPaid).reduce((acc, o) => acc + (o.totalPrice || 0), 0) || 0;
             this.animateNumber('stat-revenue', revenue, true);
 
+            // Fallback Low Stock
+            const lowStockCount = products?.filter(p => p.countInStock <= 5).length || 0;
+            const lowStockEl = document.getElementById('low-stock-alert');
+            if (lowStockEl) {
+                lowStockEl.style.display = lowStockCount > 0 ? 'flex' : 'none';
+                this.animateNumber('stat-low-stock', lowStockCount);
+            }
+
             if (Array.isArray(orders)) {
                 const tbody = document.querySelector('#recent-orders tbody');
                 if (tbody) {
@@ -80,7 +89,15 @@ class Dashboard {
             todaysRevEl.textContent = 'Today: ' + (stats.todaysRevenue || 0).toLocaleString('en-IN', { style: 'currency', currency: 'INR' });
         }
 
-        this.animateNumber('stat-customers', stats.totalUsers || 0); // Corrected from totalCustomers to totalUsers
+        this.animateNumber('stat-customers', stats.totalUsers || 0);
+
+        // Update Low Stock Alert
+        const lowStockCount = stats.lowStockCount || 0;
+        const lowStockEl = document.getElementById('low-stock-alert');
+        if (lowStockEl) {
+            lowStockEl.style.display = lowStockCount > 0 ? 'flex' : 'none';
+            this.animateNumber('stat-low-stock', lowStockCount);
+        }
     }
 
     setupCharts() {
@@ -185,7 +202,7 @@ class Dashboard {
             this.salesChart.update();
         } catch (error) {
             console.error('Failed to update sales chart:', error);
-            this.showToast('Failed to load sales data', 'error');
+            showToast('Failed to load sales data', 'error');
         }
     }
 
@@ -195,7 +212,7 @@ class Dashboard {
             this.displayTopProducts(topProducts);
         } catch (error) {
             console.error('Failed to load top products:', error);
-            this.showToast('Failed to load top products', 'error');
+            showToast('Failed to load top products', 'error');
         }
     }
 
@@ -357,37 +374,14 @@ class Dashboard {
     }
 
     showSuccessMessage(message) {
-        this.showToast(message, 'success');
+        showToast(message, 'success');
     }
 
     showErrorMessage(message) {
-        this.showToast(message, 'error');
+        showToast(message, 'error');
     }
 
-    showToast(message, type = 'info') {
-        // Remove existing toasts first
-        const existingToast = document.querySelector('.toast');
-        if (existingToast) {
-            existingToast.remove();
-        }
 
-        const toast = document.createElement('div');
-        toast.className = `toast toast-${type}`;
-
-        // Add content
-        const textNode = document.createTextNode(message);
-        toast.appendChild(textNode);
-
-        document.body.appendChild(toast);
-
-        // Auto remove after 3 seconds with slide-out animation
-        setTimeout(() => {
-            toast.style.animation = 'slideOutRight 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
-            toast.addEventListener('animationend', () => {
-                toast.remove();
-            });
-        }, 3000);
-    }
 }
 
 // Add slide animations

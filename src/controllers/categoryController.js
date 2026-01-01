@@ -5,7 +5,14 @@ const Category = require('../models/Category');
 // @access  Public
 exports.getCategories = async (req, res) => {
     try {
-        const categories = await Category.find({});
+        const filter = {};
+
+        // Apply site filtering for admin access
+        if (req.user && req.authType === 'admin' && req.adminSite) {
+            filter.site = req.adminSite;
+        }
+
+        const categories = await Category.find(filter);
         res.json(categories);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -22,7 +29,8 @@ exports.createCategory = async (req, res) => {
         const category = new Category({
             name,
             description,
-            image: req.file ? req.file.path : image
+            image: req.file ? req.file.path : image,
+            site: req.adminSite || req.body.site // Use admin's site or provided site (for super admin)
         });
 
         const createdCategory = await category.save();

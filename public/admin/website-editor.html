@@ -34,7 +34,9 @@
                 <li><a href="brands"><i class="fa-solid fa-tag"></i> Brands</a></li>
                 <li><a href="orders"><i class="fa-solid fa-cart-shopping"></i> Orders</a></li>
                 <li><a href="inventory"><i class="fa-solid fa-warehouse"></i> Inventory</a></li>
-                <li><a href="users"><i class="fa-solid fa-users"></i> Users Report</a></li>
+                <li><a href="users"><i class="fa-solid fa-users"></i> Users Report</a>
+                    <a href="sites"><i class="fas fa-globe"></i> Sites</a>
+                </li>
                 <li>
                     <a href="website-editor" class="active"><i class="fa-solid fa-wand-magic-sparkles"></i> Website
                         Editor</a>
@@ -57,6 +59,14 @@
                         <li><a href="website-editor?page=faq" onclick="switchEditorPage('faq'); return false;"
                                 style="font-size: 0.9rem; opacity: 0.8;"><i class="fa-solid fa-circle-question"></i>
                                 FAQ</a></li>
+                        <li><a href="website-editor?page=offerBanner"
+                                onclick="switchEditorPage('offerBanner'); return false;"
+                                style="font-size: 0.9rem; opacity: 0.8;"><i class="fa-solid fa-bullhorn"></i>
+                                Offer Banner</a></li>
+                        <li><a href="website-editor?page=promoCarousel"
+                                onclick="switchEditorPage('promoCarousel'); return false;"
+                                style="font-size: 0.9rem; opacity: 0.8;"><i class="fa-solid fa-images"></i>
+                                Promo Carousel</a></li>
                     </ul>
                 </li>
                 <li style="margin-top: auto;"><a href="#" id="logout"><i class="fa-solid fa-right-from-bracket"></i>
@@ -68,7 +78,16 @@
             <div class="admin-header">
                 <button class="mobile-menu-toggle"><i class="fa-solid fa-bars"></i></button>
                 <h1>Website Editor</h1>
-                <div style="display:flex; gap: 0.8rem; align-items: center;">
+                <div style="display:flex; gap: 1rem; align-items: center;">
+                    <!-- Site Selector -->
+                    <div
+                        style="display: flex; align-items: center; gap: 0.8rem; background: white; padding: 0.6rem 1rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <i class="fas fa-globe" style="color: #fbb03b;"></i>
+                        <select id="site-selector"
+                            style="border: none; background: none; font-size: 0.95rem; font-weight: 600; color: #333; cursor: pointer; outline: none;">
+                            <option value="">Loading sites...</option>
+                        </select>
+                    </div>
                     <a class="btn btn-black" href="../index" target="_blank"><i
                             class="fa-solid fa-arrow-up-right-from-square"></i> Preview Site</a>
                     <button class="btn btn-primary" id="save-btn"><i class="fa-solid fa-floppy-disk"></i> Save</button>
@@ -90,6 +109,8 @@
                             <option value="contact">Contact</option>
                             <option value="blog">Blog</option>
                             <option value="faq">FAQ</option>
+                            <option value="offerBanner">Offer Banner</option>
+                            <option value="promoCarousel">Promo Carousel (Home)</option>
                         </select>
                     </div>
                     <div id="status" style="color: rgba(255,255,255,0.75); font-weight: 600;">Loading...</div>
@@ -358,6 +379,77 @@
                         </div>
                     </div>
 
+
+                    <div class="glass" style="padding: 1.5rem; border-radius: 16px;" id="offer-banner-extra" hidden>
+                        <h2 style="margin-bottom: 1rem;">Offer Banner Configuration</h2>
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label style="display:flex; align-items:center; gap: 0.5rem; cursor:pointer;">
+                                <input id="banner-visible" type="checkbox" style="width: 1.2rem; height: 1.2rem;">
+                                <span>Enable Banner</span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Banner Text</label>
+                            <input id="banner-text" type="text" placeholder="e.g. Special Sale!">
+                        </div>
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label>Banner Link (Optional)</label>
+                            <input id="banner-link" type="text" placeholder="e.g. shop?category=sale">
+                        </div>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                            <div class="form-group">
+                                <label>Background Color</label>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <input id="banner-bg-color" type="color"
+                                        style="width: 50px; height: 50px; padding: 0; border: none; border-radius: 8px; cursor: pointer;">
+                                    <input id="banner-bg-text" type="text" placeholder="#000000" style="flex: 1;">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Text Color</label>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <input id="banner-text-color" type="color"
+                                        style="width: 50px; height: 50px; padding: 0; border: none; border-radius: 8px; cursor: pointer;">
+                                    <input id="banner-text-text" type="text" placeholder="#ffffff" style="flex: 1;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass" style="padding: 1.5rem; border-radius: 16px;" id="promo-carousel-extra" hidden>
+                        <h2 style="margin-bottom: 1rem;">Promo Carousel (Home Page)</h2>
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label style="display:flex; align-items:center; gap: 0.5rem; cursor:pointer;">
+                                <input id="carousel-visible" type="checkbox" style="width: 1.2rem; height: 1.2rem;">
+                                <span>Enable Carousel</span>
+                            </label>
+                            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-top: 0.5rem;">This will
+                                be displayed between the Hero and Featured Products sections.</p>
+                        </div>
+
+                        <hr style="margin: 1.5rem 0; border: 0; border-top: 1px solid rgba(0,0,0,0.1);">
+
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h3 style="margin: 0;">Slides</h3>
+                            <button class="btn btn-black" id="add-slide-btn"
+                                style="padding: 0.5rem 1rem; font-size: 0.8rem;">
+                                <i class="fa-solid fa-plus"></i> Add Slide
+                            </button>
+                        </div>
+
+                        <div id="carousel-list" style="display: flex; flex-direction: column; gap: 1rem;">
+                            <!-- Dynamic Slides will appear here -->
+                        </div>
+
+                        <div style="margin-top: 2rem; display: flex; justify-content: flex-end;">
+                            <button id="save-carousel-btn" class="btn"
+                                style="background: white; color: black; padding: 0.8rem 2rem; border-radius: 8px; font-weight: 600;">
+                                <i class="fa-solid fa-save"></i> Save Changes
+                            </button>
+                        </div>
+                    </div>
+
                     <div class="glass" style="padding: 1.5rem; border-radius: 16px;" id="theme-extra" hidden>
                         <h2 style="margin-bottom: 1rem;">Theme Configuration</h2>
                         <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
@@ -399,7 +491,7 @@
     <script src="../js/main.js"></script>
     <script src="js/admin-auth.js"></script>
     <script src="js/admin-mobile.js"></script>
-    <script src="js/website-editor.js?v=2"></script>
+    <script src="js/website-editor.js?v=4"></script>
     <nav class="mobile-bottom-nav">
         <a href="index" class="nav-item">
             <i class="fa-solid fa-gauge"></i>

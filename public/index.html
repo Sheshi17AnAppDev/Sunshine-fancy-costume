@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/category-grid.css">
     <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/mobile-small.css">
+    <link rel="stylesheet" href="css/view-all-buttons.css">
     <link rel="stylesheet" href="css/mobile-app.css">
 </head>
 
@@ -51,6 +53,17 @@
                 <div class="cart-badge" id="cart-count">0</div>
             </a>
         </div>
+        <!-- Mobile Search Bar (Hidden on Desktop) -->
+        <div class="mobile-search-bar"
+            style="display: none; width: 100%; padding: 0.5rem 1rem; background: var(--off-white); border-top: 1px solid #eee;">
+            <div style="position: relative; width: 100%;">
+                <input type="text" id="mobile-search-input" placeholder="Search..."
+                    style="width: 100%; padding: 0.5rem 2.5rem 0.5rem 1rem; border: 1px solid #ddd; border-radius: 20px; font-size: 0.9rem;">
+                <button id="mobile-search-btn"
+                    style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--primary-orange);"><i
+                        class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+        </div>
     </header>
 
     <main>
@@ -68,6 +81,9 @@
         <section class="reveal">
             <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
                 <h2 id="home-title-featured">Featured Products</h2>
+                <button class="mobile-view-all-btn" onclick="showAllFeatured()">
+                    View All <i class="fa-solid fa-arrow-right"></i>
+                </button>
             </div>
             <div class="product-scroll-wrapper">
                 <button class="scroll-btn prev" id="featured-prev"><i class="fa-solid fa-chevron-left"></i></button>
@@ -79,12 +95,16 @@
         </section>
 
         <section class="reveal category-showcase">
-            <div class="section-title" style="text-align: center; margin-bottom: 1rem;">
+            <div class="section-title" style="text-align: center; margin-bottom: 1rem; position: relative;">
                 <h2 id="home-title-categories">View Our Range Of Categories</h2>
                 <p id="home-subtitle-categories"
                     style="color: var(--primary-orange); font-size: 1rem; margin-top: 0.5rem;">Lorem ipsum dolor sit
                     amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna
                     aliquam.</p>
+                <button class="mobile-view-all-btn" onclick="showAllCategories()"
+                    style="position: absolute; right: 0; top: 0;">
+                    View All <i class="fa-solid fa-arrow-right"></i>
+                </button>
             </div>
 
             <div class="category-scroll-wrapper">
@@ -99,6 +119,9 @@
         <section class="reveal">
             <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
                 <h2 id="home-title-popular">Most Popular Products</h2>
+                <button class="mobile-view-all-btn" onclick="showAllPopular()">
+                    View All <i class="fa-solid fa-arrow-right"></i>
+                </button>
             </div>
             <div class="product-scroll-wrapper">
                 <button class="scroll-btn prev" id="popular-prev"><i class="fa-solid fa-chevron-left"></i></button>
@@ -189,8 +212,43 @@
         </div>
     </footer>
 
+    <!-- Featured Products Modal -->
+    <div class="fullscreen-modal" id="featured-modal">
+        <div class="modal-header-custom">
+            <button class="modal-close-btn" onclick="closeAllModals()">&times;</button>
+            <h2>Featured Products</h2>
+        </div>
+        <div class="fullscreen-modal-grid" id="featured-modal-grid">
+            <!-- Products will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Popular Products Modal -->
+    <div class="fullscreen-modal" id="popular-modal">
+        <div class="modal-header-custom">
+            <button class="modal-close-btn" onclick="closeAllModals()">&times;</button>
+            <h2>Most Popular Products</h2>
+        </div>
+        <div class="fullscreen-modal-grid" id="popular-modal-grid">
+            <!-- Products will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Categories Modal -->
+    <div class="fullscreen-modal" id="categories-modal">
+        <div class="modal-header-custom">
+            <button class="modal-close-btn" onclick="closeAllModals()">&times;</button>
+            <h2>All Categories</h2>
+        </div>
+        <div class="fullscreen-modal-grid" id="categories-modal-grid"
+            style="grid-template-columns: repeat(2, 1fr) !important;">
+            <!-- Categories will be loaded here -->
+        </div>
+    </div>
+
     <script src="js/main.js?v=4"></script>
-    <script src="js/home.js?v=4"></script>
+    <script src="js/home.js?v=2"></script>
+    <script src="js/product-modals.js"></script>
 </body>
 
 </html>

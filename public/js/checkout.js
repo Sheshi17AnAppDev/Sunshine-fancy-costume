@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     if (cart.length === 0) {
-        alert('Cart is empty!');
+        showToast('Cart is empty!', 'warning');
         window.location.href = 'shop';
         return;
     }
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             `;
         }).join('');
 
-        const shippingCost = sub > 1000 ? 0 : 50;
+        const shippingCost = 0; // Free shipping for everything
         const total = sub + shippingCost;
 
         const subEl = document.getElementById('summ-sub');
@@ -77,17 +77,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                         totalPrice: total
                     });
 
-                    const orderData = res;
+                    const orderId = res._id;
 
-                    const message = formatWhatsAppMessage(orderData, shippingAddress);
-                    const encodedMessage = encodeURIComponent(message);
-                    const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodedMessage}`;
+                    // Clear cart
+                    localStorage.removeItem('cart');
 
-                    alert('Order details saved. Redirecting to WhatsApp to complete your order...');
-                    // localStorage.removeItem('cart'); // Keep cart for user convenience
-                    window.location.href = whatsappUrl;
+                    // Redirect to native success page
+                    window.location.href = `order-success?id=${orderId}`;
                 } catch (err) {
-                    alert(err.message || 'Checkout failed');
+                    showToast(err.message || 'Checkout failed', 'error');
                 }
             };
         }
@@ -108,13 +106,13 @@ function formatWhatsAppMessage(order, shipping) {
 
     message += `--------------------------\n`;
     message += `*Subtotal:* ₹${order.totalPrice - (order.shippingPrice || 0)}\n`;
-    message += `*Shipping:* To be calculated on WhatsApp\n`;
-    message += `*Total (Excl. Shipping):* ₹${order.totalPrice - (order.shippingPrice || 0)}\n`;
+    message += `*Shipping:* Free\n`;
+    message += `*Total:* ₹${order.totalPrice}\n`;
     message += `--------------------------\n`;
     message += `*Shipping Address:*\n`;
     message += `${shipping.address}, ${shipping.city}, ${shipping.postalCode}, ${shipping.country}\n`;
     message += `--------------------------\n`;
-    message += `_Please confirm shipping charges and final total._`;
+    message += `_Please confirm order._`;
 
     return message;
 }

@@ -6,7 +6,8 @@ const {
     getSalesChartData,
     getTopProducts,
     getUserReport,
-    getUserOrders
+    getUserOrders,
+    deleteUserAndData
 } = require('../controllers/adminStatsController');
 const { protect, requirePermission } = require('../middleware/adminAuthMiddleware');
 
@@ -17,5 +18,6 @@ router.get('/stats/top-products', protect, requirePermission('canViewStats'), ge
 router.get('/orders/recent', protect, requirePermission('canViewStats'), getRecentOrders);
 router.get('/users/report', protect, requirePermission('canViewStats'), getUserReport);
 router.get('/users/:id/orders', protect, requirePermission('canViewStats'), getUserOrders);
+router.delete('/users/:id', protect, requirePermission('canViewStats'), deleteUserAndData);
 
 module.exports = router;

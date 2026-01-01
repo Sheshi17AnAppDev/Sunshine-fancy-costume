@@ -2,7 +2,7 @@
 function togglePassword(inputId) {
     const passwordInput = document.getElementById(inputId);
     const passwordIcon = document.getElementById(inputId + '-icon');
-    
+
     if (passwordInput.type === 'password') {
         passwordInput.type = 'text';
         passwordIcon.classList.remove('fa-regular', 'fa-eye');
@@ -28,13 +28,13 @@ document.getElementById('login-form').onsubmit = async (e) => {
         // Check for stored redirect page or URL parameter
         const redirectPage = localStorage.getItem('redirectAfterLogin');
         const urlRedirect = new URLSearchParams(window.location.search).get('redirect');
-        
+
         // Clear stored redirect
         localStorage.removeItem('redirectAfterLogin');
-        
+
         // Redirect to stored page, URL parameter, or index
         window.location.href = redirectPage ? `/${redirectPage}` : (urlRedirect || '/');
     } catch (err) {
-        alert(err.message || 'Login failed');
+        showToast(err.message || 'Login failed', 'error');
     }
 };

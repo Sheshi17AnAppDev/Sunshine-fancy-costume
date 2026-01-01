@@ -2,14 +2,51 @@
 class AdminManagement {
     constructor() {
         this.admins = [];
+        this.sites = [];
         this.initializeEventListeners();
         this.loadAdmins();
+        this.loadSites();
+    }
+
+    async loadSites() {
+        try {
+            this.sites = await fetch('/api/sites', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                }
+            }).then(res => res.json());
+
+            const siteSelect = document.getElementById('admin-site');
+            if (this.sites.length > 0) {
+                siteSelect.innerHTML = this.sites.map(site =>
+                    `<option value="${site._id}">${site.name}</option>`
+                ).join('');
+            } else {
+                siteSelect.innerHTML = '<option value="">No sites available</option>';
+            }
+        } catch (error) {
+            console.error('Failed to load sites:', error);
+        }
     }
 
     initializeEventListeners() {
         // Add admin button
         document.getElementById('add-admin-btn').addEventListener('click', () => {
             this.showAddAdminModal();
+        });
+
+        // Role change handler - show/hide site selector
+        document.getElementById('admin-role').addEventListener('change', (e) => {
+            const siteGroup = document.getElementById('site-selection-group');
+            const siteSelect = document.getElementById('admin-site');
+
+            if (e.target.value === 'super_admin') {
+                siteGroup.style.display = 'none';
+                siteSelect.required = false;
+            } else {
+                siteGroup.style.display = 'block';
+                siteSelect.required = true;
+            }
         });
 
         // Admin form submission
@@ -47,7 +84,7 @@ class AdminManagement {
             this.renderAdminTable();
         } catch (error) {
             console.error('Failed to load admins:', error);
-            this.showToast('Failed to load admin users', 'error');
+            showToast('Failed to load admin users', 'error');
         }
     }
 
@@ -63,14 +100,14 @@ class AdminManagement {
 
     createAdminRow(admin) {
         const tr = document.createElement('tr');
-        
-        const statusBadge = admin.isActive ? 
-            '<span class="status-badge status-delivered">Active</span>' : 
+
+        const statusBadge = admin.isActive ?
+            '<span class="status-badge status-delivered">Active</span>' :
             '<span class="status-badge status-cancelled">Inactive</span>';
 
-        const lastLogin = admin.lastLogin ? 
+        const lastLogin = admin.lastLogin ?
             new Date(admin.lastLogin).toLocaleDateString() : 'Never';
-        
+
         const createdDate = new Date(admin.createdAt).toLocaleDateString();
 
         const isSuperAdmin = admin.role === 'super_admin';
@@ -148,12 +185,12 @@ class AdminManagement {
                 body: JSON.stringify(formData)
             });
 
-            this.showToast('Admin created successfully', 'success');
+            showToast('Admin created successfully', 'success');
             this.closeModal();
             this.loadAdmins();
         } catch (error) {
             console.error('Failed to create admin:', error);
-            this.showToast(error.message || 'Failed to create admin', 'error');
+            showToast(error.message || 'Failed to create admin', 'error');
         }
     }
 
@@ -197,12 +234,12 @@ class AdminManagement {
                 body: JSON.stringify({ permissions })
             });
 
-            this.showToast('Permissions updated successfully', 'success');
+            showToast('Permissions updated successfully', 'success');
             this.closePermissionsModal();
             this.loadAdmins();
         } catch (error) {
             console.error('Failed to update permissions:', error);
-            this.showToast(error.message || 'Failed to update permissions', 'error');
+            showToast(error.message || 'Failed to update permissions', 'error');
         }
     }
 
@@ -212,11 +249,11 @@ class AdminManagement {
                 method: 'PUT'
             });
 
-            this.showToast('Admin status updated successfully', 'success');
+            showToast('Admin status updated successfully', 'success');
             this.loadAdmins();
         } catch (error) {
             console.error('Failed to toggle admin status:', error);
-            this.showToast(error.message || 'Failed to update admin status', 'error');
+            showToast(error.message || 'Failed to update admin status', 'error');
         }
     }
 
@@ -230,25 +267,15 @@ class AdminManagement {
                 method: 'DELETE'
             });
 
-            this.showToast('Admin deleted successfully', 'success');
+            showToast('Admin deleted successfully', 'success');
             this.loadAdmins();
         } catch (error) {
             console.error('Failed to delete admin:', error);
-            this.showToast(error.message || 'Failed to delete admin', 'error');
+            showToast(error.message || 'Failed to delete admin', 'error');
         }
     }
 
-    showToast(message, type = 'info') {
-        const toast = document.createElement('div');
-        toast.className = `toast toast-${type}`;
-        toast.textContent = message;
-        document.body.appendChild(toast);
 
-        setTimeout(() => {
-            toast.style.animation = 'slideOut 0.3s ease-out';
-            setTimeout(() => toast.remove(), 300);
-        }, 3000);
-    }
 }
 
 // Initialize when DOM is loaded

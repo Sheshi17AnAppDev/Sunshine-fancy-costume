@@ -1,0 +1,64 @@
+/* Reviews Styling */
+.star-rating-input {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+}
+
+.star-rating-input input {
+    display: none;
+}
+
+.star-rating-input label {
+    font-size: 2rem;
+    color: #ccc;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.star-rating-input label:hover,
+.star-rating-input label:hover~label,
+.star-rating-input input:checked~label {
+    color: #ffd700;
+}
+
+.review-item {
+    border-bottom: 1px solid #eee;
+    padding: 1.5rem 0;
+}
+
+.review-item:last-child {
+    border-bottom: none;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.review-user {
+    font-weight: 600;
+}
+
+.review-date {
+    font-size: 0.85rem;
+    color: #999;
+}
+
+.review-rating {
+    color: #ffd700;
+    margin-bottom: 0.5rem;
+}
+
+.admin-badge {
+    background: #000;
+    color: #fff;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    margin-left: 0.5rem;
+    text-transform: uppercase;
+    font-weight: 700;
+}
