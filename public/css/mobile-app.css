@@ -561,7 +561,42 @@
     align-items: center;
 }
 
+
 .fullscreen-modal-grid .new-price {
     font-weight: 700;
     color: var(--primary-orange);
+}
+
+/* Fix for mobile search bar hiding behind fixed header */
+@media (max-width: 768px) {
+    .mobile-search-bar {
+        position: fixed !important;
+        top: 56px !important;
+        /* Matches header height in mobile-app.css */
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 999 !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Push main content down to account for fixed header + search bar */
+    main {
+        padding-top: 115px !important;
+        /* 56px header + ~59px search bar */
+    }
+
+    /* Ensure other pages main content is also pushed down */
+    .shop-main,
+    .cart-main,
+    .checkout-main,
+    .account-page,
+    .blog-hero {
+        padding-top: 115px !important;
+    }
+
+    /* Adjust specific pages if they have different padding */
+    .hero {
+        margin-top: 50px !important;
+        /* Extra margin for hero search bar overlap prevention */
+    }
 }
