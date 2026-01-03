@@ -95,7 +95,6 @@ const siteSchema = new mongoose.Schema({
 });
 
 // Index for faster lookups
-siteSchema.index({ slug: 1 });
 siteSchema.index({ isActive: 1 });
 
 module.exports = mongoose.model('Site', siteSchema);

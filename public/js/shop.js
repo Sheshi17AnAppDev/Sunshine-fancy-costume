@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         return `
-            <div class="product-item reveal">
+            <div class="product-item">
                 <div class="product-img-box">
                     ${hasSale ? `<span class="sale-tag">-${discountPercent}% OFF</span>` : ''}
                     <a href="product?id=${p._id}" style="display: block; width: 100%; height: 100%; position: relative; overflow: hidden;">
@@ -161,7 +161,30 @@ document.addEventListener('DOMContentLoaded', async () => {
         `;
     };
 
-    const filterProducts = () => {
+    const initialUrlParams = new URLSearchParams(window.location.search);
+    const initialCategory = initialUrlParams.get('category');
+    const initialFilter = initialUrlParams.get('filter');
+
+    // If entering with a specific category or filter, show more items initially (e.g., 50)
+    // otherwise default to 12
+    // Dynamic Page Size
+    let pageSize = (initialCategory || initialFilter) ? 50 : 12;
+
+    // If entering with a specific category or filter, show more items initially
+    let visibleCount = pageSize;
+
+    const loadMoreBtn = document.getElementById('load-more-btn');
+
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', () => {
+            visibleCount += pageSize;
+            filterProducts(false); // false = don't reset count
+        });
+    }
+
+    const filterProducts = (resetCount = true) => {
+        if (resetCount) visibleCount = pageSize;
+
         const searchText = (document.getElementById('shop-search')?.value || '').toLowerCase();
         const selectedCats = Array.from(document.querySelectorAll('.cat-filter:checked')).map(cb => cb.value);
         const selectedAges = Array.from(document.querySelectorAll('.age-filter:checked')).map(cb => cb.value);
@@ -202,11 +225,24 @@ document.addEventListener('DOMContentLoaded', async () => {
             return matchesSearch && matchesCat && matchesAge && matchesPrice && matchesFilter;
         });
 
+        const visibleProducts = filtered.slice(0, visibleCount);
+
         if (grid) {
             if (filtered.length === 0) {
                 grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 5rem;">No products match your filters.</div>';
+                if (loadMoreBtn) loadMoreBtn.style.display = 'none';
             } else {
-                grid.innerHTML = filtered.map(renderItem).join('');
+                grid.innerHTML = visibleProducts.map(renderItem).join('');
+
+                // Handle Load More Button Visibility
+                if (loadMoreBtn) {
+                    if (filtered.length > visibleCount) {
+                        loadMoreBtn.style.display = 'inline-block';
+                        loadMoreBtn.innerText = `Load More (${filtered.length - visibleCount} remaining)`;
+                    } else {
+                        loadMoreBtn.style.display = 'none';
+                    }
+                }
             }
         }
 
@@ -214,7 +250,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.querySelectorAll('.reveal').forEach(el => window.observer.observe(el));
         }
         const counter = document.getElementById('counter');
-        if (counter) counter.innerText = `Showing 1-${filtered.length} of ${filtered.length} item(s)`;
+        if (counter) counter.innerText = `Showing 1-${Math.min(visibleCount, filtered.length)} of ${filtered.length} item(s)`;
     };
 
     // Event Listeners
@@ -272,6 +308,43 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
     });
+
+    // Mobile Filter Drawer Logic
+    const filterToggle = document.getElementById('filter-toggle');
+    const sidebar = document.querySelector('.shop-sidebar-container');
+    const overlay = document.getElementById('sidebar-overlay');
+
+    if (filterToggle && sidebar && overlay) {
+        // Create Close Button
+        const closeBtn = document.createElement('div');
+        closeBtn.className = 'filter-close';
+        closeBtn.innerHTML = '&times;';
+        closeBtn.onclick = () => {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        };
+        // Add title and close button container if not present
+        if (!sidebar.querySelector('.filter-close')) {
+            const header = document.createElement('div');
+            header.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #eee;';
+            header.innerHTML = '<h3 style="margin:0; font-size:1.2rem;">Filters</h3>';
+            header.appendChild(closeBtn);
+            sidebar.prepend(header);
+        }
+
+        filterToggle.addEventListener('click', () => {
+            sidebar.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent background scroll
+        });
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+    }
 
     initShop();
 });

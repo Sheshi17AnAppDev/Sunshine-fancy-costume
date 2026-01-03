@@ -46,6 +46,11 @@ async function applyTheme() {
 }
 
 async function renderOfferBanner() {
+    // Restrict to Home Page
+    const path = window.location.pathname.toLowerCase();
+    const isHome = path === '/' || path.endsWith('/index.html') || path.endsWith('/index');
+    if (!isHome) return;
+
     try {
         const response = await fetch('/api/site-content/offerBanner');
         if (response.ok) {
@@ -653,3 +658,112 @@ window.showToast = (message, type = 'info') => {
     }, 4000);
 };
 
+// Setup Mobile App Header
+function setupMobileHeader() {
+    if (window.innerWidth > 1024) return;
+
+    const header = document.getElementById('header');
+    if (!header) return;
+
+    const path = window.location.pathname.toLowerCase();
+    const isHome = path === '/' || path.endsWith('index.html') || path.endsWith('index');
+
+    const logo = header.querySelector('.logo');
+    const headerIcons = header.querySelector('.header-icons');
+
+    // Remove existing dynamic content if any
+    const existingDynamic = header.querySelector('.mobile-app-header-content');
+    if (existingDynamic) existingDynamic.remove();
+
+    // Check for existing home-specific elements
+    let homeCatBtn = header.querySelector('.mobile-home-cat-btn');
+
+    if (isHome) {
+        // Home View: Logo only (Icons hidden)
+        if (logo) logo.classList.remove('hidden-mobile');
+        if (headerIcons) headerIcons.classList.remove('visible-mobile');
+
+        // Feature: Category Menu Button
+        if (!homeCatBtn) {
+            homeCatBtn = document.createElement('button');
+            homeCatBtn.className = 'mobile-home-cat-btn';
+            homeCatBtn.innerHTML = '<i class="fa-solid fa-border-all"></i>';
+            homeCatBtn.onclick = () => { if (window.showAllCategories) window.showAllCategories(); };
+
+            // Inline Styles for positioning
+            homeCatBtn.style.position = 'absolute';
+            homeCatBtn.style.right = '1rem';
+            homeCatBtn.style.top = '50%';
+            homeCatBtn.style.transform = 'translateY(-50%)';
+            homeCatBtn.style.background = 'none';
+            homeCatBtn.style.border = 'none';
+            homeCatBtn.style.fontSize = '1.3rem';
+            homeCatBtn.style.color = '#1a1a1a';
+            homeCatBtn.style.cursor = 'pointer';
+
+            header.appendChild(homeCatBtn);
+        } else {
+            homeCatBtn.style.display = 'block';
+        }
+
+    } else {
+        // Sub-page View: Back + Title + Action
+        if (logo) logo.classList.add('hidden-mobile');
+        if (headerIcons) headerIcons.classList.remove('visible-mobile');
+
+        // Hide Home Button if persists
+        if (homeCatBtn) homeCatBtn.style.display = 'none';
+        // Hide standard icons, we might add specific ones
+        // Actually, keep standard icons hidden and let dynamic header handle it if needed
+
+        let pageTitle = 'Sunshine';
+        if (path.includes('shop')) pageTitle = 'Shop';
+        else if (path.includes('cart')) pageTitle = 'My Cart';
+        else if (path.includes('checkout')) pageTitle = 'Checkout';
+        else if (path.includes('profile')) pageTitle = 'Profile';
+        else if (path.includes('login') || path.includes('signup')) pageTitle = 'Account'; // Usually full screen anyway
+        else if (path.includes('product')) pageTitle = 'Product Details';
+        else if (path.includes('order')) pageTitle = 'Orders';
+
+        // Check for specific element to grab title
+        const productTitleEl = document.getElementById('product-name');
+        if (path.includes('product') && productTitleEl) {
+            // For product page, stick to generic or short name to avoid overflow
+            pageTitle = 'Details';
+        }
+
+        const dynamicContainer = document.createElement('div');
+        dynamicContainer.className = 'mobile-app-header-content';
+
+        dynamicContainer.innerHTML = `
+            <button class="mobile-back-btn" onclick="history.back()"><i class="fa-solid fa-arrow-left"></i></button>
+            <span class="mobile-page-title">${pageTitle}</span>
+            <div class="mobile-header-spacer" style="width: 40px;"></div> 
+        `;
+
+        // Optional: Add a specific action button on right instead of spacer
+        // e.g. on Shop, show Search? On Product, show Cart?
+        if (path.includes('shop')) {
+            const rightAction = document.createElement('div');
+            rightAction.className = 'mobile-back-btn'; // Reuse style
+            rightAction.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i>';
+            rightAction.onclick = () => document.getElementById('search-trigger')?.click();
+            dynamicContainer.querySelector('.mobile-header-spacer').replaceWith(rightAction);
+        } else if (path.includes('product')) {
+            const rightAction = document.createElement('a');
+            rightAction.href = 'cart';
+            rightAction.className = 'mobile-back-btn';
+            rightAction.innerHTML = '<i class="fa-solid fa-bag-shopping"></i>';
+            dynamicContainer.querySelector('.mobile-header-spacer').replaceWith(rightAction);
+        }
+
+        header.appendChild(dynamicContainer);
+    }
+}
+
+// Call on load and resize
+setupMobileHeader(); // Run immediately in case deferred
+document.addEventListener('DOMContentLoaded', () => {
+    setupMobileHeader();
+    window.addEventListener('resize', setupMobileHeader);
+});

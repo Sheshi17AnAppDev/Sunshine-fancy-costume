@@ -9,7 +9,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/responsive.css?v=99">
     <link rel="stylesheet" href="css/mobile-small.css">
     <link rel="stylesheet" href="css/view-all-buttons.css">
     <link rel="stylesheet" href="css/mobile-app.css">
@@ -55,16 +55,7 @@
     </header>
 
     <!-- Mobile Search Bar (Hidden on Desktop) -->
-    <div class="mobile-search-bar"
-        style="width: 100%; padding: 0.5rem 1rem; background: var(--off-white); border-top: 1px solid #eee;">
-        <div style="position: relative; width: 100%;">
-            <input type="text" id="mobile-search-input" placeholder="Search..."
-                style="width: 100%; padding: 0.5rem 2.5rem 0.5rem 1rem; border: 1px solid #ddd; border-radius: 20px; font-size: 0.9rem;">
-            <button id="mobile-search-btn"
-                style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--primary-orange);"><i
-                    class="fa-solid fa-magnifying-glass"></i></button>
-        </div>
-    </div>
+
 
     <main class="shop-main">
         <aside class="shop-sidebar-container reveal">
@@ -122,9 +113,17 @@
             </div>
         </aside>
 
+        <div id="sidebar-overlay"></div> <!-- Overlay for mobile sidebar -->
+
         <section class="shop-content reveal">
-            <div style="margin-bottom: 3rem;">
-                <h2 style="font-size: 2rem;">Our Collection Of Products</h2>
+            <div style="margin-bottom: 3rem; position: relative;">
+                <h2 style="font-size: 2rem; padding-right: 50px;">Our Collection Of Products</h2>
+
+                <!-- Mobile Filter Toggle Button -->
+                <button id="filter-toggle" class="mobile-filter-btn">
+                    <i class="fa-solid fa-filter"></i>
+                </button>
+
                 <div style="margin-top: 2rem; position: relative; max-width: 400px;">
                     <input type="text" id="shop-search" placeholder="Search Item"
                         style="width: 100%; padding: 1rem; border: 1px solid var(--border-gray); border-radius: 5px;">
@@ -140,7 +139,7 @@
             </div>
 
             <div style="margin-top: 5rem; text-align: center;" class="reveal">
-                <button
+                <button id="load-more-btn"
                     style="padding: 1.5rem 3rem; background: #111; color: white; border: none; border-radius: 5px; cursor: pointer;">Load
                     More <i class="fa-solid fa-chevron-down"></i></button>
             </div>
@@ -195,7 +194,7 @@
 
     <script src="js/main.js?v=4"></script>
     <script src="js/auth.js?v=4"></script>
-    <script src="js/shop.js?v=4"></script>
+    <script src="js/shop.js?v=99"></script>
 </body>
 
 </html>

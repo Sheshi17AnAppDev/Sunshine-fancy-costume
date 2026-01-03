@@ -57,11 +57,25 @@ function renderBatch(type) {
     let items, page;
     if (type === 'featured') { items = currentFeatured; page = featuredPage; }
     else if (type === 'popular') { items = currentPopular; page = popularPage; }
-    else { items = currentCategories; page = categoriesPage; }
+    else {
+        // For categories, we SHOW ALL at once, no pagination
+        items = currentCategories;
+        page = 0;
+    }
 
-    const start = page * ITEMS_PER_PAGE;
-    const end = start + ITEMS_PER_PAGE;
-    const batch = items.slice(start, end);
+    let start, end, batch;
+
+    if (type === 'categories') {
+        // Show ALL categories
+        start = 0;
+        end = items.length;
+        batch = items;
+    } else {
+        // Standard Pagination for others
+        start = page * ITEMS_PER_PAGE;
+        end = start + ITEMS_PER_PAGE;
+        batch = items.slice(start, end);
+    }
 
     if (batch.length === 0) return;
 
@@ -75,12 +89,12 @@ function renderBatch(type) {
 
     if (page === 0) {
         grid.innerHTML = html;
-        if (items.length > end) addLoadMoreButton(grid, type);
+        if (type !== 'categories' && items.length > end) addLoadMoreButton(grid, type);
     } else {
         const btn = grid.querySelector('.load-more-container');
         if (btn) btn.remove();
         grid.insertAdjacentHTML('beforeend', html);
-        if (items.length > end) addLoadMoreButton(grid, type);
+        if (type !== 'categories' && items.length > end) addLoadMoreButton(grid, type);
     }
 
     // Increment Page
@@ -108,12 +122,20 @@ window.closeAllModals = function () {
 };
 
 function renderCategoryCard(cat) {
+    // Calculate Product Count
+    const count = window.allProducts
+        ? window.allProducts.filter(p => p.category === cat._id || (p.category && p.category._id === cat._id)).length
+        : 0;
+
     return `
         <a href="/shop?category=${cat._id}" class="category-cat-item" style="text-decoration: none; color: inherit; display: block; border: 1px solid #eee; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
             <div style="aspect-ratio: 4/3; overflow: hidden; background: #f9f9f9; width: 100%;">
                 <img src="${cat.image || 'https://via.placeholder.com/400x300?text=' + encodeURIComponent(cat.name)}" alt="${cat.name}" style="width: 100%; height: 100%; object-fit: cover;">
             </div>
-            <h3 style="padding: 0.8rem; margin: 0; font-size: 0.95rem; text-align: center; color: #333;">${cat.name}</h3>
+            <div style="padding: 0.8rem; text-align: center;">
+                <h3 style="margin: 0; font-size: 0.95rem; color: #333;">${cat.name}</h3>
+                <span class="cat-count" style="display: block; font-size: 0.8rem; color: #999; margin-top: 0.3rem;">${count} Products</span>
+            </div>
         </a>
     `;
 }

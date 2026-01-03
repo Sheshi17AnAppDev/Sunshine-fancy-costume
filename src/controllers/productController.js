@@ -64,7 +64,8 @@ exports.createProduct = async (req, res) => {
             images: images || [],
             video: video || null,
             agePrices: agePrices || [],
-            sizePrices: sizePrices || []
+            sizePrices: sizePrices || [],
+            site: req.adminSite || req.body.site
         });
 
         const createdProduct = await product.save();

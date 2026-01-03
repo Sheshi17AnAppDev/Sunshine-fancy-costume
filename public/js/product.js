@@ -33,6 +33,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         const productDesc = document.getElementById('product-desc');
         if (productDesc) productDesc.innerText = product.description;
 
+        // Also populate the tab description immediately
+        const tabDesc = document.getElementById('tab-desc');
+        if (tabDesc) {
+            tabDesc.innerText = product.description;
+            tabDesc.style.color = 'var(--dark-text)'; // Reset style if needed
+        }
+
         const productCat = document.getElementById('product-category');
         if (productCat) productCat.innerText = (product.category?.name || product.category || 'CATEGORY');
 

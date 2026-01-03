@@ -196,9 +196,27 @@ function createEmailTemplate(otp, type = 'verify') {
 // @route   POST /api/auth/register-init
 // @access  Public
 exports.initiateRegistration = async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, phoneNumber } = req.body;
 
     try {
+        // --- Backend Validation ---
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const phoneRegex = /^[\d+]/; // Check that it starts with digit or +
+
+        if (!email || !emailRegex.test(email)) {
+            return res.status(400).json({ message: 'Please provide a valid email address' });
+        }
+
+        if (!password || password.length < 8) {
+            return res.status(400).json({ message: 'Password must be at least 8 characters long' });
+        }
+
+        // Basic phone validation 
+        if (!phoneNumber || phoneNumber.replace(/\D/g, '').length < 10) {
+            return res.status(400).json({ message: 'Please provide a valid phone number' });
+        }
+        // --- End Validation ---
+
         // Check if user already exists and is verified
         const existingUser = await User.findOne({ email });
         if (existingUser && existingUser.isVerified) {
@@ -214,6 +232,7 @@ exports.initiateRegistration = async (req, res) => {
             name,
             email,
             password,
+            phoneNumber, // Store phone number
             otp,
             otpExpiry,
             createdAt: Date.now()
@@ -298,6 +317,7 @@ exports.verifyOTP = async (req, res) => {
             password: userData.password,
             role: 'user',
             isVerified: true,
+            phoneNumber: userData.phoneNumber, // Save phone number
             site: defaultSite ? defaultSite._id : null
         });
 

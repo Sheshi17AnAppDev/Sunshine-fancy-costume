@@ -58,16 +58,7 @@
     </header>
 
     <!-- Mobile Search Bar (Hidden on Desktop) -->
-    <div class="mobile-search-bar"
-        style="width: 100%; padding: 0.5rem 1rem; background: var(--off-white); border-top: 1px solid #eee;">
-        <div style="position: relative; width: 100%;">
-            <input type="text" id="mobile-search-input" placeholder="Search..."
-                style="width: 100%; padding: 0.5rem 2.5rem 0.5rem 1rem; border: 1px solid #ddd; border-radius: 20px; font-size: 0.9rem;">
-            <button id="mobile-search-btn"
-                style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--primary-orange);"><i
-                    class="fa-solid fa-magnifying-glass"></i></button>
-        </div>
-    </div>
+
 
     <div class="breadcrumb">
         <a href="shop">Product Listing</a> <i class="fa-solid fa-chevron-right"
@@ -126,16 +117,19 @@
                     <p id="product-desc">Loading product description...</p>
                 </div>
 
-                <div class="product-actions-container" style="margin-top: 2rem;">
-                    <div class="quantity-input-wrapper">
-                        <button onclick="changeQty(-1)"><i class="fa-solid fa-minus"></i></button>
-                        <input type="number" id="qty" value="1" readonly>
-                        <button onclick="changeQty(1)"><i class="fa-solid fa-plus"></i></button>
+                <div class="product-bottom-actions">
+                    <div class="product-actions-container" style="margin-top: 2rem;">
+                        <div class="quantity-input-wrapper">
+                            <button onclick="changeQty(-1)"><i class="fa-solid fa-minus"></i></button>
+                            <input type="number" id="qty" value="1" readonly>
+                            <button onclick="changeQty(1)"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                        <button id="add-to-cart" class="btn add-to-cart-btn"><i class="fa-solid fa-bag-shopping"></i>
+                            Add to
+                            Cart</button>
                     </div>
-                    <button id="add-to-cart" class="btn add-to-cart-btn"><i class="fa-solid fa-bag-shopping"></i> Add to
-                        Cart</button>
+                    <button class="btn btn-outline buy-now-btn" style="width: 100%; margin-top: 1rem;">Buy Now</button>
                 </div>
-                <button class="btn btn-outline buy-now-btn" style="width: 100%; margin-top: 1rem;">Buy Now</button>
 
                 <div class="shipping-info" style="margin-top: 2.5rem;">
 

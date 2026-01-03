@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="css/mobile-small.css">
     <link rel="stylesheet" href="css/view-all-buttons.css">
-    <link rel="stylesheet" href="css/mobile-app.css">
+    <link rel="stylesheet" href="css/mobile-app.css?v=99">
 </head>
 
 <body>
@@ -57,14 +57,10 @@
     </header>
 
     <!-- Mobile Search Bar (Hidden on Desktop) -->
-    <div class="mobile-search-bar"
-        style="width: 100%; padding: 0.5rem 1rem; background: var(--off-white); border-top: 1px solid #eee;">
-        <div style="position: relative; width: 100%;">
-            <input type="text" id="mobile-search-input" placeholder="Search..."
-                style="width: 100%; padding: 0.5rem 2.5rem 0.5rem 1rem; border: 1px solid #ddd; border-radius: 20px; font-size: 0.9rem;">
-            <button id="mobile-search-btn"
-                style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--primary-orange);"><i
-                    class="fa-solid fa-magnifying-glass"></i></button>
+    <div class="mobile-search-bar">
+        <div class="mobile-search-inner">
+            <input type="text" id="mobile-search-input" placeholder="Search for products...">
+            <button id="mobile-search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
         </div>
     </div>
 
@@ -97,14 +93,10 @@
         </section>
 
         <section class="reveal category-showcase">
-            <div class="section-title" style="text-align: center; margin-bottom: 1rem; position: relative;">
-                <h2 id="home-title-categories">View Our Range Of Categories</h2>
-                <p id="home-subtitle-categories"
-                    style="color: var(--primary-orange); font-size: 1rem; margin-top: 0.5rem;">Lorem ipsum dolor sit
-                    amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna
-                    aliquam.</p>
-                <button class="mobile-view-all-btn" onclick="showAllCategories()"
-                    style="position: absolute; right: 0; top: 0;">
+            <div class="section-title"
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h2 id="home-title-categories">Categories</h2>
+                <button class="mobile-view-all-btn" onclick="showAllCategories()">
                     View All <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </div>

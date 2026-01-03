@@ -167,6 +167,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.log('Promo Carousel Raw:', JSON.stringify(cData));
 
             if (cData && cData.isVisible && cData.slides && cData.slides.length > 0) {
+                // Data exists, proceed
+            }
+
+            if (cData && cData.isVisible && cData.slides && cData.slides.length > 0) {
                 console.log('Rendering', cData.slides.length, 'slides');
                 const carouselSection = document.createElement('section');
                 carouselSection.className = 'promo-carousel-section';

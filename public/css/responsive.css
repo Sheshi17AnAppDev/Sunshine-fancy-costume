@@ -777,14 +777,15 @@
     /* Mobile View All Popup Logic */
     @media (max-width: 768px) {
 
-        /* Limit initially visible items */
+        /* Limit initially visible items - REMOVED to fix Shop Page issue */
+        /* 
         .products-container>*:nth-child(n+5),
         .product-scroll-container>*:nth-child(n+5),
         .cat-grid>*:nth-child(n+5),
         .category-scroll-container>*:nth-child(n+5) {
-            /* Fallback */
-            display: none !important;
-        }
+             display: none !important;
+        } 
+        */
 
         /* View All Button - Enhanced Styling */
         .mobile-view-all-btn {

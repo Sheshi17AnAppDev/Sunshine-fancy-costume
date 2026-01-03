@@ -138,7 +138,7 @@
     box-shadow: var(--shadow-md);
     border: 1px solid rgba(0, 0, 0, 0.03);
     position: relative;
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
 }
 
 @media (max-width: 768px) {
