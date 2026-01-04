@@ -283,6 +283,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <div class="promo-carousel-content" style="pointer-events: none;">
                             ${slide.title ? `<h2>${slide.title}</h2>` : ''}
                             ${subtitle ? `<p>${subtitle}</p>` : ''}
+                            
+                            ${slide.promoCode ? `
+                                <div class="promo-code-container" style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 8px; display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; border: 1px dashed #fbb03b;">
+                                    <span style="font-family: monospace; font-size: 1.2rem; font-weight: bold; color: #fbb03b;">${slide.promoCode}</span>
+                                    <button onclick="navigator.clipboard.writeText('${slide.promoCode}'); showToast('Code Copied!', 'success');" style="background: none; border: none; color: white; cursor: pointer;" title="Copy Code">
+                                        <i class="fa-regular fa-copy"></i>
+                                    </button>
+                                </div><br>
+                            ` : ''}
+
                             ${slide.link ? `<a href="${slide.link}" class="promo-carousel-btn" style="pointer-events: auto;">Shop Now <i class="fa-solid fa-arrow-right"></i></a>` : ''}
                         </div>
                     </div>

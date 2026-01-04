@@ -269,8 +269,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const urlParams = new URLSearchParams(window.location.search);
     const searchQuery = urlParams.get('search');
+
+    // Set initial search value if present
     if (searchQuery && searchInput) {
         searchInput.value = searchQuery;
+        // Trigger filter immediately is handled by initShop -> filterProducts
     }
 
     // Product Card Hover Auto-Scroll (Delegated)

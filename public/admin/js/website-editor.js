@@ -302,9 +302,15 @@
             </div>
              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin-bottom:1rem;">
                 <div>
+                   <label style="font-weight:600; font-size:0.8rem; display:block; margin-bottom:0.3rem;">Promo Code (Optional)</label>
+                   <input type="text" class="slide-promo-code" value="${slide.promoCode || ''}" placeholder="e.g. SUMMER20" style="width:100%; padding:0.6rem; border-radius:6px; border:1px solid #ddd;">
+                </div>
+                <div>
                    <label style="font-weight:600; font-size:0.8rem; display:block; margin-bottom:0.3rem;">Discount %</label>
                    <input type="number" class="slide-discount" value="${slide.discount || ''}" placeholder="e.g. 20" style="width:100%; padding:0.6rem; border-radius:6px; border:1px solid #ddd;">
                 </div>
+            </div>
+             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin-bottom:1rem;">
                 <div style="display:flex; align-items:flex-end;">
                    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; margin-bottom:0.8rem;">
                         <input type="checkbox" class="slide-show-discount" ${slide.showDiscount ? 'checked' : ''} style="width:1.2rem; height:1.2rem;">
@@ -707,6 +713,7 @@
                     id: String(index + 1),
                     image: item.querySelector('.slide-image').value,
                     title: item.querySelector('.slide-title').value,
+                    promoCode: item.querySelector('.slide-promo-code').value,
                     categoryId: categoryId,
                     discount: item.querySelector('.slide-discount').value,
                     showDiscount: item.querySelector('.slide-show-discount').checked,

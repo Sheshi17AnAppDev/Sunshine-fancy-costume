@@ -389,7 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && searchInput.value.trim()) {
-                window.location.href = `shop?search=${encodeURIComponent(searchInput.value.trim())}`;
+                window.location.href = `/shop?search=${encodeURIComponent(searchInput.value.trim())}`;
             }
         });
     }
@@ -401,7 +401,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleSearch = (inputId) => {
         const input = document.getElementById(inputId);
         if (input && input.value.trim()) {
-            window.location.href = `/shop?search=${encodeURIComponent(input.value.trim())}`;
+            const query = input.value.trim();
+            // Encode the collection param, but "search" is typically just ?search=...
+            window.location.href = `/shop?search=${encodeURIComponent(query)}`;
         }
     };
 
