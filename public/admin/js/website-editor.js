@@ -112,7 +112,11 @@
         promoCarouselExtra: document.getElementById('promo-carousel-extra'),
         carouselVisible: document.getElementById('carousel-visible'),
         carouselList: document.getElementById('carousel-list'),
-        addSlideBtn: document.getElementById('add-slide-btn')
+        addSlideBtn: document.getElementById('add-slide-btn'),
+
+        // Media Library
+        mediaLibraryExtra: document.getElementById('media-library-extra'),
+        mediaList: document.getElementById('media-list')
     };
 
     const setStatus = (text) => {
@@ -125,6 +129,7 @@
         if (els.aboutExtra) els.aboutExtra.hidden = key !== 'about';
         if (els.offerBannerExtra) els.offerBannerExtra.hidden = key !== 'offerBanner';
         if (els.promoCarouselExtra) els.promoCarouselExtra.hidden = key !== 'promoCarousel';
+        if (els.mediaLibraryExtra) els.mediaLibraryExtra.hidden = key !== 'mediaLibrary';
         if (els.contactExtra) els.contactExtra.hidden = key !== 'contact';
         if (els.blogExtra) els.blogExtra.hidden = key !== 'blog';
         if (els.faqExtra) els.faqExtra.hidden = key !== 'faq';
@@ -133,9 +138,9 @@
         if (els.headerExtra) els.headerExtra.hidden = key !== 'header';
         if (els.themeExtra) els.themeExtra.hidden = key !== 'theme';
 
-        const contentKeys = ['home', 'header', 'about', 'shop', 'contact', 'blog', 'faq', 'theme', 'offerBanner', 'promoCarousel'];
+        const contentKeys = ['home', 'header', 'about', 'shop', 'contact', 'blog', 'faq', 'theme', 'offerBanner', 'promoCarousel', 'mediaLibrary'];
         // Only show generic blocks for 'home' or others if they use them. 
-        const showGeneric = !['header', 'theme', 'contact', 'blog', 'faq', 'shop', 'offerBanner', 'promoCarousel'].includes(key);
+        const showGeneric = !['header', 'theme', 'contact', 'blog', 'faq', 'shop', 'offerBanner', 'promoCarousel', 'mediaLibrary'].includes(key);
 
         if (els.heroBlock) els.heroBlock.style.display = showGeneric ? '' : 'none';
         if (els.sectionTitlesBlock) els.sectionTitlesBlock.style.display = showGeneric ? '' : 'none';
@@ -744,12 +749,80 @@
         return {};
     };
 
+    // --- Media Library Logic ---
+    window.refreshMediaLibrary = async () => {
+        const list = els.mediaList;
+        list.innerHTML = '<div style="text-align:center; padding: 2rem; color: rgba(255,255,255,0.5); grid-column: 1/-1;"><i class="fa-solid fa-spinner fa-spin fa-2x"></i><br>Loading media...</div>';
+
+        try {
+            const res = await adminAuth.makeAuthenticatedRequest('/api/media?t=' + Date.now());
+            list.innerHTML = '';
+
+            if (res.length === 0) {
+                list.innerHTML = '<div style="text-align:center; padding: 2rem; color: rgba(255,255,255,0.5); grid-column: 1/-1;">No media files found.</div>';
+                return;
+            }
+
+            res.forEach(file => {
+                const isVideo = file.name.match(/\.(mp4|webm|mov)$/i);
+                const div = document.createElement('div');
+                div.className = 'media-item glass';
+                div.style.cssText = 'position: relative; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column;';
+
+                let preview = '';
+                if (isVideo) {
+                    preview = `<div style="height: 100px; background: #000; display:flex; align-items:center; justify-content:center; color:white;"><i class="fa-solid fa-video"></i></div>`;
+                } else {
+                    preview = `<div style="height: 100px; background-image: url('${file.url}'); background-size: cover; background-position: center;"></div>`;
+                }
+
+                div.innerHTML = `
+                    ${preview}
+                    <div style="padding: 0.8rem; flex: 1;">
+                        <div style="font-size: 0.75rem; word-break: break-all; margin-bottom: 0.5rem; font-weight: 500;">${file.name}</div>
+                        <div style="font-size: 0.7rem; color: rgba(255,255,255,0.5); margin-bottom: 0.8rem;">
+                            ${(file.size / 1024).toFixed(1)} KB<br>
+                            ${new Date(file.createdAt).toLocaleDateString()}
+                        </div>
+                        <button class="btn-delete-media" style="width: 100%; padding: 0.4rem; border: 1px solid #ff6b6b; color: #ff6b6b; background: rgba(255,107,107,0.1); border-radius: 4px; font-size: 0.8rem; cursor: pointer;">
+                            <i class="fa-solid fa-trash"></i> Delete
+                        </button>
+                    </div>
+                `;
+
+                div.querySelector('.btn-delete-media').addEventListener('click', () => deleteMedia(file.name));
+                list.appendChild(div);
+            });
+        } catch (error) {
+            list.innerHTML = `<div style="text-align:center; padding: 2rem; color: #ff6b6b; grid-column: 1/-1;">Error loading media: ${error.message}</div>`;
+        }
+    };
+
+    const deleteMedia = async (filename) => {
+        if (!confirm(`Are you sure you want to delete "${filename}"? This cannot be undone.`)) return;
+
+        try {
+            await adminAuth.makeAuthenticatedRequest(`/api/media/${filename}`, { method: 'DELETE' });
+            showToast('File deleted successfully', 'success');
+            setTimeout(window.refreshMediaLibrary, 500);
+        } catch (error) {
+            showToast('Failed to delete file: ' + error.message, 'error');
+        }
+    };
+    // ---------------------------
+
     let availableCategories = [];
 
     const loadPage = async () => {
         const key = els.pageKey.value;
         setVisibleForPage(key);
         setStatus('Loading...');
+
+        if (key === 'mediaLibrary') {
+            setStatus('Viewing Media Library');
+            window.refreshMediaLibrary();
+            return;
+        }
 
         try {
             // Pre-fetch categories if needed for promoCarousel

@@ -67,6 +67,10 @@
                                 onclick="switchEditorPage('promoCarousel'); return false;"
                                 style="font-size: 0.9rem; opacity: 0.8;"><i class="fa-solid fa-images"></i>
                                 Promo Carousel</a></li>
+                        <li><a href="website-editor?page=mediaLibrary"
+                                onclick="switchEditorPage('mediaLibrary'); return false;"
+                                style="font-size: 0.9rem; opacity: 0.8;"><i class="fa-solid fa-photo-film"></i>
+                                Media Library</a></li>
                     </ul>
                 </li>
                 <li style="margin-top: auto;"><a href="#" id="logout"><i class="fa-solid fa-right-from-bracket"></i>
@@ -111,6 +115,7 @@
                             <option value="faq">FAQ</option>
                             <option value="offerBanner">Offer Banner</option>
                             <option value="promoCarousel">Promo Carousel (Home)</option>
+                            <option value="mediaLibrary">Media Library</option>
                         </select>
                     </div>
                     <div id="status" style="color: rgba(255,255,255,0.75); font-weight: 600;">Loading...</div>
@@ -484,8 +489,33 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="glass" style="padding: 1.5rem; border-radius: 16px;" id="media-library-extra" hidden>
+                    <h2 style="margin-bottom: 1rem;">Media Library</h2>
+                    <p style="font-size: 0.9rem; color: rgba(255,255,255,0.7); margin-bottom: 1.5rem;">
+                        Manage your uploaded images and videos. <span style="color: #ff6b6b;"><i
+                                class="fa-solid fa-triangle-exclamation"></i> Deleting a file here will remove it
+                            permanently from the server and break any links using it.</span>
+                    </p>
+
+                    <div style="display:flex; justify-content: flex-end; margin-bottom: 1rem;">
+                        <button class="btn btn-black" onclick="refreshMediaLibrary()"
+                            style="padding: 0.5rem 1rem; font-size: 0.8rem;">
+                            <i class="fa-solid fa-rotate-right"></i> Refresh
+                        </button>
+                    </div>
+
+                    <div id="media-list"
+                        style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem;">
+                        <!-- Dynamic Media Items will appear here -->
+                        <div style="text-align:center; padding: 2rem; color: rgba(255,255,255,0.5); grid-column: 1/-1;">
+                            <i class="fa-solid fa-spinner fa-spin fa-2x"></i><br>Loading media...
+                        </div>
+                    </div>
+                </div>
             </div>
-        </main>
+    </div>
+    </main>
     </div>
 
     <script src="../js/main.js"></script>

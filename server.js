@@ -28,6 +28,7 @@ app.use('/api/orders', require('./src/routes/orderRoutes'));
 app.use('/api/brands', require('./src/routes/brandRoutes'));
 app.use('/api/sites', require('./src/routes/siteRoutes'));
 app.use('/api/reviews', require('./src/routes/reviewRoutes'));
+app.use('/api/media', require('./src/routes/mediaRoutes'));
 
 app.get('/api/health', (req, res) => {
     res.status(200).json({ status: 'API is running' });

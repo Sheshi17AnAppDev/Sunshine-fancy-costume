@@ -18,6 +18,19 @@ document.getElementById('login-form').onsubmit = async (e) => {
     e.preventDefault();
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email)) {
+        showToast('Please enter a valid email address.', 'error');
+        return;
+    }
+
+    if (!password || password.length < 1) {
+        showToast('Please enter your password.', 'error');
+        return;
+    }
+
     try {
         const res = await api.post('/auth/login', { email, password });
         localStorage.setItem('user', JSON.stringify(res));

@@ -23,9 +23,15 @@ document.getElementById('signup-form').onsubmit = async (e) => {
     const password = document.getElementById('password').value;
 
     // --- Start Validation ---
+    const nameRegex = /^[a-zA-Z\s]{2,50}$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phoneRegex = /^\d{10,15}$/; // Basic digit check, length 10-15
+    const phoneRegex = /^\d{10}$/; // Exactly 10 digits
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/; // Min 8 chars, 1 letter, 1 number
+
+    if (!nameRegex.test(name)) {
+        showError('Please enter a valid full name (letters and spaces only, 2-50 characters).');
+        return;
+    }
 
     if (!emailRegex.test(email)) {
         showError('Please enter a valid email address.');
@@ -35,7 +41,7 @@ document.getElementById('signup-form').onsubmit = async (e) => {
     // Strip non-digits for phone validation
     const cleanPhone = phoneNumberInput.replace(/\D/g, '');
     if (!phoneRegex.test(cleanPhone)) {
-        showError('Please enter a valid phone number (displayed digits only).');
+        showError('Please enter a valid phone number (exactly 10 digits).');
         return;
     }
 
