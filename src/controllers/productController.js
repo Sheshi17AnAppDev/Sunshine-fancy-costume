@@ -1,4 +1,5 @@
 const Product = require('../models/Product');
+const Site = require('../models/Site');
 const { cloudinary } = require('../config/cloudinary');
 
 // @desc    Get all products
@@ -51,6 +52,18 @@ exports.createProduct = async (req, res) => {
     try {
         const { name, description, price, originalPrice, category, brand, countInStock, isFeatured, isPopular, images, video, agePrices, sizePrices } = req.body;
 
+        let productSite = req.adminSite || req.body.site;
+
+        // Fallback for Super Admin if no site specified: use first active site
+        if (!productSite && req.isSuperAdmin) {
+            const defaultSite = await Site.findOne({ isActive: true });
+            if (defaultSite) {
+                productSite = defaultSite._id;
+            } else {
+                return res.status(400).json({ message: 'No active site found to assign to product. Please create a site first.' });
+            }
+        }
+
         const product = new Product({
             name,
             description,
@@ -65,7 +78,7 @@ exports.createProduct = async (req, res) => {
             video: video || null,
             agePrices: agePrices || [],
             sizePrices: sizePrices || [],
-            site: req.adminSite || req.body.site
+            site: productSite
         });
 
         const createdProduct = await product.save();

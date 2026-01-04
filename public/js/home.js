@@ -162,9 +162,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Render Promo Carousel
         try {
             const carouselRes = await api.get('/site-content/promoCarousel');
-            const cData = carouselRes;
-            console.log('Promo Carousel Data:', cData);
-            console.log('Promo Carousel Raw:', JSON.stringify(cData));
+            // FIX: The API returns { key: "promoCarousel", data: { ... } }
+            // We need to access the inner .data property if it exists
+            const cData = (carouselRes && carouselRes.data) ? carouselRes.data : carouselRes;
+
+            console.log('Promo Carousel Data (Processed):', cData);
 
             if (cData && cData.isVisible && cData.slides && cData.slides.length > 0) {
                 // Data exists, proceed
