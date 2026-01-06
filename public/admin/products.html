@@ -158,7 +158,12 @@
                 <label>Main Images (Select multiple)</label>
                 <input type="file" id="prod-images" multiple accept="image/*">
                 <small style="color: #666;">First image will be the primary thumbnail.</small>
-                <div id="prod-images-preview" class="image-preview-container"></div>
+
+                <!-- Existing images (Moved here) -->
+                <div id="prod-current-images-preview"
+                    style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 10px;"></div>
+                <!-- New uploads preview -->
+                <div id="prod-upload-preview" class="image-preview-container" style="margin-top: 10px;"></div>
             </div>
 
             <div class="form-group" style="margin-top: 1rem;">
@@ -174,13 +179,13 @@
             </div>
             <div class="form-group" style="margin-top: 1rem;">
                 <label>Current Images</label>
-                <div id="prod-images-preview" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                <div id="prod-current-images-preview"
+                    style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
                     <!-- Previews here -->
                 </div>
 
 
-                <label style="margin-top: 1rem; display: block;">Related / Gallery Images</label>
-                <input type="file" id="prod-related-images" multiple accept="image/*">
+
             </div>
 
             <hr style="margin: 1.5rem 0; border: 0; border-top: 1px solid rgba(0,0,0,0.1);">
@@ -220,8 +225,8 @@
     <script src="../js/main.js"></script>
     <script src="js/admin-auth.js"></script>
     <script src="js/admin-mobile.js"></script>
-    <script src="js/pricing-manager.js"></script>
-    <script src="js/products.js?v=2"></script>
+    <script src="js/pricing-manager.js?v=6"></script>
+    <script src="js/products.js?v=6"></script>
     <nav class="mobile-bottom-nav">
         <a href="index" class="nav-item">
             <i class="fa-solid fa-gauge"></i>

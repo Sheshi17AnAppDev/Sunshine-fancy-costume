@@ -63,7 +63,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             products = productsRes || [];
             categories = categoriesRes || [];
             dynamicPriceRanges = shopContentRes?.data?.priceRanges || [];
-            ageGroups = shopContentRes?.data?.ageGroups || [];
+
+            // DYNAMIC AGE GROUPS: Extract unique age groups from products
+            const derivedAgeGroups = [...new Set(products.flatMap(p => (p.agePrices || []).map(ap => ap.ageGroup)))].filter(Boolean).sort();
+            ageGroups = derivedAgeGroups.length > 0 ? derivedAgeGroups : (shopContentRes?.data?.ageGroups || []);
 
             if (collectionTitle && shopContentRes?.data?.title) {
                 collectionTitle.innerText = shopContentRes.data.title;
@@ -96,6 +99,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }).join('');
         }
 
+        /*
         if (ageList) {
             ageList.innerHTML = ageGroups.map(age => `
                 <label class="custom-checkbox-container" style="margin-bottom: 1rem;">
@@ -105,6 +109,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </label>
             `).join('');
         }
+        */
 
         if (priceList) {
             priceList.innerHTML = dynamicPriceRanges.map((range, index) => `
@@ -185,7 +190,32 @@ document.addEventListener('DOMContentLoaded', async () => {
     const filterProducts = (resetCount = true) => {
         if (resetCount) visibleCount = pageSize;
 
-        const searchText = (document.getElementById('shop-search')?.value || '').toLowerCase();
+        const searchText = (document.getElementById('shop-search')?.value || '').toLowerCase().trim();
+
+        // Feature: Auto-tick filters if search term matches
+        if (searchText.length > 2) {
+            // 1. Categories
+            document.querySelectorAll('.cat-filter').forEach(cb => {
+                const label = cb.parentNode.querySelector('.label-text').innerText.toLowerCase();
+                if (searchText.length >= 3 && label.includes(searchText)) cb.checked = true;
+            });
+
+            // 2. Age Groups
+            /*
+            document.querySelectorAll('.age-filter').forEach(cb => {
+                const label = cb.parentNode.querySelector('.label-text').innerText.toLowerCase();
+                if (searchText.length >= 3 && label.includes(searchText)) cb.checked = true;
+            });
+            */
+
+            // 3. Price Ranges
+            document.querySelectorAll('.price-filter').forEach(cb => {
+                const label = cb.parentNode.querySelector('.label-text').innerText.toLowerCase();
+                if (searchText.length >= 3 && label.includes(searchText)) cb.checked = true;
+            });
+        }
+
+        // Re-read checkboxes after potential auto-tick
         const selectedCats = Array.from(document.querySelectorAll('.cat-filter:checked')).map(cb => cb.value);
         const selectedAges = Array.from(document.querySelectorAll('.age-filter:checked')).map(cb => cb.value);
         const selectedPriceIndices = Array.from(document.querySelectorAll('.price-filter:checked')).map(cb => parseInt(cb.value));

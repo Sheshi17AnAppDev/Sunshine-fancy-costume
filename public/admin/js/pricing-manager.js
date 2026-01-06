@@ -8,75 +8,78 @@
     let agePricesCount = 0;
     let sizePricesCount = 0;
 
-    // Common sizes for clothing
-    const commonSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
+    // Helper to create input with exact styles
+    const createStyledInput = (type, placeholder, value, className) => {
+        const input = document.createElement('input');
+        input.type = type;
+        input.placeholder = placeholder;
+        input.value = value || ''; // Safe assignment
+        input.className = className;
+        // Replicate original inline styles
+        input.style.flex = '1';
+        input.style.padding = '0.6rem';
+        input.style.border = '1px solid #ddd';
+        input.style.borderRadius = '6px';
+        return input;
+    };
 
     // Add Age Price Row
     window.addAgePriceRow = function (ageGroup = '', price = '') {
         const id = `age-price-${agePricesCount++}`;
         const row = document.createElement('div');
         row.id = id;
+        // Exact original container style
         row.style.cssText = 'display: flex; gap: 0.5rem; align-items: center;';
-        row.innerHTML = `
-            <input type="text" placeholder="Age Group (e.g., 3-5 Years)" 
-                   value="${ageGroup}" 
-                   class="age-group-input" 
-                   style="flex: 1; padding: 0.6rem; border: 1px solid #ddd; border-radius: 6px;">
-            <input type="number" placeholder="Price" 
-                   value="${price}" 
-                   class="age-price-input" 
-                   style="flex: 1; padding: 0.6rem; border: 1px solid #ddd; border-radius: 6px;">
-            <button type="button" class="btn btn-sm btn-danger" 
-                    onclick="document.getElementById('${id}').remove()"
-                    style="padding: 0.6rem 1rem;">
-                <i class="fa-solid fa-trash"></i>
-            </button>
-        `;
-        agePricesList.appendChild(row);
+
+        const nameInput = createStyledInput('text', 'Age Group (e.g., 3-5 Years)', ageGroup, 'age-group-input');
+
+        const priceInput = createStyledInput('number', 'Price', price, 'age-price-input');
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'btn btn-sm btn-danger';
+        removeBtn.style.padding = '0.6rem 1rem';
+        removeBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+        removeBtn.onclick = function () {
+            document.getElementById(id).remove();
+        };
+
+        row.appendChild(nameInput);
+        row.appendChild(priceInput);
+        row.appendChild(removeBtn);
+
+        if (agePricesList) agePricesList.appendChild(row);
     };
 
-    // Add Size Price Row
+    // Add Size Price Row (Text Input)
     window.addSizePriceRow = function (size = '', price = '') {
         const id = `size-price-${sizePricesCount++}`;
         const row = document.createElement('div');
         row.id = id;
         row.style.cssText = 'display: flex; gap: 0.5rem; align-items: center;';
-        row.innerHTML = `
-            <select class="size-input" 
-                    style="flex: 1; padding: 0.6rem; border: 1px solid #ddd; border-radius: 6px;">
-                <option value="">Select Size</option>
-                ${commonSizes.map(s => `<option value="${s}" ${s === size ? 'selected' : ''}>${s}</option>`).join('')}
-                <option value="custom" ${!commonSizes.includes(size) && size ? 'selected' : ''}>Custom Size</option>
-            </select>
-            <input type="text" placeholder="Custom Size" 
-                   value="${!commonSizes.includes(size) && size ? size : ''}" 
-                   class="size-custom-input" 
-                   style="flex: 1; padding: 0.6rem; border: 1px solid #ddd; border-radius: 6px; display: ${!commonSizes.includes(size) && size ? 'block' : 'none'};">
-            <input type="number" placeholder="Price" 
-                   value="${price}" 
-                   class="size-price-input" 
-                   style="flex: 1; padding: 0.6rem; border: 1px solid #ddd; border-radius: 6px;">
-            <button type="button" class="btn btn-sm btn-danger" 
-                    onclick="document.getElementById('${id}').remove()"
-                    style="padding: 0.6rem 1rem;">
-                <i class="fa-solid fa-trash"></i>
-            </button>
-        `;
-        sizePricesList.appendChild(row);
 
-        // Handle custom size input visibility
-        const sizeSelect = row.querySelector('.size-input');
-        const customInput = row.querySelector('.size-custom-input');
-        sizeSelect.addEventListener('change', function () {
-            customInput.style.display = this.value === 'custom' ? 'block' : 'none';
-            if (this.value !== 'custom') {
-                customInput.value = '';
-            }
-        });
+        const nameInput = createStyledInput('text', 'Size (e.g. XL, 42)', size, 'size-input');
+        const priceInput = createStyledInput('number', 'Price', price, 'size-price-input');
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'btn btn-sm btn-danger';
+        removeBtn.style.padding = '0.6rem 1rem';
+        removeBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+        removeBtn.onclick = function () {
+            document.getElementById(id).remove();
+        };
+
+        row.appendChild(nameInput);
+        row.appendChild(priceInput);
+        row.appendChild(removeBtn);
+
+        if (sizePricesList) sizePricesList.appendChild(row);
     };
 
     // Collect Age Prices
     window.getAgePrices = function () {
+        if (!agePricesList) return [];
         const rows = agePricesList.querySelectorAll('div[id^="age-price-"]');
         const agePrices = [];
         rows.forEach(row => {
@@ -91,12 +94,11 @@
 
     // Collect Size Prices
     window.getSizePrices = function () {
+        if (!sizePricesList) return [];
         const rows = sizePricesList.querySelectorAll('div[id^="size-price-"]');
         const sizePrices = [];
         rows.forEach(row => {
-            const sizeSelect = row.querySelector('.size-input')?.value;
-            const customSize = row.querySelector('.size-custom-input')?.value.trim();
-            const size = sizeSelect === 'custom' ? customSize : sizeSelect;
+            const size = row.querySelector('.size-input')?.value.trim();
             const price = parseFloat(row.querySelector('.size-price-input')?.value);
             if (size && price > 0) {
                 sizePrices.push({ size, price });
@@ -107,6 +109,7 @@
 
     // Load Age Prices into UI
     window.loadAgePrices = function (agePrices) {
+        if (!agePricesList) return;
         agePricesList.innerHTML = '';
         agePricesCount = 0;
         if (agePrices && agePrices.length > 0) {
@@ -118,6 +121,7 @@
 
     // Load Size Prices into UI
     window.loadSizePrices = function (sizePrices) {
+        if (!sizePricesList) return;
         sizePricesList.innerHTML = '';
         sizePricesCount = 0;
         if (sizePrices && sizePrices.length > 0) {

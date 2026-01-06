@@ -179,7 +179,7 @@ class ProductManager {
             document.getElementById('prod-discount').value = '';
         }
 
-        const previewContainer = document.getElementById('prod-images-preview');
+        const previewContainer = document.getElementById('prod-current-images-preview');
 
         // Store current images for deletion
         window.currentProductImages = [...(product.images || [])];
@@ -247,7 +247,8 @@ document.getElementById('add-btn').onclick = () => {
     editingId = null;
     document.getElementById('product-form').reset();
     document.getElementById('modal-title').innerText = 'Add Product';
-    document.getElementById('prod-images-preview').innerHTML = '';
+    document.getElementById('prod-upload-preview').innerHTML = '';
+    document.getElementById('prod-current-images-preview').innerHTML = '';
 
     // Reset Pricing
     if (window.loadAgePrices) window.loadAgePrices([]);
@@ -319,8 +320,7 @@ document.getElementById('product-form').onsubmit = async (e) => {
 
         // 1. Upload Main Images
         const newMainImages = await uploadFiles('prod-images');
-        // 2. Upload Related Images (if any legacy support needed, otherwise ignore)
-        // const newRelatedImages = await uploadFiles('prod-related-images'); // Removed or deprecated in html
+
 
         // 3. Upload Video
         const newVideos = await uploadFiles('prod-video');
@@ -394,7 +394,7 @@ window.removeImage = function (index) {
     if (confirm('Remove this image?')) {
         window.currentProductImages.splice(index, 1);
         // Re-render the preview
-        const previewContainer = document.getElementById('prod-images-preview');
+        const previewContainer = document.getElementById('prod-current-images-preview');
         previewContainer.innerHTML = (window.currentProductImages || []).map((img, i) => `
             <div style="position: relative; display: inline-block; margin-right: 8px;">
                 <img src="${img.url || img}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid #ddd;">
@@ -429,7 +429,7 @@ window.removeVideo = function () {
     if (confirm('Remove this video?')) {
         window.currentProductVideo = null;
         // Re-render the preview (remove video but keep images)
-        const previewContainer = document.getElementById('prod-images-preview');
+        const previewContainer = document.getElementById('prod-current-images-preview');
         previewContainer.innerHTML = (window.currentProductImages || []).map((img, i) => `
             <div style="position: relative; display: inline-block; margin-right: 8px;">
                 <img src="${img.url || img}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid #ddd;">

@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const categorySchema = new mongoose.Schema({
     site: {
         type: mongoose.Schema.ObjectId,
-        ref: 'Site',
-        required: true,
+        req: 'Site',
+        required: [true, 'Site association is required for categories'],
         index: true
     },
     name: {

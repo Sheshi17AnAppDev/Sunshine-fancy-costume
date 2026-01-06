@@ -4,24 +4,43 @@ const overlay = document.getElementById('overlay');
 
 let editingId = null;
 
+let allCategories = [];
+
 const loadCategories = async () => {
     try {
-        const categories = await api.get('/categories');
-        tableBody.innerHTML = categories.map(cat => `
-            <tr>
-                <td><img src="${cat.image}" style="width: 50px; border-radius: 5px;"></td>
-                <td>${cat.name}</td>
-                <td>${cat.description.slice(0, 50)}...</td>
-                <td>
-                    <button onclick="editCat('${cat._id}', '${cat.name}', '${cat.description}', '${cat.image}')" class="btn-icon"><i class="fa-solid fa-edit"></i></button>
-                    <button onclick="deleteCat('${cat._id}')" class="btn-icon" style="color: #ff4444;"><i class="fa-solid fa-trash"></i></button>
-                </td>
-            </tr>
-        `).join('');
+        allCategories = await api.get('/categories');
+        renderCategories(allCategories);
     } catch (err) {
         console.error(err);
     }
 };
+
+const renderCategories = (categories) => {
+    if (categories.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No categories found</td></tr>';
+        return;
+    }
+    tableBody.innerHTML = categories.map(cat => `
+        <tr>
+            <td><img src="${cat.image}" style="width: 50px; border-radius: 5px;"></td>
+            <td>${cat.name}</td>
+            <td>${cat.description.slice(0, 50)}...</td>
+            <td>
+                <button onclick="editCat('${cat._id}', '${cat.name}', '${cat.description}', '${cat.image}')" class="btn-icon"><i class="fa-solid fa-edit"></i></button>
+                <button onclick="deleteCat('${cat._id}')" class="btn-icon" style="color: #ff4444;"><i class="fa-solid fa-trash"></i></button>
+            </td>
+        </tr>
+    `).join('');
+};
+
+document.getElementById('category-search')?.addEventListener('keyup', (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    const filtered = allCategories.filter(cat =>
+        cat.name.toLowerCase().includes(searchTerm) ||
+        cat.description.toLowerCase().includes(searchTerm)
+    );
+    renderCategories(filtered);
+});
 
 window.editCat = (id, name, desc, img) => {
     editingId = id;

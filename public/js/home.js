@@ -119,14 +119,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
 
         if (featuredContainer) {
-            const featured = products.filter(p => p.isFeatured);
+            const featured = products.filter(p => p.isFeatured).slice(0, 6);
             featuredContainer.innerHTML = featured.length > 0
                 ? featured.map(renderItem).join('')
                 : '<div style="grid-column: 1/-1; text-align: center; padding: 2rem;">No featured products yet.</div>';
         }
 
         if (popularContainer) {
-            const popular = products.filter(p => p.isPopular);
+            const popular = products.filter(p => p.isPopular).slice(0, 6);
             popularContainer.innerHTML = popular.length > 0
                 ? popular.map(renderItem).join('')
                 : '<div style="grid-column: 1/-1; text-align: center; padding: 2rem;">No popular products yet.</div>';

@@ -1,3 +1,4 @@
+const Site = require('../models/Site');
 const Category = require('../models/Category');
 
 // @desc    Get all categories
@@ -26,17 +27,33 @@ exports.createCategory = async (req, res) => {
     const { name, description, image } = req.body;
 
     try {
+        let siteId = req.adminSite || req.body.site;
+
+        // Fallback for Super Admin if no site is selected/provided
+        if (!siteId) {
+            const defaultSite = await Site.findOne({ isActive: true });
+            if (defaultSite) {
+                siteId = defaultSite._id;
+            } else {
+                return res.status(400).json({ message: 'No active site found to associate with this category.' });
+            }
+        }
+
         const category = new Category({
             name,
             description,
             image: req.file ? req.file.path : image,
-            site: req.adminSite || req.body.site // Use admin's site or provided site (for super admin)
+            site: siteId
         });
 
         const createdCategory = await category.save();
         res.status(201).json(createdCategory);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        console.error('Create category error:', error);
+        if (error.code === 11000) {
+            return res.status(400).json({ message: 'Category with this name already exists' });
+        }
+        res.status(400).json({ message: error.message || 'Error creating category' });
     }
 };
 
@@ -60,6 +77,9 @@ exports.updateCategory = async (req, res) => {
             res.status(404).json({ message: 'Category not found' });
         }
     } catch (error) {
+        if (error.code === 11000) {
+            return res.status(400).json({ message: 'Category with this name already exists' });
+        }
         res.status(400).json({ message: error.message });
     }
 };
