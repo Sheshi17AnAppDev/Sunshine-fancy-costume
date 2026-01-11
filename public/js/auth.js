@@ -45,4 +45,8 @@ function redirectAfterLogin() {
 }
 
 // Initialize auth check on page load
-document.addEventListener('DOMContentLoaded', checkPageAuth);
+// document.addEventListener('DOMContentLoaded', checkPageAuth);
+document.addEventListener('DOMContentLoaded', () => {
+    // Auth check disabled per user request
+    console.log('Auth check skipped');
+});

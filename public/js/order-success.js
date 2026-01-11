@@ -46,10 +46,36 @@ document.addEventListener('DOMContentLoaded', async () => {
         const whatsappBtn = document.getElementById('whatsapp-btn');
         if (whatsappBtn) {
             whatsappBtn.onclick = () => {
-                const message = encodeURIComponent(`Hello, I just placed an order (ID: #${order._id.slice(-8).toUpperCase()}). I'd like to confirm my order details.`);
+                const message = encodeURIComponent(formatWhatsAppMessage(order, order.shippingAddress));
                 window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
             };
         }
+    }
+
+    function formatWhatsAppMessage(order, shipping) {
+        let message = `*New Order Request*\n`;
+        message += `--------------------------\n`;
+        message += `*Order ID:* ${order._id ? order._id.slice(-8).toUpperCase() : 'Pending'}\n`;
+        message += `*Customer:* ${shipping.fullName}\n`;
+        message += `*Phone:* ${shipping.phone}\n`;
+        message += `--------------------------\n`;
+        message += `*Items:*\n`;
+
+        order.orderItems.forEach(item => {
+            message += `- ${item.name}${item.ageGroup ? ` (${item.ageGroup})` : ''} (x${item.qty}) - ₹${item.price * item.qty}\n`;
+        });
+
+        message += `--------------------------\n`;
+        message += `*Subtotal:* ₹${order.totalPrice - (order.shippingPrice || 0)}\n`;
+        message += `*Shipping:* Free\n`;
+        message += `*Total:* ₹${order.totalPrice}\n`;
+        message += `--------------------------\n`;
+        message += `*Shipping Address:*\n`;
+        message += `${shipping.address}, ${shipping.city}, ${shipping.postalCode}, ${shipping.country}\n`;
+        message += `--------------------------\n`;
+        message += `_Please confirm order._`;
+
+        return message;
     }
 
     window.downloadPDF = () => {
@@ -85,9 +111,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         doc.setTextColor(0);
         doc.text(ship.fullName, 14, 57);
         doc.setFontSize(10);
-        doc.text(`${ship.address}`, 14, 63);
-        doc.text(`${ship.city}, ${ship.postalCode}`, 14, 68);
-        doc.text(`${ship.country}`, 14, 73);
+        doc.text(`Phone: ${ship.phone}`, 14, 62);
+        doc.text(`${ship.address}`, 14, 67);
+        doc.text(`${ship.city}, ${ship.postalCode}`, 14, 72);
+        doc.text(`${ship.country}`, 14, 77);
 
         // Table
         const tableData = currentOrder.orderItems.map(item => [

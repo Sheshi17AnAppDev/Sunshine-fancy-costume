@@ -10,7 +10,7 @@ const orderSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
-        required: true
+        required: false // Allow guest orders
     },
     orderItems: [
         {
@@ -28,6 +28,7 @@ const orderSchema = new mongoose.Schema({
     ],
     shippingAddress: {
         fullName: { type: String, required: true },
+        phone: { type: String, required: true },
         email: { type: String, required: false },
         address: { type: String, required: true },
         city: { type: String, required: true },

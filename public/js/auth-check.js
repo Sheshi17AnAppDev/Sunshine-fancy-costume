@@ -3,11 +3,11 @@ function checkPageAuthentication() {
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     const pageName = currentPage.replace('.html', '').toLowerCase();
 
-    // Pages that don't require authentication
-    const publicPages = ['index', 'login', 'signup', 'verify', 'legal', 'shop', 'product', 'about', 'contact', 'blog', 'faq'];
+    // Pages that require authentication
+    const protectedPages = ['checkout', 'profile', 'orders'];
 
     // Check if current page requires authentication
-    if (!publicPages.includes(pageName)) {
+    if (protectedPages.includes(pageName)) {
         const user = JSON.parse(localStorage.getItem('user'));
         if (!user || !user.token) {
             // Redirect to login with return URL

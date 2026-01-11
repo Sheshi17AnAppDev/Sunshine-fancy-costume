@@ -88,7 +88,7 @@ exports.getDashboardStats = async (req, res) => {
         const allProducts = await Product.find({});
         const totalViews = allProducts.reduce((sum, p) => sum + (p.views || 0), 0);
         const totalBooked = allProducts.reduce((sum, p) => sum + (p.bookedCount || 0), 0);
-        const lowStockCount = await Product.countDocuments({ countInStock: { $lte: 5 } });
+        const lowStockCount = await Product.countDocuments({ countInStock: { $lte: 2 } });
 
         const orders = await Order.find({ isPaid: true });
         const totalRevenue = orders.reduce((sum, order) => sum + (order.totalPrice || 0), 0);

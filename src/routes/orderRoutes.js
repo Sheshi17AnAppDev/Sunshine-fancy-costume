@@ -7,22 +7,26 @@ const {
     updateOrderToDelivered,
     updateOrderItems,
     getMyOrders,
-    getOrders
+    getOrders,
+    deleteOrder
 } = require('../controllers/orderController');
-const { protect, admin } = require('../middleware/authMiddleware');
+const { protect, optionalProtect, admin } = require('../middleware/authMiddleware');
 const { protectAdminOrUserAdmin, requirePermission } = require('../middleware/adminAuthMiddleware');
 
 router.route('/')
-    .post(protect, addOrderItems)
+    .post(optionalProtect, addOrderItems)
     .get(protectAdminOrUserAdmin, requirePermission('canManageOrders'), getOrders);
 
 router.route('/myorders').get(protect, getMyOrders);
 
 // Admin order details (must be defined before '/:id')
 router.route('/admin/:id')
-    .get(protectAdminOrUserAdmin, requirePermission('canManageOrders'), getOrderById);
+    .get(protectAdminOrUserAdmin, requirePermission('canManageOrders'), getOrderById)
+    .delete(protectAdminOrUserAdmin, requirePermission('canManageOrders'), deleteOrder);
 
-router.route('/:id').get(protect, getOrderById);
+router.route('/:id')
+    .get(protect, getOrderById)
+    .delete(protect, deleteOrder);
 router.route('/:id/pay').put(protect, updateOrderToPaid);
 router.route('/:id/deliver').put(protectAdminOrUserAdmin, requirePermission('canManageOrders'), updateOrderToDelivered);
 router.route('/:id/items').put(protectAdminOrUserAdmin, requirePermission('canManageOrders'), updateOrderItems);

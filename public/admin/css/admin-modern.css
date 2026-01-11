@@ -406,6 +406,28 @@ body {
     border-color: var(--primary-color);
 }
 
+.btn-refresh {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background: white;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    margin-left: 0.5rem;
+}
+
+.btn-refresh:hover {
+    background: var(--primary-soft-bg);
+    color: var(--primary-dark);
+    border-color: var(--primary-light);
+    transform: rotate(180deg);
+}
+
 /* =========================================
    GENERIC PAGE COMPONENTS (Filters, Actions)
    ========================================= */

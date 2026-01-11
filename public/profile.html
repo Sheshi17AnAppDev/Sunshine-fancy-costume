@@ -7,7 +7,7 @@
     <title>My Account | Sunshine</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="css/mobile-small.css">
@@ -96,6 +96,10 @@
                                 <div class="profile-meta">
                                     <div class="profile-title" id="profile-name-2">Customer</div>
                                     <div class="profile-sub" id="profile-email">email@example.com</div>
+                                    <div class="profile-sub" style="margin-top: 4px; opacity: 0.8;">
+                                        <i class="fa-solid fa-phone" style="font-size: 0.8rem; margin-right: 5px;"></i>
+                                        <span id="profile-phone">-</span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="mini-grid">
@@ -140,11 +144,12 @@
                                         <th>Date</th>
                                         <th>Total</th>
                                         <th>Status</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="recent-orders-body">
                                     <tr>
-                                        <td colspan="4" class="table-empty">Loading...</td>
+                                        <td colspan="5" class="table-empty">Loading...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -167,6 +172,7 @@
                                         <th>Total</th>
                                         <th>Paid</th>
                                         <th>Delivered</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="orders-body">

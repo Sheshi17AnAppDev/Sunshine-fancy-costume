@@ -7,7 +7,8 @@
     <title>Sign Up | Sunshine</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/auth.css">
     <link rel="stylesheet" href="css/verify.css">
@@ -36,7 +37,7 @@
         <div class="auth-card">
             <h2>Create Account</h2>
             <p>Join us today to start your signature style journey.</p>
-            <form id="signup-form">
+            <form id="signup-form" novalidate>
                 <div class="input-group">
                     <label>Full Name</label>
                     <input type="text" id="name" placeholder="John Doe" required>
@@ -90,6 +91,15 @@
                         <input type="password" id="password" placeholder="••••••••" required>
                         <button type="button" class="password-toggle-btn" onclick="togglePassword('password')">
                             <i class="fa-regular fa-eye" id="password-icon"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Confirm Password</label>
+                    <div class="password-toggle-container">
+                        <input type="password" id="confirmPassword" placeholder="••••••••" required>
+                        <button type="button" class="password-toggle-btn" onclick="togglePassword('confirmPassword')">
+                            <i class="fa-regular fa-eye" id="confirmPassword-icon"></i>
                         </button>
                     </div>
                 </div>

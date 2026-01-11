@@ -14,22 +14,39 @@ function togglePassword(inputId) {
     }
 }
 
+
+// Real-time validation
+document.addEventListener('DOMContentLoaded', () => {
+    const fields = [
+        { id: 'email', type: 'email' },
+        { id: 'password', type: 'password' }
+    ];
+
+    fields.forEach(f => {
+        const el = document.getElementById(f.id);
+        if (el) {
+            el.addEventListener('blur', () => Validator.validateField(el, f.type));
+            el.addEventListener('input', () => {
+                el.style.borderColor = '';
+                const parent = el.closest('.input-group') || el.parentNode;
+                const error = parent.querySelector('.input-error');
+                if (error) error.style.display = 'none';
+            });
+        }
+    });
+});
+
 document.getElementById('login-form').onsubmit = async (e) => {
     e.preventDefault();
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // --- Validation ---
+    const isEmailValid = Validator.validateField(document.getElementById('email'), 'email');
+    const isPasswordValid = Validator.validateField(document.getElementById('password'), 'password');
 
-    if (!emailRegex.test(email)) {
-        showToast('Please enter a valid email address.', 'error');
-        return;
-    }
-
-    if (!password || password.length < 1) {
-        showToast('Please enter your password.', 'error');
-        return;
-    }
+    if (!isEmailValid || !isPasswordValid) return;
+    // --- End Validation ---
 
     try {
         const res = await api.post('/auth/login', { email, password });

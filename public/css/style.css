@@ -482,28 +482,34 @@ nav ul li a {
 }
 
 /* Hero - Peach/Orange Background */
+/* Hero - Peach/Orange Background */
 .hero {
     background-color: var(--primary-orange);
-    padding: 5rem 10%;
+    padding: 2rem 5%;
+    /* Significantly reduced */
     text-align: center;
     color: var(--white);
-    min-height: 50vh;
+    min-height: auto;
+    /* Fit to content */
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 
 .hero h1 {
-    font-size: 3.2rem;
+    font-size: 2.5rem;
+    /* Slightly smaller for compactness */
     font-weight: 700;
     line-height: 1.2;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.5rem;
+    /* Tighter spacing */
 }
 
 .hero p {
     font-size: 1.1rem;
     max-width: 700px;
-    margin: 0 auto 2.5rem;
+    margin: 0 auto 1rem;
+    /* Reduced bottom margin */
     opacity: 0.9;
 }
 
@@ -584,25 +590,58 @@ nav ul li a {
 }
 
 /* Section Common Styling */
+/* Section Common Styling */
 section {
-    padding: 5rem 10%;
+    padding: 0 5% 0.5rem 5%;
+    /* Top padding 0 */
+}
+
+.brand-intro {
+    background-color: #FFB300;
+    /* Amber */
+    background-image: linear-gradient(135deg, #FFB300 0%, #FF8F00 100%);
+    color: white;
+    /* Contrast text */
+    margin-bottom: 2rem;
+    border-radius: 0 0 50px 50px;
+    /* Stylish heavy round bottom */
+    box-shadow: 0 10px 30px rgba(255, 179, 0, 0.3);
+}
+
+.brand-intro h1 {
+    color: white !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.brand-intro p {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500;
 }
 
 .section-title {
-    margin-bottom: 3rem;
+    margin-bottom: 0.5rem;
+    /* Minimal bottom margin */
+    padding-top: 0;
+    /* Removed spacer */
 }
 
 .section-title h2 {
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: 700;
+    margin-top: 0;
+    /* STRICTLY 0 top margin */
+    margin-bottom: 0;
+    /* 0 bottom margin */
 }
 
 /* Category Grid - New Design Based on Uploaded Image */
 .cat-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 1.5rem;
-    padding: 2rem 0;
+    gap: 1rem;
+    /* Reduced gap */
+    padding: 0;
+    /* Removed vertical padding */
 }
 
 .cat-card {
@@ -704,7 +743,8 @@ section {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.5rem;
+    /* Reduced from 1.5rem */
     position: relative;
     padding: 2rem;
     border-radius: var(--radius-md);
@@ -1244,7 +1284,8 @@ body.admin-signup {
 
     /* Responsive sections */
     section {
-        padding: 3rem 5%;
+        padding: 0 5% 0.5rem 5%;
+        /* Tight responsive padding */
     }
 
     .section-title h2 {
@@ -2159,5 +2200,62 @@ body.admin-signup {
         right: 1rem;
         bottom: 5rem;
         justify-content: center;
+    }
+}
+
+/* Floating WhatsApp Button */
+.whatsapp-float {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    background-color: #25d366;
+    color: #FFF;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    font-size: 30px;
+    box-shadow: 2px 2px 3px #999;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    animation: whatsapp-pulse 2s infinite;
+}
+
+.whatsapp-float:hover {
+    background-color: #128c7e;
+    transform: scale(1.1);
+    color: #FFF;
+}
+
+.whatsapp-float i {
+    margin-top: 2px;
+}
+
+@keyframes whatsapp-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5);
+    }
+
+    70% {
+        box-shadow: 0 0 0 15px rgba(37, 211, 102, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+    }
+}
+
+@media (max-width: 768px) {
+    .whatsapp-float {
+        bottom: 6rem;
+        /* Raised to avoid bottom nav if present, or just higher on mobile */
+        left: 1rem;
+        width: 50px;
+        height: 50px;
+        font-size: 25px;
     }
 }

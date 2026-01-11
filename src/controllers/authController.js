@@ -200,19 +200,25 @@ exports.initiateRegistration = async (req, res) => {
 
     try {
         // --- Backend Validation ---
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+        const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
         const phoneRegex = /^[\d+]/; // Check that it starts with digit or +
+
+        if (!name || !nameRegex.test(name)) {
+            return res.status(400).json({ message: 'Please provide a valid name (letters and spaces only)' });
+        }
 
         if (!email || !emailRegex.test(email)) {
             return res.status(400).json({ message: 'Please provide a valid email address' });
         }
 
-        if (!password || password.length < 8) {
-            return res.status(400).json({ message: 'Password must be at least 8 characters long' });
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        if (!password || !passwordRegex.test(password)) {
+            return res.status(400).json({ message: 'Password must be at least 8 chars, include uppercase, lowercase, number, and special character (@$!%*?&)' });
         }
 
         // Basic phone validation 
-        if (!phoneNumber || phoneNumber.replace(/\D/g, '').length < 10) {
+        if (!phoneNumber || phoneNumber.replace(/\D/g, '').length < 6) {
             return res.status(400).json({ message: 'Please provide a valid phone number' });
         }
         // --- End Validation ---
@@ -331,6 +337,7 @@ exports.verifyOTP = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 role: user.role,
+                phoneNumber: user.phoneNumber,
                 token: generateToken(user._id)
             });
         } else {
@@ -428,6 +435,7 @@ exports.registerUser = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 role: user.role,
+                phoneNumber: user.phoneNumber,
                 token: generateToken(user._id)
             });
         } else {
@@ -453,6 +461,7 @@ exports.loginUser = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 role: user.role,
+                phoneNumber: user.phoneNumber,
                 token: generateToken(user._id)
             });
         } else {

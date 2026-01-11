@@ -2,6 +2,8 @@
 class Dashboard {
     constructor() {
         this.salesChart = null;
+        window.dashboard = this; // Expose instance globally
+        window.refreshTopProducts = () => this.refreshTopProducts(); // Global wrapper
         this.init();
     }
 
@@ -51,7 +53,7 @@ class Dashboard {
             this.animateNumber('stat-revenue', revenue, true);
 
             // Fallback Low Stock
-            const lowStockCount = products?.filter(p => p.countInStock <= 5).length || 0;
+            const lowStockCount = products?.filter(p => p.countInStock <= 2).length || 0;
             const lowStockEl = document.getElementById('low-stock-alert');
             if (lowStockEl) {
                 lowStockEl.style.display = lowStockCount > 0 ? 'flex' : 'none';

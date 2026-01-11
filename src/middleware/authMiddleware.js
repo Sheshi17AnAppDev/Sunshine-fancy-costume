@@ -35,4 +35,23 @@ const admin = (req, res, next) => {
     }
 };
 
-module.exports = { protect, admin };
+const optionalProtect = async (req, res, next) => {
+    let token;
+
+    if (
+        req.headers.authorization &&
+        req.headers.authorization.startsWith('Bearer')
+    ) {
+        try {
+            token = req.headers.authorization.split(' ')[1];
+            const decoded = jwt.verify(token, process.env.JWT_SECRET || 'dev_secret_fallback_12345');
+            req.user = await User.findById(decoded.id).select('-password');
+        } catch (error) {
+            console.warn('Optional auth token failed:', error.message);
+            // Proceed as guest without error
+        }
+    }
+    next();
+};
+
+module.exports = { protect, optionalProtect, admin };

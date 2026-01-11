@@ -22,34 +22,19 @@ document.getElementById('signup-form').onsubmit = async (e) => {
     const phoneNumberInput = document.getElementById('phone').value;
     const password = document.getElementById('password').value;
 
-    // --- Start Validation ---
-    const nameRegex = /^[a-zA-Z\s]{2,50}$/;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phoneRegex = /^\d{10}$/; // Exactly 10 digits
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/; // Min 8 chars, 1 letter, 1 number
+    // --- Start Validation (Global Validator) ---
+    const isNameValid = Validator.validateField(document.getElementById('name'), 'name');
+    const isEmailValid = Validator.validateField(document.getElementById('email'), 'email');
+    const isPhoneValid = Validator.validateField(document.getElementById('phone'), 'phone');
+    const isPasswordValid = Validator.validateField(document.getElementById('password'), 'strongPassword');
+    const isConfirmValid = Validator.validateField(document.getElementById('confirmPassword'), 'confirmPassword', password);
 
-    if (!nameRegex.test(name)) {
-        showError('Please enter a valid full name (letters and spaces only, 2-50 characters).');
-        return;
-    }
-
-    if (!emailRegex.test(email)) {
-        showError('Please enter a valid email address.');
-        return;
-    }
-
-    // Strip non-digits for phone validation
-    const cleanPhone = phoneNumberInput.replace(/\D/g, '');
-    if (!phoneRegex.test(cleanPhone)) {
-        showError('Please enter a valid phone number (exactly 10 digits).');
-        return;
-    }
-
-    if (!passwordRegex.test(password)) {
-        showError('Password must be at least 8 characters long and include at least one letter and one number.');
+    if (!isNameValid || !isEmailValid || !isPhoneValid || !isPasswordValid || !isConfirmValid) {
+        // Errors are already shown by validateField
         return;
     }
     // --- End Validation ---
+
 
     const fullPhoneNumber = `${countryCode} ${phoneNumberInput}`;
 
@@ -143,3 +128,34 @@ function showError(message) {
     // Auto remove
     setTimeout(() => errorDiv.remove(), 5000);
 }
+
+// --- Real-time validation setup on page load ---
+document.addEventListener('DOMContentLoaded', () => {
+    const fields = [
+        { id: 'name', type: 'name' },
+        { id: 'email', type: 'email' },
+        { id: 'phone', type: 'phone' },
+        { id: 'password', type: 'strongPassword' },
+        { id: 'confirmPassword', type: 'confirmPassword' }
+    ];
+
+    fields.forEach(f => {
+        const el = document.getElementById(f.id);
+        if (el) {
+            el.addEventListener('blur', () => {
+                if (f.id === 'confirmPassword') {
+                    const passwordVal = document.getElementById('password').value;
+                    Validator.validateField(el, f.type, passwordVal);
+                } else {
+                    Validator.validateField(el, f.type);
+                }
+            });
+            el.addEventListener('input', () => {
+                el.style.borderColor = '';
+                const parent = el.closest('.input-group') || el.parentNode;
+                const error = parent.querySelector('.input-error');
+                if (error) error.style.display = 'none';
+            });
+        }
+    });
+});

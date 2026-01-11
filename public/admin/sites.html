@@ -7,7 +7,7 @@
     <title>Site Management | Sunshine Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="css/admin-modern.css">
     <link rel="stylesheet" href="css/admin-mobile-app.css">
@@ -134,9 +134,7 @@
                 <button class="mobile-menu-toggle"><i class="fa-solid fa-bars"></i></button>
                 <h1>Site Management</h1>
                 <div class="header-actions">
-                    <button class="btn btn-primary" id="add-site-btn">
-                        <i class="fas fa-plus"></i> Create New Site
-                    </button>
+                    <!-- Create Site Button Removed -->
                 </div>
             </div>
 
@@ -146,75 +144,8 @@
         </main>
     </div>
 
-    <!-- Modal for Create/Edit Site -->
+    <!-- Modal for Create/Edit Site Removed -->
     <div class="modal-overlay" id="modal-overlay"></div>
-    <div class="modal" id="site-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modal-title">Create New Site</h2>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
-            </div>
-            <form id="site-form">
-                <div class="form-group">
-                    <label>Site Name *</label>
-                    <input type="text" id="site-name" required placeholder="e.g., Winter Wear Store">
-                </div>
-
-                <div class="form-group">
-                    <label>URL Slug *</label>
-                    <input type="text" id="site-slug" required placeholder="e.g., winter-wear" pattern="[a-z0-9-]+">
-                    <small>Only lowercase letters, numbers, and hyphens</small>
-                </div>
-
-                <div class="form-group">
-                    <label>Description</label>
-                    <textarea id="site-description" rows="3" placeholder="Brief description of your site"></textarea>
-                </div>
-
-                <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                    <div class="form-group">
-                        <label>Primary Color</label>
-                        <div class="color-picker-wrapper">
-                            <input type="color" id="site-primary-color" value="#fbb03b">
-                            <span id="primary-color-value">#fbb03b</span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Secondary Color</label>
-                        <div class="color-picker-wrapper">
-                            <input type="color" id="site-secondary-color" value="#e89b25">
-                            <span id="secondary-color-value">#e89b25</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                    <div class="form-group">
-                        <label>Currency</label>
-                        <input type="text" id="site-currency" value="INR" placeholder="INR">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Currency Symbol</label>
-                        <input type="text" id="site-currency-symbol" value="₹" placeholder="₹">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" id="site-active" checked>
-                        Site is active
-                    </label>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary" id="submit-btn">Create Site</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
     <script src="../js/api.js"></script>
     <script src="../js/main.js"></script>

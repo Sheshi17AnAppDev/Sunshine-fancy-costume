@@ -61,6 +61,9 @@ const fetchOrders = async () => {
                             <a href="invoice?id=${o._id}" class="btn-icon" title="Generate Bill" style="color: var(--primary-orange); font-size: 1.1rem;">
                                 <i class="fa-solid fa-file-invoice"></i>
                             </a>
+                            <button class="btn-icon" onclick="deleteOrder('${o._id}')" title="Delete Order" style="background:none; border:none; cursor:pointer; color: #ef4444; font-size: 1.1rem;">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
                         </div>
                     </td>
                 </tr>
@@ -214,6 +217,19 @@ window.viewOrder = async (id) => {
             <p>Error loading order: ${err.message || 'Internal Server Error'}</p>
             <button class="btn btn-sm btn-primary" onclick="viewOrder('${id}')" style="margin-top: 1rem;">Retry</button>
         </div>`;
+    }
+};
+
+window.deleteOrder = async (id) => {
+    if (confirm('Are you sure you want to delete this order? This action cannot be undone.')) {
+        try {
+            await api.delete(`/orders/admin/${id}`);
+            showToast('Order deleted successfully', 'success');
+            fetchOrders(); // Refresh table
+        } catch (err) {
+            console.error(err);
+            showToast(err.message || 'Failed to delete', 'error');
+        }
     }
 };
 

@@ -366,32 +366,112 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const buyNowBtn = document.querySelector('.buy-now-btn');
         if (buyNowBtn) {
-            buyNowBtn.onclick = () => {
+            buyNowBtn.onclick = async () => {
                 if (!validateSelection()) return;
 
                 const qty = parseInt(document.getElementById('qty').value) || 1;
-                let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                const originalText = buyNowBtn.innerText;
+                buyNowBtn.innerText = 'Processing...';
+                buyNowBtn.disabled = true;
 
-                const cartItem = {
-                    ...product,
-                    price: currentPrice,
-                    qty,
-                    ageGroup: selectedAgeGroup,
-                    size: selectedSize
-                };
+                try {
+                    // 1. Fetch WhatsApp Number
+                    let whatsappNumber = '919704022443';
+                    try {
+                        const contactRes = await api.get('/site-content/contact');
+                        if (contactRes?.data?.whatsapp) whatsappNumber = contactRes.data.whatsapp;
+                    } catch (e) {
+                        console.warn('Failed to fetch contact', e);
+                    }
 
-                const existingIndex = cart.findIndex(item =>
-                    item._id === product._id &&
-                    item.ageGroup === selectedAgeGroup &&
-                    item.size === selectedSize
-                );
+                    // 2. Prepare Order Payload
+                    const orderItem = {
+                        product: product._id,
+                        name: product.name,
+                        qty: qty,
+                        price: currentPrice,
+                        image: product.images && product.images[0] ? (product.images[0].url || product.images[0]) : '',
+                        ageGroup: selectedAgeGroup || null
+                    };
 
-                if (existingIndex > -1) cart[existingIndex].qty += qty;
-                else cart.push(cartItem);
+                    // Dummy Address for "Quick Buy"
+                    const shippingAddress = {
+                        fullName: 'WhatsApp Guest',
+                        phone: 'Pending',
+                        address: 'WhatsApp Order',
+                        city: 'WhatsApp',
+                        postalCode: '000000',
+                        country: 'Global'
+                    };
 
-                localStorage.setItem('cart', JSON.stringify(cart));
-                api.patch(`/products/${productId}/booked`).catch(err => console.error(err));
-                window.location.href = '/cart';
+                    // 3. Create Order
+                    const res = await api.post('/orders', {
+                        orderItems: [orderItem],
+                        shippingAddress,
+                        paymentMethod: 'WhatsApp',
+                        itemsPrice: currentPrice * qty,
+                        shippingPrice: 0,
+                        totalPrice: currentPrice * qty
+                    });
+
+                    // 4. Construct Message & Redirect Logic
+                    const orderId = res._id;
+                    const user = JSON.parse(localStorage.getItem('user')) || {};
+
+                    const processRedirect = (userName, userPhone) => {
+                        const message = `*New Order #${orderId}*\n\n` +
+                            `Name: ${userName}\n` +
+                            `Mobile: ${userPhone}\n` +
+                            `------------------\n` +
+                            `I would like to buy:\n` +
+                            `${product.name}\n` +
+                            `Qty: ${qty}\n` +
+                            `Price: ${formatCurrency(currentPrice * qty)}\n\n` +
+                            `Please confirm my order.`;
+
+                        // 1. Open WhatsApp in NEW TAB
+                        const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+                        window.open(url, '_blank');
+
+                        // 2. Ask User for Confirmation
+                        showOrderConfirmationModal((confirmed) => {
+                            if (confirmed) {
+                                // User said YES -> Success Page
+                                window.location.href = '/order-success.html?id=' + orderId;
+                            } else {
+                                // User said NO -> Re-enable button
+                                buyNowBtn.innerText = originalText;
+                                buyNowBtn.disabled = false;
+                            }
+                        });
+                    };
+
+                    if (user && user.name && user.phoneNumber) {
+                        // User is logged in, proceed directly
+                        processRedirect(user.name, user.phoneNumber);
+                    } else {
+                        // Guest or incomplete profile: Show Modal
+                        if (typeof showGuestDetailsModal === 'function') {
+                            buyNowBtn.innerText = originalText; // Reset button so valid modal submit triggers redirect, not stuck on processing
+                            buyNowBtn.disabled = false;
+
+                            showGuestDetailsModal((details) => {
+                                buyNowBtn.innerText = 'Redirecting...';
+                                buyNowBtn.disabled = true;
+                                processRedirect(details.name, details.phone);
+                            });
+                        } else {
+                            // Fallback if modal script missing
+                            processRedirect('', '');
+                        }
+                    }
+
+                } catch (err) {
+                    console.error(err);
+                    showToast(err.message || 'Order failed', 'error');
+                    buyNowBtn.innerText = originalText;
+                    buyNowBtn.disabled = false;
+                }
             };
         }
 

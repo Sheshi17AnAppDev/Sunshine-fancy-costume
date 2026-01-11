@@ -848,6 +848,7 @@
 
     const savePage = async () => {
         const key = els.pageKey.value;
+        const originalStatus = els.status.textContent;
         setStatus('Saving...');
 
         try {
@@ -857,20 +858,28 @@
                 body: JSON.stringify({ data })
             });
             setStatus(`Saved • ${new Date(res.updatedAt).toLocaleString()}`);
+            showToast('Changes Saved Successfully!', 'success');
         } catch (e) {
-            setStatus(e.message || 'Failed to save');
+            setStatus(originalStatus); // Revert status on error or keep useful info? 
+            // Better to show error in status or just toast? msg says "Failed to save"
+            setStatus('Failed to save');
+            showToast(e.message || 'Failed to save changes', 'error');
         }
     };
 
     document.addEventListener('DOMContentLoaded', () => {
         setVisibleForPage(els.pageKey.value);
-        document.getElementById('save-btn').addEventListener('click', savePage);
+
+        // Universal Save Button
+        const universalSaveBtn = document.getElementById('save-btn');
+        if (universalSaveBtn) {
+            universalSaveBtn.addEventListener('click', savePage);
+        }
+
+        // Carousel Specific Save Button (if it exists, it does same thing)
         const saveCarouselBtn = document.getElementById('save-carousel-btn');
         if (saveCarouselBtn) {
-            saveCarouselBtn.addEventListener('click', async () => {
-                await savePage();
-                showToast('Changes Saved Successfully!', 'success');
-            });
+            saveCarouselBtn.addEventListener('click', savePage);
         }
 
         els.pageKey.addEventListener('change', loadPage);

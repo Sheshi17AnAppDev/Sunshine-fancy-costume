@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             categoriesContainer.innerHTML = categoryGroups.map((group, index) => {
                 const cardsHtml = group.map(cat => `
                     <a href="/shop?category=${cat._id}" class="category-card">
-                        <img src="${cat.image || 'https://via.placeholder.com/400x300?text=' + encodeURIComponent(cat.name)}" alt="${cat.name}">
+                        <img crossorigin="anonymous" src="${cat.image || 'https://via.placeholder.com/400x300?text=' + encodeURIComponent(cat.name)}" alt="${cat.name}">
                         <h3>${cat.name}</h3>
                     </a>
                 `).join('');
@@ -84,11 +84,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (hasMultipleImages) {
                 imageContent = `
                     <div class="product-card-carousel">
-                        ${p.images.map(img => `<img src="${img.url || img}" alt="${p.name}">`).join('')}
+                        ${p.images.map(img => `<img crossorigin="anonymous" src="${img.url || img}" alt="${p.name}">`).join('')}
                     </div>
                 `;
             } else {
-                imageContent = `<img src="${p.images[0]?.url || p.images[0] || ''}" alt="${p.name}">`;
+                imageContent = `<img crossorigin="anonymous" src="${p.images[0]?.url || p.images[0] || ''}" alt="${p.name}">`;
             }
 
             return `
@@ -176,8 +176,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 console.log('Rendering', cData.slides.length, 'slides');
                 const carouselSection = document.createElement('section');
                 carouselSection.className = 'promo-carousel-section';
-                carouselSection.style.marginBottom = '3rem';
-                carouselSection.style.marginTop = '2rem';
+                carouselSection.style.marginBottom = '0.5rem'; // Minimal space
+                carouselSection.style.marginTop = '0'; // Adjusted for layout
+                carouselSection.style.padding = '0';   // Override default section padding
 
                 const styles = `
                     .promo-carousel-container {
@@ -195,8 +196,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     .promo-carousel-slide {
                         min-width: 100%;
                         position: relative;
-                        aspect-ratio: 21/9;
+                        aspect-ratio: 21/7; /* More panoramic for hero banner */
                         overflow: hidden;
+                        border-radius: 12px;
                     }
                     .promo-carousel-slide img {
                         width: 100%;
@@ -244,7 +246,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     .pc-prev { left: 1rem; }
                     .pc-next { right: 1rem; }
                     @media (max-width: 768px) {
-                        .promo-carousel-slide { aspect-ratio: 16/9; }
+                        .promo-carousel-slide { aspect-ratio: 16/9; border-radius: 8px; }
                         .promo-carousel-content { max-width: 90%; bottom: 5%; left: 5%; padding: 1rem; }
                         .promo-carousel-content h2 { font-size: 1.5rem; }
                     }
@@ -278,7 +280,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                              <div style="position:absolute; bottom:20px; right:20px; z-index:20; background:rgba(0,0,0,0.5); color:white; padding:5px 10px; border-radius:4px; font-size:0.8rem; pointer-events:none;">
                                 <i class="fa-solid fa-volume-high"></i> Hover for Sound
                              </div>`
-                            : `<img src="${slide.image}" alt="${slide.title}">`
+                            : `<img crossorigin="anonymous" src="${slide.image}" alt="${slide.title}">`
                         }
                         <div class="promo-carousel-content" style="pointer-events: none;">
                             ${slide.title ? `<h2>${slide.title}</h2>` : ''}
@@ -335,26 +337,25 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // Auto slide
                 setInterval(nextSlide, 5000);
 
-                // Insert before Featured Products
-                // The featured products section is the second .reveal section in common layout, or can be identified by containing #featured-products
-                const featuredContainer = document.getElementById('featured-products');
-                if (featuredContainer) {
-                    // Go up to the section parent
-                    const heroSection = document.querySelector('.hero');
-                    if (heroSection) {
-                        heroSection.after(carouselSection);
-                    } else {
-                        // Fallback if hero not found
-                        const featuredProductsSection = document.getElementById('featured-products');
-                        if (featuredProductsSection) {
-                            // Insert before the parent SECTION of featured products to avoid being inside scroll wrapper
-                            const parentSection = featuredProductsSection.closest('section');
-                            if (parentSection) {
-                                parentSection.before(carouselSection);
-                            } else {
-                                featuredProductsSection.parentNode.insertBefore(carouselSection, featuredProductsSection);
-                            }
-                        }
+                // Insert logic:
+                // User Request: Title/Subtitle (about Sunshine Fancy) with Orange Background -> Promo Carousel
+                // Order: Hero(Title/Sub) -> Promo Carousel
+
+                const heroSection = document.querySelector('.hero');
+
+                if (heroSection) {
+                    // Insert Carousel AFTER Hero
+                    heroSection.after(carouselSection);
+
+                    // Styling adjustments
+                    carouselSection.style.marginTop = '0';
+                    carouselSection.style.marginBottom = '1rem'; // Reduced from 2rem
+                } else {
+                    // Fallback
+                    const featuredContainer = document.getElementById('featured-products');
+                    if (featuredContainer) {
+                        const parentSection = featuredContainer.closest('section');
+                        if (parentSection) parentSection.before(carouselSection);
                     }
                 }
             }

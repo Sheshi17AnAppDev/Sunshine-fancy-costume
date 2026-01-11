@@ -5,11 +5,7 @@
         return;
     }
 
-    const logout = () => {
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
-        window.location.href = 'index';
-    };
+    // Logout function moved to avoid duplication
 
     const safeText = (v) => (v === null || v === undefined ? '' : String(v));
 
@@ -53,9 +49,37 @@
                             <td>${o.paymentMethod || 'COD'}</td>
                             <td>${pill(!!o.isPaid, o.isPaid ? 'Paid' : 'Unpaid')}</td>
                             <td>${pill(!!o.isDelivered, o.isDelivered ? 'Delivered' : 'Pending')}</td>
+                            <td style="text-align: right;">
+                                <button class="btn-delete-order" data-id="${o._id}" style="background: none; border: none; color: #ff4444; cursor: pointer; font-size: 1rem; padding: 5px;" title="Delete Order">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </td>
                         </tr>
                     `;
                 }).join('');
+
+                // Attach Event Listeners for Main List
+                setTimeout(() => {
+                    const deleteBtns = ordersBody.querySelectorAll('.btn-delete-order');
+                    deleteBtns.forEach(btn => {
+                        btn.onclick = async (e) => {
+                            e.preventDefault();
+                            if (confirm('Are you sure you want to delete this order?')) {
+                                try {
+                                    const id = btn.getAttribute('data-id');
+                                    await api.delete(`/orders/${id}`);
+                                    showToast('Order failed/deleted successfully', 'success');
+                                    // Refresh
+                                    const fresh = await api.get('/orders/myorders');
+                                    renderOrders(fresh);
+                                } catch (err) {
+                                    console.error(err);
+                                    showToast(err.message || 'Failed to delete', 'error');
+                                }
+                            }
+                        };
+                    });
+                }, 0);
             }
         }
 
@@ -76,9 +100,37 @@
                             <td>${date}</td>
                             <td>${formatMoney(o.totalPrice)}</td>
                             <td><span class="status-pill ${statusKind}"><i class="fa-solid ${icon}"></i> ${statusLabel}</span></td>
+                            <td style="text-align: right;">
+                                <button class="btn-delete-order" data-id="${o._id}" style="background: none; border: none; color: #ff4444; cursor: pointer; font-size: 1rem; padding: 5px;" title="Delete Order">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </td>
                         </tr>
                     `;
                 }).join('');
+
+                // Attach Event Listeners
+                setTimeout(() => {
+                    const deleteBtns = recentBody.querySelectorAll('.btn-delete-order');
+                    deleteBtns.forEach(btn => {
+                        btn.onclick = async (e) => {
+                            e.preventDefault();
+                            if (confirm('Are you sure you want to delete this order?')) {
+                                try {
+                                    const id = btn.getAttribute('data-id');
+                                    await api.delete(`/orders/${id}`);
+                                    showToast('Order failed/deleted successfully', 'success'); // "Order removed"
+                                    // Refresh
+                                    const fresh = await api.get('/orders/myorders');
+                                    renderOrders(fresh);
+                                } catch (err) {
+                                    console.error(err);
+                                    showToast(err.message || 'Failed to delete', 'error');
+                                }
+                            }
+                        };
+                    });
+                }, 0);
             }
         }
     };
@@ -109,12 +161,59 @@
         });
     };
 
+    const logout = (e) => {
+        if (e) e.preventDefault();
+        console.log('Logout clicked');
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        window.location.href = 'index';
+    };
+
+    // ...
+
     const setupActions = () => {
-        document.getElementById('logout-btn')?.addEventListener('click', logout);
-        document.getElementById('logout-btn-2')?.addEventListener('click', logout);
+        console.log('Setting up logout actions');
+        const btn1 = document.getElementById('logout-btn');
+        const btn2 = document.getElementById('logout-btn-2');
+
+        if (btn1) {
+            console.log('Logout btn 1 found');
+            btn1.addEventListener('click', logout);
+        } else {
+            console.error('Logout btn 1 not found');
+        }
+
+        if (btn2) {
+            console.log('Logout btn 2 found');
+            btn2.addEventListener('click', logout);
+        }
 
         const editForm = document.getElementById('edit-profile-form');
+
+        // Real-time validation
         if (editForm) {
+            ['edit-name', 'edit-email', 'edit-phone', 'edit-postal', 'edit-password'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    const type = id === 'edit-postal' ? 'postalCode' :
+                        (id === 'edit-phone' ? 'phone' :
+                            (id === 'edit-email' ? 'email' :
+                                (id === 'edit-password' ? 'password' : 'name')));
+
+                    el.addEventListener('blur', () => {
+                        // Password is optional validation if empty
+                        if (id === 'edit-password' && !el.value) {
+                            // Clear error if empty
+                            const errorEl = el.nextElementSibling;
+                            if (errorEl && errorEl.classList.contains('input-error')) errorEl.style.display = 'none';
+                            el.style.borderColor = '';
+                            return;
+                        }
+                        Validator.validateField(el, type);
+                    });
+                }
+            });
+
             editForm.onsubmit = async (e) => {
                 e.preventDefault();
                 const name = document.getElementById('edit-name').value;
@@ -125,6 +224,20 @@
                 const city = document.getElementById('edit-city').value;
                 const postalCode = document.getElementById('edit-postal').value;
                 const country = document.getElementById('edit-country').value;
+
+                // --- Validation ---
+                const isNameValid = Validator.validateField(document.getElementById('edit-name'), 'name');
+                const isEmailValid = Validator.validateField(document.getElementById('edit-email'), 'email');
+                const isPhoneValid = Validator.validateField(document.getElementById('edit-phone'), 'phone');
+                const isPostalValid = Validator.validateField(document.getElementById('edit-postal'), 'postalCode');
+
+                let isPasswordValid = true;
+                if (password) {
+                    isPasswordValid = Validator.validateField(document.getElementById('edit-password'), 'password');
+                }
+
+                if (!isNameValid || !isEmailValid || !isPhoneValid || !isPostalValid || !isPasswordValid) return;
+                // --- End Validation ---
 
                 try {
                     const submitBtn = editForm.querySelector('button[type="submit"]');
@@ -180,6 +293,7 @@
             setText('profile-name', profile.name || 'Customer');
             setText('profile-name-2', profile.name || 'Customer');
             setText('profile-email', profile.email || '');
+            setText('profile-phone', profile.phoneNumber || '-');
             setText('profile-role', (profile.role || 'user').toUpperCase());
 
             // Fill form

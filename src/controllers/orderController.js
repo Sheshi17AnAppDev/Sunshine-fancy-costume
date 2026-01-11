@@ -5,27 +5,43 @@ const Product = require('../models/Product');
 // @route   POST /api/orders
 // @access  Private
 exports.addOrderItems = async (req, res) => {
-    const {
-        orderItems,
-        shippingAddress,
-        paymentMethod,
-        itemsPrice,
-        shippingPrice,
-        totalPrice
-    } = req.body;
-
-    if (orderItems && orderItems.length === 0) {
-        res.status(400).json({ message: 'No order items' });
-        return;
-    } else {
-        const order = new Order({
+    try {
+        const {
             orderItems,
-            user: req.user._id,
             shippingAddress,
             paymentMethod,
             itemsPrice,
             shippingPrice,
             totalPrice
+        } = req.body;
+
+        if (orderItems && orderItems.length === 0) {
+            res.status(400).json({ message: 'No order items' });
+            return;
+        }
+
+        // Use site from middleware or default
+        let siteId = req.site ? req.site._id : undefined;
+        if (!siteId) {
+            // Fallback: find default site
+            const Site = require('../models/Site');
+            const defaultSite = await Site.findOne({ isActive: true });
+            if (defaultSite) siteId = defaultSite._id;
+        }
+
+        if (!siteId) {
+            return res.status(400).json({ message: 'Site context required' });
+        }
+
+        const order = new Order({
+            orderItems,
+            user: req.user ? req.user._id : undefined,
+            shippingAddress,
+            paymentMethod,
+            itemsPrice,
+            shippingPrice,
+            totalPrice,
+            site: siteId
         });
 
         const createdOrder = await order.save();
@@ -38,6 +54,9 @@ exports.addOrderItems = async (req, res) => {
         }
 
         res.status(201).json(createdOrder);
+    } catch (error) {
+        console.error('Order Create Error:', error);
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -182,3 +201,35 @@ exports.updateOrderItems = async (req, res) => {
     }
 };
 
+// @desc    Delete order
+// @route   DELETE /api/orders/:id
+// @access  Private
+exports.deleteOrder = async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id);
+
+        if (order) {
+            // Check ownership or admin
+
+            const isOwner = order.user && req.user && req.user._id && order.user.toString() === req.user._id.toString();
+            const isAdmin = req.user && (req.user.isAdmin || req.user.role === 'admin' || req.user.role === 'super_admin');
+
+            if (!isOwner && !isAdmin) {
+                res.status(401);
+                throw new Error('Not authorized to delete this order');
+            }
+
+            // Optional: Prevent deleting paid/delivered orders if that's a business rule
+            // For now, allowing deletion as per user request (or maybe just "remove from view"?)
+            // Usually "delete" means delete.
+
+            await order.deleteOne();
+            res.json({ message: 'Order removed' });
+        } else {
+            res.status(404);
+            throw new Error('Order not found');
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

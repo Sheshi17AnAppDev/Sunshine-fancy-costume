@@ -1,5 +1,74 @@
 const API_URL = '/api';
 
+// Global Validation Utility
+const Validator = {
+    regex: {
+        email: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/,
+        phone: /^[0-9\s\-]{6,20}$/, // Allow spaces and hyphens, 6-20 chars
+        name: /^[A-Za-z]+(?: [A-Za-z]+)*$/,
+        password: /^.{6,}$/,
+        strongPassword: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        postalCode: /^[0-9]{5,6}$/,
+        text: /^.+$/
+    },
+
+    messages: {
+        email: 'Please enter a valid email address.',
+        phone: 'Please enter a valid phone number.',
+        name: 'Name must contain only letters, spaces, hyphens, or apostrophes (2-50 chars).',
+        password: 'Password must be at least 6 characters.',
+        strongPassword: 'Password must be 8+ chars, include uppercase, lowercase, number, and special character.',
+        postalCode: 'Please enter a valid postal code.',
+        text: 'This field is required.',
+        confirmPassword: 'Passwords do not match.'
+    },
+
+    validate: function (type, value) {
+        if (!this.regex[type]) return { isValid: true };
+        const isValid = this.regex[type].test(value);
+        return {
+            isValid,
+            message: isValid ? '' : this.messages[type]
+        };
+    },
+
+    // Helper to validate and toggle UI error
+    validateField: function (inputElement, type, matchValue = null) {
+        const value = inputElement.value.trim();
+        let result = this.validate(type, value);
+
+        // Special case for matching (e.g., Confirm Password)
+        if (type === 'confirmPassword' && matchValue !== null) {
+            const isValid = value === matchValue.trim();
+            result = {
+                isValid,
+                message: isValid ? '' : this.messages.confirmPassword
+            };
+        }
+
+        const parent = inputElement.closest('.input-group') || inputElement.parentNode;
+
+        let errorEl = parent.querySelector('.input-error');
+        if (!errorEl) {
+            errorEl = document.createElement('div');
+            errorEl.className = 'input-error';
+            parent.appendChild(errorEl);
+        }
+
+        if (!result.isValid) {
+            errorEl.textContent = result.message;
+            errorEl.style.display = 'block';
+            inputElement.style.borderColor = 'red';
+            return false;
+        } else {
+            errorEl.style.display = 'none';
+            inputElement.style.borderColor = ''; // Reset
+            return true;
+        }
+    }
+};
+window.Validator = Validator;
+
 async function applyTheme() {
     try {
         const response = await fetch('/api/site-content/theme');
@@ -109,6 +178,32 @@ async function renderOfferBanner() {
     }
 }
 
+async function renderWhatsAppButton() {
+    // Avoid on admin pages
+    if (window.location.pathname.startsWith('/admin')) return;
+
+    try {
+        const response = await fetch('/api/site-content/contact');
+        if (response.ok) {
+            const { data } = await response.json();
+            if (data && data.whatsapp) {
+                const whatsappNumber = data.whatsapp.replace(/\D/g, ''); // Clean number
+                if (!whatsappNumber) return;
+
+                const button = document.createElement('a');
+                button.href = `https://wa.me/${whatsappNumber}`;
+                button.className = 'whatsapp-float';
+                button.target = '_blank';
+                button.innerHTML = '<i class="fa-brands fa-whatsapp"></i>';
+
+                document.body.appendChild(button);
+            }
+        }
+    } catch (error) {
+        console.error('Failed to render WhatsApp button:', error);
+    }
+}
+
 // Authentication check function
 function isAuthenticated() {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -128,14 +223,14 @@ function requireAuth() {
 function handleNavigationClick(event, targetPage) {
     event.preventDefault();
 
-    // Allow home page without authentication
-    if (targetPage === 'index' || targetPage === '') {
-        window.location.href = targetPage === 'index' ? '/' : '/';
-        return;
-    }
+    // Allow most pages without authentication
+    const protectedPages = ['checkout', 'profile', 'orders', 'logout'];
 
-    // Require authentication for all other pages
-    if (requireAuth()) {
+    // Only require authentication for protected pages
+    if (protectedPages.includes(targetPage) && requireAuth()) {
+        window.location.href = `/${targetPage}`;
+    } else {
+        // For public pages, just navigate
         window.location.href = `/${targetPage}`;
     }
 }
@@ -201,7 +296,15 @@ window.api = {
         };
 
         const response = await fetch(`${API_URL}${endpoint}`, config);
-        const result = await response.json();
+        const text = await response.text();
+        let result;
+        try {
+            result = JSON.parse(text);
+        } catch (e) {
+            console.error('API Parse Error:', text.substring(0, 500)); // Log HTML for debugging
+            throw new Error(`Server Error: ${response.status} (Received non-JSON response)`);
+        }
+
         if (!response.ok) throw new Error(result.message || 'API Error');
         return result;
     },
@@ -237,11 +340,13 @@ window.addEventListener('scroll', () => {
 document.addEventListener('DOMContentLoaded', () => {
     applyTheme();
     renderOfferBanner();
+    renderWhatsAppButton();
     updateCartCount();
     // CMS: Dynamic header (public site only)
     try {
         const isAdminArea = (window.location.pathname || '').startsWith('/admin');
         if (!isAdminArea) {
+            // Header Content
             (async () => {
                 try {
                     const res = await api.get('/site-content/header');
@@ -293,6 +398,69 @@ document.addEventListener('DOMContentLoaded', () => {
                 } catch (e) {
                 }
             })();
+
+            // Home Page Content
+            const path = window.location.pathname.toLowerCase();
+            const isHome = path === '/' || path.endsWith('/index.html') || path.endsWith('/index');
+            if (isHome) {
+                (async () => {
+                    try {
+                        const res = await api.get('/site-content/home');
+                        const data = res?.data || {};
+
+                        if (data.hero) {
+                            const heroTitle = document.getElementById('home-hero-title');
+                            // Replace newlines with <br> for title and subtitle
+                            if (heroTitle && data.hero.title) heroTitle.innerHTML = data.hero.title.replace(/\n/g, '<br>');
+
+                            const heroSubtitle = document.getElementById('home-hero-subtitle');
+                            if (heroSubtitle && data.hero.subtitle) heroSubtitle.innerHTML = data.hero.subtitle.replace(/\n/g, '<br>');
+                        }
+
+                        if (data.sectionTitles) {
+                            const setTxt = (id, txt) => {
+                                const el = document.getElementById(id);
+                                if (el && txt) el.innerHTML = txt.replace(/\n/g, '<br>');
+                            };
+                            setTxt('title-featured', data.sectionTitles.featured);
+                            setTxt('title-categories', data.sectionTitles.categories);
+                            setTxt('title-popular', data.sectionTitles.popular);
+                            setTxt('title-stats', data.sectionTitles.stats);
+                            setTxt('title-newsletter', data.sectionTitles.newsletter);
+                        }
+
+                    } catch (e) {
+                        console.error('Failed to load home content', e);
+                    }
+                })();
+            }
+
+            // About Page Content
+            if (path.includes('about')) {
+                (async () => {
+                    try {
+                        const res = await api.get('/site-content/about');
+                        const data = res?.data || {};
+
+                        if (data.story) {
+                            const storyTitle = document.getElementById('about-story-title');
+                            if (storyTitle && data.story.title) storyTitle.innerHTML = data.story.title.replace(/\n/g, '<br>');
+                        }
+                        if (data.intro) {
+                            const introTitle = document.getElementById('about-intro-title');
+                            if (introTitle && data.intro.title) introTitle.textContent = data.intro.title;
+
+                            const p1 = document.getElementById('about-intro-p1');
+                            if (p1 && data.intro.paragraph1) p1.textContent = data.intro.paragraph1;
+
+                            const p2 = document.getElementById('about-intro-p2');
+                            if (p2 && data.intro.paragraph2) p2.textContent = data.intro.paragraph2;
+                        }
+                    } catch (e) {
+                        console.error('Failed to load about content', e);
+                    }
+                })();
+            }
         }
     } catch (e) {
     }

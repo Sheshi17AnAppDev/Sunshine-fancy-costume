@@ -90,4 +90,123 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial Render
     if (body) renderCart();
+
+    const checkoutBtn = document.getElementById('checkout-btn');
+    if (checkoutBtn) {
+        checkoutBtn.onclick = async () => {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            if (cart.length === 0) {
+                showToast('Cart is empty', 'warning');
+                return;
+            }
+
+            const originalText = checkoutBtn.innerText;
+            checkoutBtn.innerText = 'Processing...';
+            checkoutBtn.disabled = true;
+
+            try {
+                // 1. Fetch WhatsApp Number
+                let whatsappNumber = '919704022443';
+                try {
+                    const contactRes = await api.get('/site-content/contact');
+                    if (contactRes?.data?.whatsapp) whatsappNumber = contactRes.data.whatsapp;
+                } catch (e) {
+                    console.warn('Failed to fetch contact', e);
+                }
+
+                // 2. Prepare Order Payload
+                const orderItems = cart.map(i => ({
+                    product: i._id,
+                    name: i.name,
+                    qty: i.qty,
+                    price: i.price,
+                    image: i.images && i.images[0] ? (i.images[0].url || i.images[0]) : '',
+                    ageGroup: i.ageGroup || null,
+                    size: i.size || null
+                }));
+
+                const totalPrice = orderItems.reduce((acc, item) => acc + item.price * item.qty, 0);
+
+                // Dummy Address for "Quick Buy"
+                const shippingAddress = {
+                    fullName: 'WhatsApp Guest',
+                    phone: 'Pending',
+                    address: 'WhatsApp Order',
+                    city: 'WhatsApp',
+                    postalCode: '000000',
+                    country: 'Global'
+                };
+
+                // 3. Create Order
+                const res = await api.post('/orders', {
+                    orderItems,
+                    shippingAddress,
+                    paymentMethod: 'WhatsApp',
+                    itemsPrice: totalPrice,
+                    shippingPrice: 0,
+                    totalPrice: totalPrice
+                });
+
+                // 4. Construct Message & Redirect Logic
+                const orderId = res._id;
+                const user = JSON.parse(localStorage.getItem('user')) || {};
+
+                const processRedirect = (userName, userPhone) => {
+                    let message = `*New Order #${orderId}*\n\n` +
+                        `Name: ${userName}\n` +
+                        `Mobile: ${userPhone}\n` +
+                        `------------------\n` +
+                        `I would like to buy:\n`;
+
+                    orderItems.forEach(item => {
+                        message += `- ${item.name} (x${item.qty}) - ${formatCurrency(item.price * item.qty)}\n`;
+                    });
+                    message += `\nTotal: ${formatCurrency(totalPrice)}\n\nPlease confirm my order.`;
+
+                    // 1. Open WhatsApp in NEW TAB
+                    const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+                    window.open(url, '_blank');
+
+                    // 2. Ask User for Confirmation
+                    showOrderConfirmationModal((confirmed) => {
+                        if (confirmed) {
+                            // User said YES -> Clear Cart & Success
+                            localStorage.removeItem('cart');
+                            window.location.href = '/order-success.html?id=' + orderId;
+                        } else {
+                            // User said NO -> Keep Cart, Re-enable button
+                            checkoutBtn.innerText = originalText;
+                            checkoutBtn.disabled = false;
+                        }
+                    });
+                };
+
+                if (user && user.name && user.phoneNumber) {
+                    // User is logged in, proceed directly
+                    processRedirect(user.name, user.phoneNumber);
+                } else {
+                    // Guest: Show Modal
+                    if (typeof showGuestDetailsModal === 'function') {
+                        checkoutBtn.innerText = originalText;
+                        checkoutBtn.disabled = false;
+
+                        showGuestDetailsModal((details) => {
+                            checkoutBtn.innerText = 'Redirecting...';
+                            checkoutBtn.disabled = true;
+                            processRedirect(details.name, details.phone);
+                        });
+                    } else {
+                        // Fallback
+                        processRedirect('', '');
+                    }
+                }
+
+            } catch (err) {
+                console.error(err);
+                showToast(err.message || 'Order failed', 'error');
+                checkoutBtn.innerText = originalText;
+                checkoutBtn.disabled = false;
+            }
+        };
+    }
 });
