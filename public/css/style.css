@@ -1,7 +1,7 @@
 :root {
-    --primary-orange: #fbb03b;
-    --primary-orange-dark: #e89b25;
-    --soft-peach: #fff2e0;
+    --primary-orange: #FFB300;
+    --primary-orange-dark: #FF8F00;
+    --soft-peach: #FFF8E1;
     --dark-text: #111111;
     --light-gray: #f8f8f8;
     --border-gray: #ececec;
@@ -27,6 +27,16 @@
     --success: #27ae60;
     --warning: #f1c40f;
     --info: #3498db;
+}
+
+/* Global Scrollbar Hiding */
+::-webkit-scrollbar {
+    display: none !important;
+}
+
+* {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
 }
 
 * {
@@ -674,15 +684,15 @@ section {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #fbb03b, #f39c12);
-    box-shadow: 0 8px 20px rgba(251, 176, 59, 0.3);
+    background: linear-gradient(135deg, #FFB300, #FF8F00);
+    box-shadow: 0 8px 20px rgba(255, 179, 0, 0.3);
     position: relative;
     transition: var(--transition-fast);
 }
 
 .cat-card:hover .cat-image-container {
     transform: scale(1.1);
-    box-shadow: 0 12px 30px rgba(251, 176, 59, 0.4);
+    box-shadow: 0 12px 30px rgba(255, 179, 0, 0.4);
 }
 
 .cat-card .cat-image-container img {
@@ -848,14 +858,14 @@ section {
     position: absolute;
     top: 12px;
     right: 12px;
-    background: linear-gradient(135deg, #f39c12, #e67e22);
+    background: linear-gradient(135deg, #FFB300, #FF8F00);
     color: white;
     font-size: 0.6rem;
     font-weight: 900;
     padding: 5px 12px;
     border-radius: 18px;
     z-index: 2;
-    box-shadow: 0 4px 12px rgba(230, 126, 34, 0.4);
+    box-shadow: 0 4px 12px rgba(255, 179, 0, 0.4);
     animation: glow 2.5s ease-in-out infinite;
     text-transform: uppercase;
     letter-spacing: 0.3px;
@@ -867,11 +877,11 @@ section {
 
     0%,
     100% {
-        box-shadow: 0 4px 12px rgba(230, 126, 34, 0.4), 0 0 20px rgba(230, 126, 34, 0.2);
+        box-shadow: 0 4px 12px rgba(255, 179, 0, 0.4), 0 0 20px rgba(255, 179, 0, 0.2);
     }
 
     50% {
-        box-shadow: 0 6px 20px rgba(230, 126, 34, 0.6), 0 0 30px rgba(230, 126, 34, 0.4);
+        box-shadow: 0 6px 20px rgba(255, 179, 0, 0.6), 0 0 30px rgba(255, 179, 0, 0.4);
     }
 }
 
